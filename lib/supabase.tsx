@@ -1,8 +1,9 @@
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+import { auth } from './auth'; // Import the Better Auth setup
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-//Argument of type 'string | undefined' is not assignable to parameter of type 'string'. Type 'undefined' is not assignable to type 'strin
+
 
 export const supabase = createSupabaseClient(supabaseUrl, supabaseKey);
 
@@ -11,10 +12,9 @@ export const createClient = () => {
 };
 
 export async function requireAuth() {
-    const supabase = createClient();
-    const { data: { session }, error } = await supabase.auth.getSession();
+    const session = await auth.getSession(); // Use Better Auth's session management
 
-    if (error || !session) {
+    if (!session) {
         throw new Error('Unauthorized');
     }
 
@@ -22,9 +22,9 @@ export async function requireAuth() {
 }
 
 export async function requireRole(allowedRoles: string[]) {
-    const supabase = createClient();
     const session = await requireAuth();
 
+    // Fetch user profile from Supabase
     const { data: profile, error } = await supabase
         .from('profiles')
         .select('role')

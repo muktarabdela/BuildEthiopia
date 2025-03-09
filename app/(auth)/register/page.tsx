@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -24,24 +25,26 @@ export default function RegisterPage() {
         };
 
         try {
-            const response = await fetch('/api/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            });
+            const response = await axios.post('/api/auth/register', data);
 
-            const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.error || 'Failed to register');
+            if (response.data) {
+                // Registration successful
+                router.push('/');
+            } else {
+                throw new Error('Failed to register');
             }
-
-            // Registration successful
-            router.push('/l');
         } catch (err) {
-            setError(err.message);
+            console.log('Error:', err);
+            if (axios.isAxiosError(err) && err.response) {
+                // Handle API response errors
+                setError(err.response.data?.error || 'Registration failed. Please try again.');
+            } else if (err.request) {
+                // Handle network errors
+                setError('Network error - please check your connection');
+            } else {
+                // Handle other errors
+                setError('An unexpected error occurred. Please try again later.');
+            }
         } finally {
             setLoading(false);
         }

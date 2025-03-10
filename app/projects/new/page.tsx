@@ -213,7 +213,7 @@ export default function NewProjectPage() {
                                 type="hidden"
                                 name="developer_id"
                                 id="developer_id"
-                                value={/* Add logic to get current user's profile ID */}
+                                // value={/* Add logic to get current user's profile ID */}
                             />
                         </CardContent>
                     </Card>

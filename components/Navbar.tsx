@@ -30,8 +30,6 @@ export function Navbar() {
         async function getSession() {
             // Get the user's session from local storage
             const session = localStorage.getItem('session');
-            // const { data: { session } } = await supabase.auth?.getSession();
-            console.log(session);
             setSession(session);
 
             if (session) {

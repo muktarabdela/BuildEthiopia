@@ -1,22 +1,42 @@
+'use client';
+
+import { useAuth } from "@/components/AuthProvider";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import { ArrowRight, Clock, Code, Search, TrendingUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 export default function Home() {
-  // get session from supabase
-  const { data: session } = supabase.auth.getSession();
-  // const { data: session } = await supabase.auth.getSession();
-  console.log("Session:", session);
-  // const { data: session } = await supabase.auth.getSession();
+  const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    const fetchSession = async () => {
+      const session = localStorage.getItem('session');
+      setSession(session)
+    };
+
+    fetchSession();
+  }, []);
+
+  // const { user, loading } = useAuth();
+  // const router = useRouter();
+  // console.log("user", user)
+  // // Redirect immediately if no user
+  // useEffect(() => {
+  //   if (!loading && !user) {
+  //     router.push('/login');
+  //   }
+  // }, [user, loading, router]);
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <Navbar />
 
 
       {/* Hero Section */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
+      <section className={`relative py-20 md:py-28 overflow-hidden ${!session ? 'hidden' : ''}`}>
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 z-0"></div>
         <div className="absolute right-0 top-0 w-1/3 h-full bg-gradient-to-l from-primary/20 to-transparent z-0 opacity-70"></div>
 

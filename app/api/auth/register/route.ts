@@ -38,7 +38,7 @@ export async function POST(request) {
         { status: 500 }
       );
     }
-
+    // get user session
     console.log("User signed up successfully:", data);
     return NextResponse.json({
       message:

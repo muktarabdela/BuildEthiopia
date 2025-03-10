@@ -5,11 +5,13 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import VerificationModal from '@/components/VerificationModal';
 
 export default function RegisterPage() {
     const router = useRouter();
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isModalOpen, setModalOpen] = useState(false);
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -26,23 +28,18 @@ export default function RegisterPage() {
 
         try {
             const response = await axios.post('/api/auth/register', data);
-
             if (response.data) {
-                // Registration successful
-                router.push('/');
+                setModalOpen(true);
             } else {
                 throw new Error('Failed to register');
             }
         } catch (err) {
             console.log('Error:', err);
             if (axios.isAxiosError(err) && err.response) {
-                // Handle API response errors
                 setError(err.response.data?.error || 'Registration failed. Please try again.');
             } else if (err.request) {
-                // Handle network errors
                 setError('Network error - please check your connection');
             } else {
-                // Handle other errors
                 setError('An unexpected error occurred. Please try again later.');
             }
         } finally {
@@ -150,6 +147,7 @@ export default function RegisterPage() {
                     </div>
                 </CardContent>
             </Card>
+            <VerificationModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} />
         </div>
     );
 }

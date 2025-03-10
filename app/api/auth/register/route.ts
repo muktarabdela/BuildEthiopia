@@ -38,6 +38,27 @@ export async function POST(request) {
         { status: 500 }
       );
     }
+
+    // If the user is created successfully, store their information in the "profiles" table
+    const user = data.user; // Extract user information
+    if (user) {
+      const { error: profileError } = await supabase.from("profiles").insert([
+        {
+          id: user.id, // Use the same ID as the authenticated user
+          name: name,
+      },
+      ]);
+
+      // Handle profile insertion errors
+      if (profileError) {
+        console.error("Profile creation error:", profileError);
+        return NextResponse.json(
+          { error: "User registered but profile creation failed." },
+          { status: 500 }
+        );
+      }
+    }
+
     // get user session
     console.log("User signed up successfully:", data);
     return NextResponse.json({

@@ -30,7 +30,6 @@ export function Navbar() {
         async function getSession() {
             // Get the user's session from local storage
             const session = localStorage.getItem('session');
-            console.log('Session from local storage:', session);
             setSession(session);
 
             if (session) {

@@ -1,12 +1,19 @@
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/supabase";
 import { ArrowRight, Clock, Code, Search, TrendingUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 export default function Home() {
+  // get session from supabase
+  const { data: session } = supabase.auth.getSession();
+  // const { data: session } = await supabase.auth.getSession();
+  console.log("Session:", session);
+  // const { data: session } = await supabase.auth.getSession();
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       <Navbar />
+
 
       {/* Hero Section */}
       <section className="relative py-20 md:py-28 overflow-hidden">

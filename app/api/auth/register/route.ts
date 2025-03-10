@@ -1,4 +1,4 @@
-import { authClient } from "@/lib/auth-client";
+import { supabase } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 
 export async function POST(request) {
@@ -11,35 +11,25 @@ export async function POST(request) {
       );
     }
 
-    const { email, password, name, image } = await request.json();
+    const { email, password, name, role } = await request.json();
 
-    if (!email || !password || !name) {
+    if (!email || !password || !name || !role) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    const { data, error } = await authClient.signUp.email(
-      {
-        email,
-        password,
-        name,
-        image,
-        callbackURL: "/",
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name,
+          role,
+        },
       },
-      {
-        onRequest: (ctx) => {
-          console.log("Sign-up request started");
-        },
-        onSuccess: (ctx) => {
-          console.log("Sign-up successful:", ctx);
-        },
-        onError: (ctx) => {
-          console.error("Sign-up error:", ctx.error);
-        },
-      }
-    );
+    });
 
     if (error) {
       console.error("Sign-up error details:", error);
@@ -53,7 +43,7 @@ export async function POST(request) {
     return NextResponse.json({
       message:
         "Registration successful. Please check your email for verification.",
-      user: data,
+      user: data.user,
     });
   } catch (error) {
     console.error("Registration Error:", error);

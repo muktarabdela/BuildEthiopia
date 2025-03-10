@@ -1,5 +1,4 @@
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
-import { auth } from "./auth";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -11,9 +10,12 @@ export const createClient = () => {
 };
 
 export async function requireAuth() {
-  const session = await auth.getSession(); // Use Better Auth's session management
+  const {
+    data: { session },
+    error,
+  } = await supabase.auth.getSession();
 
-  if (!session) {
+  if (error || !session) {
     throw new Error("Unauthorized");
   }
 

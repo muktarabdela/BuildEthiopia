@@ -20,7 +20,7 @@ export default function ProfilePage() {
             const parsedSession = session ? JSON.parse(session) : null;
             if (!parsedSession) {
                 console.log("No valid session found, redirecting to login");
-                // router.push('/login');
+                router.push('/login');
                 return;
             }
 

@@ -28,7 +28,11 @@ export default function RegisterPage() {
 
         try {
             const response = await axios.post('/api/auth/register', data);
+            console.log(response)
             if (response.data) {
+                // store session in local storage
+                localStorage.setItem('session', JSON.stringify(response.data.user));
+                // Login successful
                 setModalOpen(true);
             } else {
                 throw new Error('Failed to register');

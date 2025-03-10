@@ -30,6 +30,7 @@ export function Navbar() {
         async function getSession() {
             // Get the user's session from local storage
             const session = localStorage.getItem('session');
+            console.log('Session from local storage:', session);
             setSession(session);
 
             if (session) {
@@ -69,7 +70,15 @@ export function Navbar() {
     const isActive = (path) => {
         return pathname === path;
     };
-
+    // create function lo sign out  and clear the local storage
+    const signOut = async () => {
+        await supabase.auth.signOut();
+        localStorage.removeItem('session');
+        setSession(null);
+        setProfile(null);
+        setUnreadCount(0);
+        window.location.href = '/';
+    }
     return (
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
             <div className="container mx-auto px-4">
@@ -160,7 +169,7 @@ export function Navbar() {
                                     <User className="h-5 w-5" />
                                     <span className="text-sm font-medium">Profile</span>
                                 </Link>
-                                <form action="/auth/signout" method="post" className="hidden md:block">
+                                <div onClick={signOut} className="hidden md:block">
                                     <Button
                                         variant="outline"
                                         size="sm"
@@ -169,7 +178,7 @@ export function Navbar() {
                                         <LogOut className="h-4 w-4 mr-1" />
                                         Sign Out
                                     </Button>
-                                </form>
+                                </div>
                             </>
                         ) : (
                             <>
@@ -283,15 +292,15 @@ export function Navbar() {
                                         <span>Profile</span>
                                     </div>
                                 </Link>
-                                <form action="/auth/signout" method="post" className="px-3 py-2">
-                                    <Button
+                                <div className="px-3 py-2">
+                                    <Button onClick={signOut}
                                         variant="outline"
                                         className="w-full justify-start border-gray-300 text-gray-700"
                                     >
                                         <LogOut className="h-5 w-5 mr-2" />
                                         Sign Out
                                     </Button>
-                                </form>
+                                </div>
                             </>
                         ) : (
                             <div className="flex flex-col space-y-2 px-3 py-2">

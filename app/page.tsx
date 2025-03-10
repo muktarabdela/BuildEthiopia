@@ -15,6 +15,7 @@ export default function Home() {
   useEffect(() => {
     const fetchSession = async () => {
       const session = localStorage.getItem('session');
+      console.log(session)
       setSession(session)
     };
 
@@ -36,7 +37,7 @@ export default function Home() {
 
 
       {/* Hero Section */}
-      <section className={`relative py-20 md:py-28 overflow-hidden ${!session ? 'hidden' : ''}`}>
+      <section className={`relative py-20 md:py-28 overflow-hidden ${session ? 'block' : ''}`}>
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 z-0"></div>
         <div className="absolute right-0 top-0 w-1/3 h-full bg-gradient-to-l from-primary/20 to-transparent z-0 opacity-70"></div>
 

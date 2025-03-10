@@ -1,6 +1,8 @@
 'use client';
 
 import { useAuth } from "@/components/AuthProvider";
+import FeaturedDevelopers from "@/components/FeaturedDevelopers";
+import FeaturedProjects from "@/components/FeaturedProjects";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
@@ -9,7 +11,60 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-export default function Home() {
+
+async function getProjects() {
+  try {
+    const { data: projects, error } = await supabase
+      .from('projects')
+      .select(`
+        *,
+        developer:profiles!projects_developer_id_fkey(id, name, profile_picture)
+      `)
+      .order('upvotes_count', { ascending: false })
+      .limit(6);
+
+    if (error) {
+      console.error('Error fetching projects:', error);
+      return [];
+    }
+
+    return projects || [];
+  } catch (error) {
+    console.error('Error:', error);
+    return [];
+  }
+}
+
+async function getFeaturedDevelopers() {
+  try {
+    const { data: developers, error } = await supabase
+      .from('profiles')
+      .select(`
+        id,
+        name,
+        profile_picture,
+        projects:projects(id)
+      `)
+      .order('created_at', { ascending: false })
+      .limit(5);
+
+    if (error) {
+      console.error('Error fetching developers:', error);
+      return [];
+    }
+
+    // Transform the data to include project count
+    return developers.map(dev => ({
+      ...dev,
+      projects_count: dev.projects ? dev.projects.length : 0
+    })) || [];
+  } catch (error) {
+    console.error('Error:', error);
+    return [];
+  }
+}
+
+export default async function Home() {
   const [session, setSession] = useState(null);
 
   useEffect(() => {
@@ -21,15 +76,9 @@ export default function Home() {
     fetchSession();
   }, []);
 
-  // const { user, loading } = useAuth();
-  // const router = useRouter();
-  // console.log("user", user)
-  // // Redirect immediately if no user
-  // useEffect(() => {
-  //   if (!loading && !user) {
-  //     router.push('/login');
-  //   }
-  // }, [user, loading, router]);
+  const trendingProjects = await getProjects();
+  const featuredDevelopers = await getFeaturedDevelopers();
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* <Navbar /> */}
@@ -124,11 +173,11 @@ export default function Home() {
                   <TrendingUp className="h-6 w-6 text-primary mr-2" />
                   <h2 className="text-2xl md:text-3xl font-bold">Trending Projects</h2>
                 </div>
-                {/* <FeaturedProjects
+                <FeaturedProjects
                   projects={trendingProjects}
                   title=""
                   showHeader={false}
-                /> */}
+                />
               </div>
 
               {/* Recent Projects */}
@@ -148,7 +197,7 @@ export default function Home() {
             {/* Sidebar */}
             <div className="w-full lg:w-[30%] space-y-8">
               {/* Featured Developers */}
-              {/* <FeaturedDevelopers developers={featuredDevelopers} /> */}
+              <FeaturedDevelopers developers={featuredDevelopers} />
 
               {/* Join Community Card */}
               <div className="bg-gradient-to-br from-primary/80 to-primary rounded-xl p-6 text-white shadow-lg">
@@ -196,7 +245,7 @@ export default function Home() {
         </div>
       </section>
 
-    
+
     </div>
   );
 }

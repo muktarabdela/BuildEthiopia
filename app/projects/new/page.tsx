@@ -5,24 +5,25 @@ import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import axios from 'axios';
 
 export default function NewProjectPage() {
     const router = useRouter();
     const supabase = createClient();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [uuid, setUuid] = useState<string | null>(null);
 
     useEffect(() => {
         async function checkAccess() {
             const session = localStorage.getItem('session');
-            //parse the session string to an object
             const parsedSession = session ? JSON.parse(session) : null;
             if (!parsedSession) {
                 console.log("No valid session found, redirecting to login");
                 router.push('/login');
                 return;
             }
-
+            setUuid(parsedSession?.id);
             const { data: profile, error: profileError } = await supabase
                 .from('profiles')
                 .select('*')
@@ -41,8 +42,7 @@ export default function NewProjectPage() {
         }
 
         checkAccess();
-
-    }, []);
+    }, [router]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -53,41 +53,37 @@ export default function NewProjectPage() {
         const data = {
             title: formData.get('title'),
             description: formData.get('description'),
-            images: formData.getAll('images'), // Assuming you have a file input for images
+            images: ["https://picsum.photos/200/300?grayscale", "https://picsum.photos/200/300"],
             logo_url: formData.get('logo_url'),
-            developer_id: formData.get('developer_id'), // Ensure this is set correctly
+            developer_id: uuid,
             github_url: formData.get('github_url'),
             live_url: formData.get('live_url'),
         };
 
         try {
-            const response = await fetch('/api/projects', {
-                method: 'POST',
+            const response = await axios.post('/api/projects', data, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(data),
             });
-
-            const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.error || 'Failed to create project');
-            }
-
-            console.log("Project created successfully:", result);
-            router.push('/projects'); // Redirect to projects page or show success message
+            console.log(response)
+            console.log("Project created successfully:", response.data);
+            // router.push('/projects'); // Redirect to projects page or show success message
         } catch (err) {
             console.error('Error:', err);
-            setError(err.message || 'An unexpected error occurred. Please try again later.');
+            if (axios.isAxiosError(err) && err.response) {
+                setError(err.response.data?.error || 'Failed to create project. Please try again.');
+            } else {
+                setError('An unexpected error occurred. Please try again later.');
+            }
         } finally {
             setLoading(false);
         }
     };
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+    // if (loading) {
+    //     return <div>Loading...</div>;
+    // }
 
     return (
         <main className="container mx-auto px-4 py-8">
@@ -213,7 +209,7 @@ export default function NewProjectPage() {
                                 type="hidden"
                                 name="developer_id"
                                 id="developer_id"
-                                // value={/* Add logic to get current user's profile ID */}
+                                value={uuid}
                             />
                         </CardContent>
                     </Card>

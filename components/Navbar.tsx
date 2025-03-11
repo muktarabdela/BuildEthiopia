@@ -30,13 +30,15 @@ export function Navbar() {
         async function getSession() {
             // Get the user's session from local storage
             const session = localStorage.getItem('session');
-            setSession(session);
-
+            // Parse the session string to an object
+            const parsedSession = session ? JSON.parse(session) : null;
+            setSession(parsedSession);
+            console.log("Session data:", parsedSession);
             if (session) {
                 const { data: profile } = await supabase
                     .from('profiles')
                     .select('*')
-                    .eq('id', session?.user?.id)
+                    .eq('id', parsedSession?.id)
                     .single();
                 setProfile(profile);
 
@@ -78,6 +80,7 @@ export function Navbar() {
         setUnreadCount(0);
         window.location.href = '/';
     }
+    console.log(profile)
     return (
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
             <div className="container mx-auto px-4">
@@ -162,7 +165,7 @@ export function Navbar() {
                                     </Link>
                                 )}
                                 <Link
-                                    href="/profile"
+                                    href={`${profile?.username}`}
                                     className="hidden md:flex items-center space-x-2 p-2 text-gray-700 hover:text-primary rounded-md hover:bg-gray-100"
                                 >
                                     <User className="h-5 w-5" />

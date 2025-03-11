@@ -41,6 +41,7 @@ async function getFeaturedDevelopers() {
         id,
         name,
         profile_picture,
+        username,
         projects:projects(id)
       `)
       .order('created_at', { ascending: false })

@@ -4,6 +4,7 @@ import { User, Code, Award } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 
 export default function FeaturedDevelopers({ developers }) {
+    console.log('Featured Developers:', developers);
     return (
         <Card className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
             <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b border-gray-100">
@@ -18,7 +19,7 @@ export default function FeaturedDevelopers({ developers }) {
                         {developers.map((developer, index) => (
                             <Link
                                 key={developer.id}
-                                href={`/developers/${developer.id}`}
+                                href={`/${developer.username}`}
                                 className={`flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors ${index !== developers.length - 1 ? 'border-b border-gray-100' : ''
                                     }`}
                             >

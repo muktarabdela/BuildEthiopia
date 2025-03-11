@@ -10,13 +10,14 @@ export default function LoginPage() {
     const router = useRouter();
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    // Parameter 'e' implicitly has an 'any' type.ts(7006)
 
-    async function handleSubmit(e) {
+    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setError('');
         setLoading(true);
 
-        const formData = new FormData(e.target);
+        const formData = new FormData(e.target as HTMLFormElement);
         const data = {
             email: formData.get('email'),
             password: formData.get('password'),

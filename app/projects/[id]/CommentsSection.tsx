@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { MessageSquare } from 'lucide-react';
 import CommentForm from './CommentForm';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function CommentsSection({ projectId, initialComments, commentsCount }) {
     const [comments, setComments] = useState(initialComments || []);

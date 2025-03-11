@@ -20,8 +20,9 @@ export default function CommentForm({ projectId, onCommentAdded }) {
             setIsSubmitting(true);
             setError(null);
 
-            const { data: { session } } = await supabase.auth.getSession();
-
+            const session = localStorage.getItem('session');
+            // Parse the session string to an object
+            const parsedSession = session ? JSON.parse(session) : null;
             if (!session) {
                 // Redirect to login
                 window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
@@ -33,13 +34,13 @@ export default function CommentForm({ projectId, onCommentAdded }) {
                 .insert({
                     content: content.trim(),
                     project_id: projectId,
-                    user_id: session.user.id
+                    user_id: parsedSession.id
                 })
                 .select(`
           id,
           content,
           created_at,
-          user:profiles(id, name, role)
+          user:profiles(id, name,profile_picture)
         `)
                 .single();
 

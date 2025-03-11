@@ -42,7 +42,7 @@ async function getFeaturedDevelopers() {
         name,
         profile_picture,
         username,
-        projects:projects(id)
+        projects:projects!projects_developer_id_fkey(id)
       `)
       .order('created_at', { ascending: false })
       .limit(5);

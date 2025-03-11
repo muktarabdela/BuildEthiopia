@@ -15,9 +15,11 @@ export default function UpvoteButton({ projectId, initialUpvotes }) {
     useEffect(() => {
         async function checkUserUpvote() {
             try {
-                const { data: { session } } = await supabase.auth.getSession();
-
-                if (!session) {
+                const session = localStorage.getItem('session');
+                // Parse the session string to an object
+                const parsedSession = session ? JSON.parse(session) : null;
+                console.log("Session data:", parsedSession);
+                if (!parsedSession) {
                     setIsAuthenticated(false);
                     setIsLoading(false);
                     return;
@@ -26,10 +28,10 @@ export default function UpvoteButton({ projectId, initialUpvotes }) {
                 setIsAuthenticated(true);
 
                 const { data, error } = await supabase
-                    .from('upvotes')
+                    .from('votes')
                     .select('*')
                     .eq('project_id', projectId)
-                    .eq('user_id', session.user.id)
+                    .eq('user_id', parsedSession.id)
                     .single();
 
                 if (error && error.code !== 'PGRST116') {

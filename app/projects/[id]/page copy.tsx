@@ -1,12 +1,13 @@
-'use client';
-
+'use client'
 import Link from 'next/link';
 import Image from 'next/image';
-import { useParams, useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import { notFound, useParams } from 'next/navigation';
+import { createClient } from '@/lib/supabase';
 import {
     Github,
     Globe,
+    ThumbsUp,
+    MessageSquare,
     Calendar,
     User,
     Share2,
@@ -14,92 +15,92 @@ import {
     Code,
     Layers,
     CheckCircle,
-    Linkedin,
-    MessageSquare
+    ExternalLink,
+    Linkedin
 } from 'lucide-react';
 import UpvoteButton from './UpvoteButton';
 import CommentsSection from './CommentsSection';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import React, { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-// Custom hook to fetch project data
-function useProject(projectId: string | undefined) {
-    const [project, setProject] = React.useState<any>(null);
-    const [loading, setLoading] = React.useState<boolean>(true);
-    const [error, setError] = React.useState<string | null>(null);
+async function getProject(id: string) {
+    const supabase = createClient();
 
-    useEffect(() => {
-        if (!projectId) return;
+    const { data: project, error } = await supabase
+        .from('projects')
+        .select(`
+      *,
+      developer:profiles(
+        id,
+        name,
+        bio,
+        github_url,
+        linkedin_url,
+        contact_visible,
+        profile_picture
+      ),
+      comments(
+        id,
+        content,
+        created_at,
+        user:profiles(id, name, profile_picture)
+      )
+    `)
+        .eq('id', id)
+        .single();
 
-        const fetchProject = async () => {
-            setLoading(true);
-            try {
-                // Optionally retrieve session from localStorage if needed
-                const session = localStorage.getItem('session');
-                const parsedSession = session ? JSON.parse(session) : null;
+    if (error || !project) {
+        notFound();
+    }
 
-                const { data, error } = await supabase
-                    .from('projects')
-                    .select(`
-                        *,
-                        developer:profiles!projects_developer_id_fkey(
-                          id,
-                          name,
-                          bio,
-                          github_url,
-                          linkedin_url,
-                          contact_visible,
-                          profile_picture
-                        ),
-                        comments(
-                          id,
-                          content,
-                          created_at,
-                          user:profiles(id, name, profile_picture)
-                        )
-                      `)
-                    .eq('id', projectId)
-                    .single();
+    return project;
+}
 
-                if (error || !data) {
-                    console.error('Error fetching project:', error);
-                    throw new Error(error?.message || 'Project not found');
-                }
-                setProject(data);
-            } catch (err: any) {
-                console.error('Error fetching project:', err);
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+async function getRelatedProjects(projectId: string, developerId: string) {
+    const supabase = createClient();
 
-        fetchProject();
-    }, [projectId]);
+    // Get other projects by the same developer
+    const { data: developerProjects } = await supabase
+        .from('projects')
+        .select(`
+      id,
+      title,
+      description,
+      upvotes_count,
+      developer:profiles!projects_developer_id_fkey(id, name, profile_picture)
+    `)
+        .eq('developer_id', developerId)
+        .neq('id', projectId)
+        .limit(3);
 
-    return { project, loading, error };
+    return developerProjects || [];
 }
 
 export default function ProjectPage() {
-    const { id } = useParams();
-    const router = useRouter();
-    const { project, loading, error } = useProject(id);
+    const [project, setProject] = useState();
+    const params = useParams();
+    const id = params?.id; // ✅ Now accessing username safely
 
-    // Redirect to a 404 page if there is an error
     useEffect(() => {
-        if (error) {
-            router.push('/404');
+        async function fetchData() {
+            try {
+                // Fetch projects and developers in parallel
+                const project = await getProject(id);
+                console.log('Project:', project);
+                setProject(project);
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
         }
-    }, [error, router]);
 
-    // Optionally render a loading state
-    if (loading || !project) {
-        return <div className="min-h-screen flex justify-center items-center">Loading...</div>;
-    }
+        fetchData();
+    }, [id]);
 
-    const developer = project.developer;
-    const comments = project.comments;
+
+    const { developer, comments } = project;
+    const relatedProjects = getRelatedProjects(id, developer?.id);
 
     // Generate a random color for the project banner
     const getRandomColor = () => {
@@ -178,6 +179,7 @@ export default function ProjectPage() {
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 -mt-8 mb-8 flex flex-wrap gap-4 justify-between items-center">
                         <div className="flex items-center gap-3">
                             <UpvoteButton projectId={project?.id} initialUpvotes={project.upvotes_count} />
+
                             <div className="flex items-center text-gray-500">
                                 <MessageSquare className="h-5 w-5 mr-1" />
                                 <span>{project.comments_count} Comments</span>
@@ -209,11 +211,19 @@ export default function ProjectPage() {
                                 </a>
                             )}
 
-                            <Button variant="outline" size="icon" className="text-gray-500 hover:text-gray-700">
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="text-gray-500 hover:text-gray-700"
+                            >
                                 <Share2 className="h-5 w-5" />
                             </Button>
 
-                            <Button variant="outline" size="icon" className="text-gray-500 hover:text-gray-700">
+                            <Button
+                                variant="outline"
+                                size="icon"
+                                className="text-gray-500 hover:text-gray-700"
+                            >
                                 <Bookmark className="h-5 w-5" />
                             </Button>
                         </div>
@@ -247,18 +257,11 @@ export default function ProjectPage() {
                                 </CardHeader>
                                 <CardContent className="pt-6">
                                     <div className="flex flex-wrap gap-2">
-                                        <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                                            React
-                                        </span>
-                                        <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                                            Node.js
-                                        </span>
-                                        <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
-                                            PostgreSQL
-                                        </span>
-                                        <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">
-                                            Tailwind CSS
-                                        </span>
+                                        {/* Placeholder tech stack tags - in a real app, these would come from the database */}
+                                        <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">React</span>
+                                        <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">Node.js</span>
+                                        <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">PostgreSQL</span>
+                                        <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">Tailwind CSS</span>
                                     </div>
                                 </CardContent>
                             </Card>
@@ -273,6 +276,7 @@ export default function ProjectPage() {
                                 </CardHeader>
                                 <CardContent className="pt-6">
                                     <ul className="space-y-3">
+                                        {/* Placeholder features - in a real app, these would come from the database */}
                                         <li className="flex items-start">
                                             <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
                                             <span>Responsive design that works on all devices</span>
@@ -294,11 +298,7 @@ export default function ProjectPage() {
                             </Card>
 
                             {/* Comments Section */}
-                            <CommentsSection
-                                projectId={project?.id}
-                                initialComments={comments}
-                                commentsCount={project.comments_count}
-                            />
+                            <CommentsSection projectId={project?.id} initialComments={comments} commentsCount={project.comments_count} />
                         </div>
 
                         {/* Sidebar */}
@@ -328,6 +328,7 @@ export default function ProjectPage() {
                                             )}
                                         </div>
                                         <h3 className="text-lg font-bold mb-1">{developer.name}</h3>
+                                        {/* <p className="text-gray-500 text-sm">{developer.role}</p> */}
                                     </div>
 
                                     {developer.bio && (
@@ -358,12 +359,54 @@ export default function ProjectPage() {
                                     </div>
 
                                     <Link href={`/developers/${developer.id}`}>
-                                        <Button variant="outline" className="w-full">
+                                        <Button
+                                            variant="outline"
+                                            className="w-full"
+                                        >
                                             View Profile
                                         </Button>
                                     </Link>
                                 </CardContent>
                             </Card>
+
+                            {/* Related Projects */}
+                            {relatedProjects.length > 0 && (
+                                <Card className="overflow-hidden">
+                                    <CardHeader className="bg-gray-50 border-b">
+                                        <CardTitle className="flex items-center">
+                                            <Layers className="h-5 w-5 text-primary mr-2" />
+                                            More by this Developer
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="pt-6">
+                                        <div className="space-y-4">
+                                            {relatedProjects.map(project => (
+                                                <Link
+                                                    key={project.id}
+                                                    href={`/projects/${project.id}`}
+                                                    className="block group"
+                                                >
+                                                    <div className="flex items-start space-x-3">
+                                                        <div className="w-12 h-12 rounded bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                                            <span className="text-primary font-medium">
+                                                                {project.title.charAt(0)}
+                                                            </span>
+                                                        </div>
+                                                        <div>
+                                                            <h4 className="font-medium text-gray-900 group-hover:text-primary transition-colors">
+                                                                {project.title}
+                                                            </h4>
+                                                            <p className="text-gray-500 text-sm line-clamp-2">
+                                                                {project.description}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -371,3 +414,4 @@ export default function ProjectPage() {
         </main>
     );
 }
+

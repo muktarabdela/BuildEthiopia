@@ -23,7 +23,8 @@ export default function RegisterPage() {
             email: formData.get('email'),
             password: formData.get('password'),
             name: formData.get('name'),
-            role: formData.get('role'),
+            username: formData.get('username'),
+            // Add any other fields you need to send
         };
 
         try {
@@ -82,6 +83,22 @@ export default function RegisterPage() {
                         </div>
                         <div>
                             <label
+                                htmlFor="username"
+                                className="block text-sm font-medium text-muted-foreground mb-1"
+                            >
+                                user name
+                            </label>
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                required
+                                className="w-full px-3 py-2 border rounded-md"
+                                placeholder="@johndoe"
+                            />
+                        </div>
+                        <div>
+                            <label
                                 htmlFor="email"
                                 className="block text-sm font-medium text-muted-foreground mb-1"
                             >
@@ -112,25 +129,6 @@ export default function RegisterPage() {
                                 placeholder="••••••••"
                                 minLength={8}
                             />
-                        </div>
-                        <div>
-                            <label
-                                htmlFor="role"
-                                className="block text-sm font-medium text-muted-foreground mb-1"
-                            >
-                                I am a...
-                            </label>
-                            <select
-                                id="role"
-                                name="role"
-                                required
-                                className="w-full px-3 py-2 border rounded-md"
-                            >
-                                <option value="">Select your role</option>
-                                <option value="developer">Developer</option>
-                                <option value="hr">HR/Recruiter</option>
-                                <option value="user">Other</option>
-                            </select>
                         </div>
                         <Button
                             type="submit"

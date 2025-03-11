@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 import { Button } from '@/components/ui/Button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import {
   Github,
   Globe,
@@ -20,6 +19,7 @@ import {
   Layers
 } from 'lucide-react';
 import ContactDeveloperButton from './ContactDeveloperButton';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 async function getDeveloper(id) {
   const supabase = createClient();

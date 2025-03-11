@@ -1,6 +1,4 @@
 'use client';
-
-import { useAuth } from "@/components/AuthProvider";
 import FeaturedDevelopers from "@/components/FeaturedDevelopers";
 import FeaturedProjects from "@/components/FeaturedProjects";
 import { Navbar } from "@/components/Navbar";
@@ -64,20 +62,34 @@ async function getFeaturedDevelopers() {
   }
 }
 
-export default async function Home() {
-  const [session, setSession] = useState(null);
+export default function Home() {
+  const [session, setSession] = useState<string | null>(null);
+  const [trendingProjects, setTrendingProjects] = useState([]);
+  const [featuredDevelopers, setFeaturedDevelopers] = useState([]);
 
   useEffect(() => {
-    const fetchSession = async () => {
-      const session = localStorage.getItem('session');
-      setSession(session)
-    };
-
-    fetchSession();
+    setSession(localStorage.getItem('session')); // Fetch session only once
   }, []);
 
-  const trendingProjects = await getProjects();
-  const featuredDevelopers = await getFeaturedDevelopers();
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        // Fetch projects and developers in parallel
+        const [projects, developers] = await Promise.all([
+          getProjects(),
+          getFeaturedDevelopers()
+        ]);
+        setTrendingProjects(projects);
+        setFeaturedDevelopers(developers);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+
+    fetchData();
+  }, []);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -85,7 +97,7 @@ export default async function Home() {
 
 
       {/* Hero Section */}
-      <section className={`relative py-20 md:py-28 overflow-hidden ${session ? 'block' : ''}`}>
+      <section className={`relative py-20 md:py-28 overflow-hidden ${session ? 'hidden' : ''}`}>
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 z-0"></div>
         <div className="absolute right-0 top-0 w-1/3 h-full bg-gradient-to-l from-primary/20 to-transparent z-0 opacity-70"></div>
 
@@ -138,7 +150,7 @@ export default async function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-10 bg-white border-y border-gray-100">
+      <section className={`"py-10 bg-white border-y border-gray-100" ${session ? 'hidden' : ''}`}>
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
@@ -167,11 +179,11 @@ export default async function Home() {
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Projects Column */}
             <div className="w-full lg:w-[70%] space-y-16">
-              {/* Trending Projects */}
+              {/* week Featured Projects */}
               <div>
                 <div className="flex items-center mb-8">
                   <TrendingUp className="h-6 w-6 text-primary mr-2" />
-                  <h2 className="text-2xl md:text-3xl font-bold">Trending Projects</h2>
+                  <h2 className="text-2xl md:text-3xl font-bold"> this week Featured Projects</h2>
                 </div>
                 <FeaturedProjects
                   projects={trendingProjects}
@@ -184,7 +196,7 @@ export default async function Home() {
               <div>
                 <div className="flex items-center mb-8">
                   <Clock className="h-6 w-6 text-primary mr-2" />
-                  <h2 className="text-2xl md:text-3xl font-bold">Recent Projects</h2>
+                  <h2 className="text-2xl md:text-3xl font-bold">last week top Projects</h2>
                 </div>
                 {/* <FeaturedProjects
                   projects={recentProjects}
@@ -201,14 +213,20 @@ export default async function Home() {
 
               {/* Join Community Card */}
               <div className="bg-gradient-to-br from-primary/80 to-primary rounded-xl p-6 text-white shadow-lg">
-                <h3 className="text-xl font-bold mb-3">Join Our Community</h3>
+                <h3 className="text-xl font-bold mb-3"> Join Our Community</h3>
                 <p className="mb-4 text-white/90">
                   Connect with other Ethiopian developers, share ideas, and grow together.
                 </p>
                 <Link href="/register">
                   <Button variant="secondary" className="w-full bg-white text-primary hover:bg-gray-100">
-                    Sign Up Now
+                    {session ? 'Go to Dashboard' : 'Sign Up'}{' '}
+                    {/* {session ? (
+                    <Clock className="ml-2 h-4 w-4" />
+                    ) : (
                     <ArrowRight className="ml-2 h-4 w-4" />
+                    )}
+                    Sign Up Now
+                    <ArrowRight className="ml-2 h-4 w-4" /> */}
                   </Button>
                 </Link>
               </div>

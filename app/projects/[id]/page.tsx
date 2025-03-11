@@ -1,6 +1,7 @@
+'use client'
 import Link from 'next/link';
 import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase';
 import {
     Github,
@@ -21,11 +22,12 @@ import UpvoteButton from './UpvoteButton';
 import CommentsSection from './CommentsSection';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
 
 async function getProject(id: string) {
     const supabase = createClient();
 
-    const { data: project } = await supabase
+    const { data: project, error } = await supabase
         .from('projects')
         .select(`
       *,
@@ -42,13 +44,13 @@ async function getProject(id: string) {
         id,
         content,
         created_at,
-        user:profiles(id, name, avatar_url)
+        user:profiles(id, name, profile_picture)
       )
     `)
         .eq('id', id)
         .single();
 
-    if (!project) {
+    if (error || !project) {
         notFound();
     }
 
@@ -75,13 +77,30 @@ async function getRelatedProjects(projectId: string, developerId: string) {
     return developerProjects || [];
 }
 
-export default async function ProjectPage({ params }: { params: { id: string } }) {
-    // Await params to access its properties
-    const { id } = await params; // Awaiting params here
-    const project = await getProject(id);
-    const { developer, comments } = project;
+export default function ProjectPage() {
+    const [project, setProject] = useState();
+    const params = useParams();
+    const id = params?.id; // ✅ Now accessing username safely
 
-    const relatedProjects = await getRelatedProjects(params.id, developer.id);
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                // Fetch projects and developers in parallel
+                const project = await getProject(id);
+                console.log('Project:', project);
+                setProject(project);
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        fetchData();
+    }, [id]);
+
+
+    const { developer, comments } = project;
+    const relatedProjects = getRelatedProjects(id, developer?.id);
 
     // Generate a random color for the project banner
     const getRandomColor = () => {
@@ -117,16 +136,16 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                             </div>
                             <h1 className="text-4xl md:text-5xl font-bold mb-4">{project.title}</h1>
                             <p className="text-xl text-white/90 mb-6 max-w-3xl">
-                                {project.description.split('\n')[0]}
+                                {project.description?.split('\n')[0]}
                             </p>
 
                             {/* Developer Info */}
                             <div className="flex items-center">
-                                <Link href={`/developers/${developer.id}`} className="flex items-center group">
+                                <Link href={`/developers/${developer?.id}`} className="flex items-center group">
                                     <div className="relative w-10 h-10 rounded-full overflow-hidden bg-white/20 mr-3">
-                                        {developer.avatar_url ? (
+                                        {developer?.profile_picture ? (
                                             <Image
-                                                src={developer.avatar_url}
+                                                src={developer.profile_picture}
                                                 alt={developer.name}
                                                 fill
                                                 className="object-cover"
@@ -159,7 +178,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                     {/* Action Bar */}
                     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 -mt-8 mb-8 flex flex-wrap gap-4 justify-between items-center">
                         <div className="flex items-center gap-3">
-                            <UpvoteButton projectId={project.id} initialUpvotes={project.upvotes_count} />
+                            <UpvoteButton projectId={project?.id} initialUpvotes={project.upvotes_count} />
 
                             <div className="flex items-center text-gray-500">
                                 <MessageSquare className="h-5 w-5 mr-1" />
@@ -279,7 +298,7 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                             </Card>
 
                             {/* Comments Section */}
-                            <CommentsSection projectId={project.id} initialComments={comments} commentsCount={project.comments_count} />
+                            <CommentsSection projectId={project?.id} initialComments={comments} commentsCount={project.comments_count} />
                         </div>
 
                         {/* Sidebar */}
@@ -295,9 +314,9 @@ export default async function ProjectPage({ params }: { params: { id: string } }
                                 <CardContent className="pt-6">
                                     <div className="flex flex-col items-center text-center mb-4">
                                         <div className="relative w-20 h-20 rounded-full overflow-hidden bg-gray-100 mb-3">
-                                            {developer.avatar_url ? (
+                                            {developer.profile_picture ? (
                                                 <Image
-                                                    src={developer.avatar_url}
+                                                    src={developer.profile_picture}
                                                     alt={developer.name}
                                                     fill
                                                     className="object-cover"

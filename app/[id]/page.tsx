@@ -47,7 +47,7 @@ export default function ProfilePage() {
             } else {
                 console.log("Profile data:", profile);
                 setProfile(profile);
-                if (!profile.bio || !profile.github_url) {
+                if (!profile?.bio || !profile?.github_url) {
                     setShowDialog(true);
                 }
             }

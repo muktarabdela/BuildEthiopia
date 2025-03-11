@@ -218,9 +218,9 @@ export default function Home() {
                 <p className="mb-4 text-white/90">
                   Connect with other Ethiopian developers, share ideas, and grow together.
                 </p>
-                <Link href="/register">
+                <Link href="/projects/new">
                   <Button variant="secondary" className="w-full bg-white text-primary hover:bg-gray-100">
-                    {session ? 'Go to Dashboard' : 'Sign Up'}{' '}
+                    {session ? 'Add project' : 'Sign Up'}{' '}
                     {/* {session ? (
                     <Clock className="ml-2 h-4 w-4" />
                     ) : (

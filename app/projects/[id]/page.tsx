@@ -22,9 +22,11 @@ import CommentsSection from './CommentsSection';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import React, { useEffect } from 'react';
+import { useAuth } from '@/components/AuthProvider';
 
 // Custom hook to fetch project data
 function useProject(projectId: string | undefined) {
+    const { user } = useAuth();
     const [project, setProject] = React.useState<any>(null);
     const [loading, setLoading] = React.useState<boolean>(true);
     const [error, setError] = React.useState<string | null>(null);
@@ -35,10 +37,6 @@ function useProject(projectId: string | undefined) {
         const fetchProject = async () => {
             setLoading(true);
             try {
-                // Optionally retrieve session from localStorage if needed
-                const session = localStorage.getItem('session');
-                const parsedSession = session ? JSON.parse(session) : null;
-
                 const { data, error } = await supabase
                     .from('projects')
                     .select(`

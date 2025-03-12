@@ -4,8 +4,10 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/components/AuthProvider';
 
 export default function CommentForm({ projectId, onCommentAdded }) {
+    const { user } = useAuth();
     const [content, setContent] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
@@ -19,10 +21,8 @@ export default function CommentForm({ projectId, onCommentAdded }) {
             setIsSubmitting(true);
             setError(null);
 
-            const session = localStorage.getItem('session');
-            // Parse the session string to an object
-            const parsedSession = session ? JSON.parse(session) : null;
-            if (!session) {
+
+            if (!user) {
                 // Redirect to login
                 window.location.href = '/login?redirect=' + encodeURIComponent(window.location.pathname);
                 return;
@@ -33,7 +33,7 @@ export default function CommentForm({ projectId, onCommentAdded }) {
                 .insert({
                     content: content.trim(),
                     project_id: projectId,
-                    user_id: parsedSession.id
+                    user_id: user.id
                 })
                 .select(`
           id,

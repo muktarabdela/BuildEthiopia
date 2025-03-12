@@ -1,57 +1,70 @@
 'use client';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { supabase } from '@/lib/supabase';
+import { Eye, EyeOff, FileLock } from 'lucide-react';
 
 export default function LoginPage() {
     const router = useRouter();
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+
     // Parameter 'e' implicitly has an 'any' type.ts(7006)
-
-    async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-        e.preventDefault();
-        setError('');
-        setLoading(true);
-
-        const formData = new FormData(e.target as HTMLFormElement);
-        const data = {
-            email: formData.get('email'),
-            password: formData.get('password'),
-        };
-
-        try {
-            const response = await axios.post('/api/auth/login', data);
-            console.log('response', response);
-
-            if (response.data?.session) {
-                // store session in local storage
-                localStorage.setItem('session', JSON.stringify(response.data.session.user));
-                // Login successful
+    useEffect(() => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN' && session) {
                 router.push('/');
-            } else {
-                throw new Error('Login failed - no session created');
             }
-        } catch (err) {
-            // console.error('Error:', err);
-            if (err.response) {
-                // Handle API response errors
-                setError(err.response.data?.error || 'Invalid email or password');
-            } else if (err.request) {
-                // Handle network errors
-                setError('Network error - please check your connection');
-            } else {
-                // Handle other errors
-                setError(err.message || 'Login failed');
+        });
+
+        return () => {
+            subscription.unsubscribe();
+        };
+    }, [router]);
+    const handleEmailLogin = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            setLoading(true);
+            setError(null);
+
+            // Validate inputs
+            if (!email || !password) {
+                throw new Error('Please fill in all fields');
             }
+
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email.trim(),
+                password: password.trim(),
+            });
+            console.log('Login response:', data);
+            if (error) {
+                console.error('Login error:', error);
+                // Handle specific error cases
+                if (error.message.includes('Invalid login credentials')) {
+                    throw new Error('Invalid email or password');
+                }
+                throw error;
+            }
+
+            // Check if email is verified
+            if (data.user && data.user.confirmed_at === null) {
+                throw new Error('Please verify your email before logging in');
+            }
+
+        } catch (error: any) {
+            console.error('Login error:', error);
+            setError(error.message || 'An error occurred during login');
         } finally {
             setLoading(false);
         }
-    }
-
+    };
     return (
         <div className="min-h-screen flex items-center justify-center px-4">
             <Card className="w-full max-w-md">
@@ -64,7 +77,7 @@ export default function LoginPage() {
                             {error}
                         </div>
                     )}
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleEmailLogin} className="space-y-4">
                         <div>
                             <label
                                 htmlFor="email"
@@ -76,11 +89,15 @@ export default function LoginPage() {
                                 type="email"
                                 id="email"
                                 name="email"
+                                autoComplete="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
                                 required
                                 className="w-full px-3 py-2 border rounded-md"
                                 placeholder="you@example.com"
                             />
                         </div>
+
                         <div>
                             <label
                                 htmlFor="password"
@@ -88,14 +105,27 @@ export default function LoginPage() {
                             >
                                 Password
                             </label>
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                required
-                                className="w-full px-3 py-2 border rounded-md"
-                                placeholder="••••••••"
-                            />
+                            <div className="relative">
+                                <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    type={showPassword ? 'text' : 'password'}
+
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    required
+                                    className="w-full px-3 py-2 border rounded-md"
+                                    placeholder="••••••••"
+                                />
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-500"
+                            >
+                                {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                            </button>
                         </div>
                         <Button
                             type="submit"
@@ -116,6 +146,6 @@ export default function LoginPage() {
                     </div>
                 </CardContent>
             </Card>
-        </div>
+        </div >
     );
 }

@@ -1,4 +1,5 @@
 'use client';
+import { useAuth } from "@/components/AuthProvider";
 import FeaturedDevelopers from "@/components/FeaturedDevelopers";
 import FeaturedProjects from "@/components/FeaturedProjects";
 import { Navbar } from "@/components/Navbar";
@@ -64,28 +65,17 @@ async function getFeaturedDevelopers() {
 }
 
 export default function Home() {
-  const [session, setSession] = useState<string | null>(null);
+  const { user, loading } = useAuth();
+  // console.log("User from AuthProvider:", user);
   const [trendingProjects, setTrendingProjects] = useState([]);
   const [featuredDevelopers, setFeaturedDevelopers] = useState([]);
 
+  // Redirect immediately if no user
   useEffect(() => {
-
-
-    const checkSession = async () => {
-      try {
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        console.log("Initial session check:", currentSession);
-
-      } catch (error) {
-        console.error('Session check error:', error);
-      }
-    };
-
-    checkSession();
-
-    // setSession(localStorage.getItem('session')); // Fetch session only once
-  }, []);
-
+    if (!loading && !user) {
+      // router.push('/login');
+    }
+  }, [user, loading]);
 
   useEffect(() => {
     async function fetchData() {
@@ -112,7 +102,7 @@ export default function Home() {
 
 
       {/* Hero Section */}
-      <section className={`relative py-20 md:py-28 overflow-hidden ${session ? 'hidden' : ''}`}>
+      <section className={`relative py-20 md:py-28 overflow-hidden ${user ? 'hidden' : ''}`}>
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 z-0"></div>
         <div className="absolute right-0 top-0 w-1/3 h-full bg-gradient-to-l from-primary/20 to-transparent z-0 opacity-70"></div>
 
@@ -165,7 +155,7 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className={`"py-10 bg-white border-y border-gray-100" ${session ? 'hidden' : ''}`}>
+      <section className={`"py-10 bg-white border-y border-gray-100" ${user ? 'hidden' : ''}`}>
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
@@ -234,7 +224,7 @@ export default function Home() {
                 </p>
                 <Link href="/projects/new">
                   <Button variant="secondary" className="w-full bg-white text-primary hover:bg-gray-100">
-                    {session ? 'Add project' : 'Sign Up'}{' '}
+                    {user ? 'Add project' : 'Sign Up'}{' '}
                     {/* {session ? (
                     <Clock className="ml-2 h-4 w-4" />
                     ) : (

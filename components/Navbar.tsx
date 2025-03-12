@@ -18,27 +18,23 @@ import {
 import { Button } from './ui/button';
 import { supabase } from '@/lib/supabase';
 import { signOut } from 'better-auth/api';
+import { useAuth } from './AuthProvider';
 
 export function Navbar() {
+    const { user } = useAuth();
     const pathname = usePathname();
-    const [session, setSession] = useState(null);
     const [profile, setProfile] = useState(null);
     const [unreadCount, setUnreadCount] = useState(0);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         async function getSession() {
-            // Get the user's session from local storage
-            const session = localStorage.getItem('session');
-            // Parse the session string to an object
-            const parsedSession = session ? JSON.parse(session) : null;
-            setSession(parsedSession);
-            console.log("Session data:", parsedSession);
-            if (session) {
+
+            if (user) {
                 const { data: profile } = await supabase
                     .from('profiles')
                     .select('*')
-                    .eq('id', parsedSession?.id)
+                    .eq('id', user?.id)
                     .single();
                 setProfile(profile);
 
@@ -47,7 +43,7 @@ export function Navbar() {
                     const { count, error } = await supabase
                         .from('contact_requests')
                         .select('*', { count: 'exact', head: true })
-                        .eq('developer_id', session.user.id)
+                        .eq('developer_id', user.id)
                         .eq('is_read', false);
 
                     if (!error) {
@@ -74,13 +70,12 @@ export function Navbar() {
     // create function lo sign out  and clear the local storage
     const signOut = async () => {
         await supabase.auth.signOut();
-        localStorage.removeItem('session');
         setSession(null);
         setProfile(null);
         setUnreadCount(0);
         window.location.href = '/';
     }
-    console.log(profile)
+    // console.log(profile)
     return (
         <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
             <div className="container mx-auto px-4">
@@ -149,7 +144,7 @@ export function Navbar() {
 
                     {/* User Actions */}
                     <div className="flex items-center space-x-2">
-                        {session ? (
+                        {user ? (
                             <>
                                 {profile?.role === 'developer' && (
                                     <Link
@@ -279,7 +274,7 @@ export function Navbar() {
                             </div>
                         </Link>
 
-                        {session ? (
+                        {user ? (
                             <>
                                 <Link
                                     href="/profile"

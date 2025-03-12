@@ -9,8 +9,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ProfileCompletionDialog from '@/components/ProfileCompletionDialog';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/components/AuthProvider';
 
 export default function ProfilePage() {
+    const { user } = useAuth();
+
     const params = useParams();
 
     const router = useRouter();
@@ -26,10 +29,7 @@ export default function ProfilePage() {
 
             const username = params?.id; // ✅ Now accessing username safely
 
-            const sessionData = localStorage.getItem('session');
-            const parsedSession = sessionData ? JSON.parse(sessionData) : null;
-
-            if (!parsedSession) {
+            if (!user) {
                 console.log("No valid session found, redirecting to login");
                 router.push('/login');
                 return;

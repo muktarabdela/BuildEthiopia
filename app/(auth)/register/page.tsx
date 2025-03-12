@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import VerificationModal from '@/components/VerificationModal';
 
 export default function RegisterPage() {
+
     const router = useRouter();
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -31,8 +32,6 @@ export default function RegisterPage() {
             const response = await axios.post('/api/auth/register', data);
             console.log(response)
             if (response.data) {
-                // store session in local storage
-                localStorage.setItem('session', JSON.stringify(response.data.user));
                 // Login successful
                 setModalOpen(true);
             } else {

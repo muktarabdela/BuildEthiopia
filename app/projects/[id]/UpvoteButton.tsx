@@ -5,19 +5,16 @@ import { ThumbsUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/components/AuthProvider';
 
 export default function UpvoteButton({ projectId, initialUpvotes }) {
+    const { user } = useAuth();
     const [upvotes, setUpvotes] = useState(initialUpvotes);
     const [hasUpvoted, setHasUpvoted] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [session, setSession] = useState(null);
     useEffect(() => {
 
-        const session = localStorage.getItem('session');
-        // Parse the session string to an object
-        const parsedSession = session ? JSON.parse(session) : null;
-        setSession(parsedSession);
 
         const fetchUpvotes = async () => {
             try {
@@ -75,7 +72,7 @@ export default function UpvoteButton({ projectId, initialUpvotes }) {
             setIsLoading(true);
             // upvote or remove upvote
             const response = await axios.post(`/api/projects/${projectId}/upvote`, {
-                user_id: session.id,
+                user_id: user.id,
                 project_id: projectId
             });
             console.log("Upvote response:", response.data);

@@ -6,8 +6,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/components/AuthProvider';
 
 export default function NewProjectPage() {
+    const { user } = useAuth();
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -15,18 +17,16 @@ export default function NewProjectPage() {
 
     useEffect(() => {
         async function checkAccess() {
-            const session = localStorage.getItem('session');
-            const parsedSession = session ? JSON.parse(session) : null;
-            if (!parsedSession) {
+            if (!user) {
                 console.log("No valid session found, redirecting to login");
                 router.push('/login');
                 return;
             }
-            setUuid(parsedSession?.id);
+            setUuid(user?.id);
             const { data: profile, error: profileError } = await supabase
                 .from('profiles')
                 .select('*')
-                .eq('id', parsedSession?.id)
+                .eq('id', user?.id)
                 .single();
 
             console.log("Profile data:", profile);

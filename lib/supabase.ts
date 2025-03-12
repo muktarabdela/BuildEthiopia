@@ -5,15 +5,12 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-export async function requireAuth() {
-  const { data: user } = await supabase.auth.getUser();
-  console.log("User:", user);
-  const {
-    data: { session },
-    error,
-  } = await supabase.auth.getSession();
-  console.log("Session check:", session);
-  if (error || !session) {
+export async function requireAuth(req: Request) {
+  // get the session from the request headers
+  const session = req.headers.get("Authorization")?.split("Bearer ")[1];
+
+  // console.log("Session check:", session);
+  if (!session) {
     throw new Error("Unauthorized");
   }
 

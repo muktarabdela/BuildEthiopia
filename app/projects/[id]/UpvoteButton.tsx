@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/AuthProvider';
 
 export default function UpvoteButton({ projectId, initialUpvotes }) {
-    const { user } = useAuth();
+    const { user, session } = useAuth();
     const [upvotes, setUpvotes] = useState(initialUpvotes);
     const [hasUpvoted, setHasUpvoted] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -18,7 +18,13 @@ export default function UpvoteButton({ projectId, initialUpvotes }) {
 
         const fetchUpvotes = async () => {
             try {
-                const { count } = await axios.get(`/api/projects/${projectId}/upvote`);
+                const { count } = await axios.get(`/api/projects/${projectId}/upvote`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${session?.access_token}`,
+                        },
+                    }
+                );
                 console.log("Fetched upvotes:", count);
                 // setUpvotes(count);
             } catch (error) {

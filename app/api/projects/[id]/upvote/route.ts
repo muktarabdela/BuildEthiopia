@@ -2,15 +2,25 @@ import { NextResponse } from "next/server";
 import { requireAuth, supabase } from "@/lib/supabase";
 
 // get /api/projects/[id]/upvote get upvote for a project
-export async function GET(request, { params }) {
+export async function GET(
+  request: Request,
+  context: { params: Promise<{ id: string }> } // params is a Promise
+) {
   try {
-    await requireAuth();
+    await requireAuth(request);
+
+    // Await params before accessing its properties
+    const resolvedParams = await context.params;
+    console.log("Resolved params:", resolvedParams);
+    if (!resolvedParams?.id) {
+      throw new Error("Project ID is required");
+    }
 
     const { data, error } = await supabase
-      .from("Upvotes")
+      .from("upvotes")
       .select("id", { count: "exact" })
-      .eq("project_id", params.id)
-      .single();
+      .eq("project_id", resolvedParams.id) // params.id should now be properly awaited
+      .maybeSingle(); // Allows empty results
 
     if (error) throw error;
 
@@ -25,8 +35,8 @@ export async function GET(request, { params }) {
 }
 
 // POST /api/projects/[id]/upvote - Upvote a project
-export async function POST(request, { params }) {
-  const { user_id, project_id } = req.body;
+export async function POST(request: Request, { params }) {
+  const { user_id, project_id } = await request.json();
   if (!user_id || !project_id) {
     return NextResponse.json(
       { error: "user_id and project_id are required" },
@@ -34,7 +44,7 @@ export async function POST(request, { params }) {
     );
   }
   try {
-    await requireAuth();
+    await requireAuth(request);
 
     const { data, error } = await supabase
       .from("Upvotes")
@@ -52,9 +62,9 @@ export async function POST(request, { params }) {
 }
 
 // DELETE /api/projects/[id]/upvote - Remove upvote from a project
-export async function DELETE(request, { params }) {
+export async function DELETE(request: Request, { params }) {
   try {
-    await requireAuth();
+    await requireAuth(request);
 
     const { error } = await supabase.rpc("handle_remove_upvote", {
       project_id: params.id,

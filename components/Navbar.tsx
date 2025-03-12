@@ -2,26 +2,26 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useAuth } from './AuthProvider';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
     Bell,
     Menu,
     X,
-    User,
     LogOut,
     Code,
     Search,
     Users,
-    Home
+    Home,
+    UserRound
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { supabase } from '@/lib/supabase';
-import { signOut } from 'better-auth/api';
-import { useAuth } from './AuthProvider';
 
 export function Navbar() {
     const { user } = useAuth();
+    console.log("user data from navbar", user)
     const pathname = usePathname();
     const [profile, setProfile] = useState(null);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -146,24 +146,24 @@ export function Navbar() {
                     <div className="flex items-center space-x-2">
                         {user ? (
                             <>
-                                {profile?.role === 'developer' && (
-                                    <Link
-                                        href="/profile/notifications"
-                                        className="relative p-2 text-gray-700 hover:text-primary rounded-full hover:bg-gray-100"
-                                    >
-                                        <Bell className="h-5 w-5" />
-                                        {unreadCount > 0 && (
-                                            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                                                {unreadCount > 9 ? '9+' : unreadCount}
-                                            </span>
-                                        )}
-                                    </Link>
-                                )}
+
+                                <Link
+                                    href="/profile/notifications"
+                                    className="relative p-2 text-gray-700 hover:text-primary rounded-full hover:bg-gray-100"
+                                >
+                                    <Bell className="h-5 w-5" />
+                                    {unreadCount > 0 && (
+                                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                                            {unreadCount > 9 ? '9+' : unreadCount}
+                                        </span>
+                                    )}
+                                </Link>
+
                                 <Link
                                     href={`${profile?.username}`}
                                     className="hidden md:flex items-center space-x-2 p-2 text-gray-700 hover:text-primary rounded-md hover:bg-gray-100"
                                 >
-                                    <User className="h-5 w-5" />
+                                    <UserRound className="h-5 w-5" />
                                     <span className="text-sm font-medium">Profile</span>
                                 </Link>
                                 <div onClick={signOut} className="hidden md:block">
@@ -285,7 +285,7 @@ export function Navbar() {
                                     onClick={closeMobileMenu}
                                 >
                                     <div className="flex items-center space-x-2">
-                                        <User className="h-5 w-5" />
+                                        <UserRound className="h-5 w-5" />
                                         <span>Profile</span>
                                     </div>
                                 </Link>

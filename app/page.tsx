@@ -66,7 +66,7 @@ async function getFeaturedDevelopers() {
 
 export default function Home() {
   const { user, loading } = useAuth();
-  // console.log("User from AuthProvider:", user);
+  // console.log("User from page:", user);
   const [trendingProjects, setTrendingProjects] = useState([]);
   const [featuredDevelopers, setFeaturedDevelopers] = useState([]);
 

@@ -1,15 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { createClient } from '@/lib/supabase';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/lib/supabase';
 
 export default function CommentForm({ projectId, onCommentAdded }) {
     const [content, setContent] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
-    const supabase = createClient();
 
     const handleSubmit = async (e) => {
         e.preventDefault();

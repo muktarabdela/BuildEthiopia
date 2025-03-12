@@ -69,7 +69,21 @@ export default function Home() {
   const [featuredDevelopers, setFeaturedDevelopers] = useState([]);
 
   useEffect(() => {
-    setSession(localStorage.getItem('session')); // Fetch session only once
+
+
+    const checkSession = async () => {
+      try {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        console.log("Initial session check:", currentSession);
+
+      } catch (error) {
+        console.error('Session check error:', error);
+      }
+    };
+
+    checkSession();
+
+    // setSession(localStorage.getItem('session')); // Fetch session only once
   }, []);
 
 

@@ -4,7 +4,7 @@ import { User, Code, Award } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 
 export default function FeaturedDevelopers({ developers }) {
-    console.log('Featured Developers:', developers);
+    // console.log('Featured Developers:', developers);
     return (
         <Card className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
             <CardHeader className="bg-gradient-to-r from-primary/10 to-primary/5 border-b border-gray-100">

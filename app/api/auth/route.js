@@ -1,7 +1,5 @@
-import { createClient } from '@/lib/supabase';
 
 export async function POST(request) {
-    const supabase = createClient();
     const { event, session } = await request.json();
 
     switch (event) {

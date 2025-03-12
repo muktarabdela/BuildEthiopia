@@ -2,14 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
+import { supabase } from '@/lib/supabase';
 
 export default function NewProjectPage() {
     const router = useRouter();
-    const supabase = createClient();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [uuid, setUuid] = useState<string | null>(null);

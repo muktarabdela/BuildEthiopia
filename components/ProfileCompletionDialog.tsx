@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { createClient } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { supabase } from "@/lib/supabase";
+import { error } from "console";
 
-const supabase = createClient();
 
 export default function ProfileCompletionDialog({ userId, onClose }) {
     const [profile, setProfile] = useState({

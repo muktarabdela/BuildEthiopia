@@ -2,7 +2,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound, useParams } from 'next/navigation';
-import { createClient } from '@/lib/supabase';
 import {
     Github,
     Globe,
@@ -23,9 +22,9 @@ import CommentsSection from './CommentsSection';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase';
 
 async function getProject(id: string) {
-    const supabase = createClient();
 
     const { data: project, error } = await supabase
         .from('projects')
@@ -58,7 +57,6 @@ async function getProject(id: string) {
 }
 
 async function getRelatedProjects(projectId: string, developerId: string) {
-    const supabase = createClient();
 
     // Get other projects by the same developer
     const { data: developerProjects } = await supabase

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { createClient } from '@/lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { Github, Globe } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -72,7 +72,7 @@ const dummyDevelopers = [
 
 
 async function getDevelopers() {
-    const supabase = createClient();
+
 
     const { data: developers } = await supabase
         .from('profiles')

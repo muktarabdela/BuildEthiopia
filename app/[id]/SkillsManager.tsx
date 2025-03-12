@@ -1,17 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createClient } from '@/lib/supabase';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { supabase } from '@/lib/supabase';
 
 export default function SkillsManager({ userId }) {
     const [skills, setSkills] = useState([]);
     const [newSkill, setNewSkill] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const supabase = createClient();
 
     useEffect(() => {
         fetchSkills();

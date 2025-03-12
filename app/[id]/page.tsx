@@ -2,19 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { createClient } from '@/lib/supabase';
 // import { ProjectCard } from '@/components/ProjectCard';
 import SkillsManager from './SkillsManager';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import ProfileCompletionDialog from '@/components/ProfileCompletionDialog';
 import Image from 'next/image';
+import { supabase } from '@/lib/supabase';
 
 export default function ProfilePage() {
     const params = useParams();
 
     const router = useRouter();
-    const supabase = createClient();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showDialog, setShowDialog] = useState(false);

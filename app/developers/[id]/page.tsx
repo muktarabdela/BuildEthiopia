@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { createClient } from '@/lib/supabase';
 import { Button } from '@/components/ui/Button';
 import {
   Github,
@@ -20,9 +19,9 @@ import {
 } from 'lucide-react';
 import ContactDeveloperButton from './ContactDeveloperButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { supabase } from '@/lib/supabase';
 
 async function getDeveloper(id) {
-  const supabase = createClient();
 
   const { data: developer } = await supabase
     .from('profiles')

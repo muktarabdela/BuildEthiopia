@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { createClient } from '@/lib/supabase';
 import {
     Bell,
     Menu,
@@ -17,10 +16,11 @@ import {
     Home
 } from 'lucide-react';
 import { Button } from './ui/button';
+import { supabase } from '@/lib/supabase';
+import { signOut } from 'better-auth/api';
 
 export function Navbar() {
     const pathname = usePathname();
-    const supabase = createClient();
     const [session, setSession] = useState(null);
     const [profile, setProfile] = useState(null);
     const [unreadCount, setUnreadCount] = useState(0);

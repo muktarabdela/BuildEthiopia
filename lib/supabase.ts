@@ -1,20 +1,18 @@
-import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
-export const supabase = createSupabaseClient(supabaseUrl, supabaseKey);
-
-export const createClient = () => {
-  return createSupabaseClient(supabaseUrl, supabaseKey);
-};
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function requireAuth() {
+  const { data: user } = await supabase.auth.getUser();
+  console.log("User:", user);
   const {
     data: { session },
     error,
   } = await supabase.auth.getSession();
-
+  console.log("Session check:", session);
   if (error || !session) {
     throw new Error("Unauthorized");
   }

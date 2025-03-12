@@ -1,9 +1,9 @@
-'use client';
+"use client"
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { useParams, useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
+import Link from "next/link"
+import Image from "next/image"
+import { useParams, useRouter } from "next/navigation"
+import { supabase } from "@/lib/supabase"
 import {
     Github,
     Globe,
@@ -15,30 +15,31 @@ import {
     Layers,
     CheckCircle,
     Linkedin,
-    MessageSquare
-} from 'lucide-react';
-import UpvoteButton from './UpvoteButton';
-import CommentsSection from './CommentsSection';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import React, { useEffect } from 'react';
-import { useAuth } from '@/components/AuthProvider';
+    MessageSquare,
+    Video,
+} from "lucide-react"
+import UpvoteButton from "./UpvoteButton"
+import CommentsSection from "./CommentsSection"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import React, { useEffect } from "react"
+import { useAuth } from "@/components/AuthProvider"
 
 // Custom hook to fetch project data
 function useProject(projectId: string | undefined) {
-    const { user } = useAuth();
-    const [project, setProject] = React.useState<any>(null);
-    const [loading, setLoading] = React.useState<boolean>(true);
-    const [error, setError] = React.useState<string | null>(null);
+    const { user } = useAuth()
+    const [project, setProject] = React.useState<any>(null)
+    const [loading, setLoading] = React.useState<boolean>(true)
+    const [error, setError] = React.useState<string | null>(null)
 
     useEffect(() => {
-        if (!projectId) return;
+        if (!projectId) return
 
         const fetchProject = async () => {
-            setLoading(true);
+            setLoading(true)
             try {
                 const { data, error } = await supabase
-                    .from('projects')
+                    .from("projects")
                     .select(`
                         *,
                         developer:profiles!projects_developer_id_fkey(
@@ -57,59 +58,70 @@ function useProject(projectId: string | undefined) {
                           user:profiles(id, name, profile_picture)
                         )
                       `)
-                    .eq('id', projectId)
-                    .single();
+                    .eq("id", projectId)
+                    .single()
 
                 if (error || !data) {
-                    console.error('Error fetching project:', error);
-                    throw new Error(error?.message || 'Project not found');
+                    console.error("Error fetching project:", error)
+                    throw new Error(error?.message || "Project not found")
                 }
-                setProject(data);
+                setProject(data)
             } catch (err: any) {
-                console.error('Error fetching project:', err);
-                setError(err.message);
+                console.error("Error fetching project:", err)
+                setError(err.message)
             } finally {
-                setLoading(false);
+                setLoading(false)
             }
-        };
+        }
 
-        fetchProject();
-    }, [projectId]);
+        fetchProject()
+    }, [projectId])
 
-    return { project, loading, error };
+    return { project, loading, error }
 }
 
 export default function ProjectPage() {
-    const { id } = useParams();
-    const router = useRouter();
-    const { project, loading, error } = useProject(id);
+    const { id } = useParams()
+    const router = useRouter()
+    const { project, loading, error } = useProject(id)
 
     // Redirect to a 404 page if there is an error
     useEffect(() => {
         if (error) {
-            router.push('/404');
+            router.push("/404")
         }
-    }, [error, router]);
+    }, [error, router])
 
     // Optionally render a loading state
     if (loading || !project) {
-        return <div className="min-h-screen flex justify-center items-center">Loading...</div>;
+        return <div className="min-h-screen flex justify-center items-center">Loading...</div>
     }
 
-    const developer = project.developer;
-    const comments = project.comments;
+    const developer = project.developer
+    const comments = project.comments
+
+    // Helper function to extract YouTube video ID from URL
+    const getYouTubeVideoId = (url: string | null): string => {
+        if (!url) return ""
+
+        // Handle different YouTube URL formats
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
+        const match = url.match(regExp)
+
+        return match && match[2].length === 11 ? match[2] : ""
+    }
 
     // Generate a random color for the project banner
     const getRandomColor = () => {
         const colors = [
-            'bg-gradient-to-r from-blue-500 to-indigo-600',
-            'bg-gradient-to-r from-purple-500 to-pink-500',
-            'bg-gradient-to-r from-green-500 to-teal-500',
-            'bg-gradient-to-r from-orange-500 to-red-500',
-            'bg-gradient-to-r from-indigo-500 to-purple-600'
-        ];
-        return colors[Math.floor(Math.random() * colors.length)];
-    };
+            "bg-gradient-to-r from-blue-500 to-indigo-600",
+            "bg-gradient-to-r from-purple-500 to-pink-500",
+            "bg-gradient-to-r from-green-500 to-teal-500",
+            "bg-gradient-to-r from-orange-500 to-red-500",
+            "bg-gradient-to-r from-indigo-500 to-purple-600",
+        ]
+        return colors[Math.floor(Math.random() * colors.length)]
+    }
 
     return (
         <main className="min-h-screen bg-gray-50">
@@ -120,21 +132,26 @@ export default function ProjectPage() {
                         {/* Project Header */}
                         <div className="mb-8">
                             <div className="flex items-center space-x-2 mb-4">
-                                <Link
-                                    href="/projects"
-                                    className="text-white/80 hover:text-white text-sm font-medium"
-                                >
+                                <Link href="/projects" className="text-white/80 hover:text-white text-sm font-medium">
                                     Projects
                                 </Link>
                                 <span className="text-white/60">/</span>
-                                <span className="text-white/80 text-sm font-medium truncate">
-                                    {project.title}
-                                </span>
+                                <span className="text-white/80 text-sm font-medium truncate">{project.title}</span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-bold mb-4">{project.title}</h1>
-                            <p className="text-xl text-white/90 mb-6 max-w-3xl">
-                                {project.description?.split('\n')[0]}
-                            </p>
+                            <div className="flex items-center gap-4 mb-4">
+                                {project.logo_url && (
+                                    <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-white/20 flex-shrink-0">
+                                        <Image
+                                            src={project.logo_url || "/placeholder.svg"}
+                                            alt={`${project.title} logo`}
+                                            fill
+                                            className="object-contain p-1"
+                                        />
+                                    </div>
+                                )}
+                                <h1 className="text-4xl md:text-5xl font-bold">{project.title}</h1>
+                            </div>
+                            <p className="text-xl text-white/90 mb-6 max-w-3xl">{project.description?.split("\n")[0]}</p>
 
                             {/* Developer Info */}
                             <div className="flex items-center">
@@ -142,21 +159,19 @@ export default function ProjectPage() {
                                     <div className="relative w-10 h-10 rounded-full overflow-hidden bg-white/20 mr-3">
                                         {developer?.profile_picture ? (
                                             <Image
-                                                src={developer.profile_picture}
+                                                src={developer.profile_picture || "/placeholder.svg"}
                                                 alt={developer.name}
                                                 fill
                                                 className="object-cover"
                                             />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center text-white font-medium">
-                                                {developer.name?.charAt(0).toUpperCase() || 'D'}
+                                                {developer.name?.charAt(0).toUpperCase() || "D"}
                                             </div>
                                         )}
                                     </div>
                                     <div>
-                                        <p className="font-medium text-white group-hover:underline">
-                                            {developer.name}
-                                        </p>
+                                        <p className="font-medium text-white group-hover:underline">{developer.name}</p>
                                         <div className="flex items-center text-white/70 text-sm">
                                             <Calendar className="h-3.5 w-3.5 mr-1" />
                                             <span>{new Date(project.created_at).toLocaleDateString()}</span>
@@ -180,6 +195,12 @@ export default function ProjectPage() {
                                 <MessageSquare className="h-5 w-5 mr-1" />
                                 <span>{project.comments_count} Comments</span>
                             </div>
+                            {project.is_open_source && (
+                                <div className="flex items-center text-green-600">
+                                    <Code className="h-5 w-5 mr-1" />
+                                    <span>Open Source</span>
+                                </div>
+                            )}
                         </div>
 
                         <div className="flex items-center gap-3">
@@ -231,9 +252,65 @@ export default function ProjectPage() {
                                 <CardContent className="pt-6">
                                     <div className="prose max-w-none">
                                         <p className="whitespace-pre-wrap">{project.description}</p>
+
+                                        {project.post_content && (
+                                            <div className="mt-6 pt-6 border-t">
+                                                <h3 className="text-lg font-medium mb-3">Detailed Information</h3>
+                                                <p className="whitespace-pre-wrap">{project.post_content}</p>
+                                            </div>
+                                        )}
                                     </div>
                                 </CardContent>
                             </Card>
+
+                            {/* Project Images Gallery */}
+                            {project.images && project.images.length > 0 && (
+                                <Card className="overflow-hidden">
+                                    <CardHeader className="bg-gray-50 border-b">
+                                        <CardTitle className="flex items-center">
+                                            <Image className="h-5 w-5 text-primary mr-2" />
+                                            Project Gallery
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="pt-6">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            {project.images.map((image, index) => (
+                                                <div key={index} className="relative aspect-video rounded-lg overflow-hidden border">
+                                                    <Image
+                                                        src={image || "/placeholder.svg"}
+                                                        alt={`Project image ${index + 1}`}
+                                                        fill
+                                                        className="object-cover hover:scale-105 transition-transform duration-300"
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )}
+
+                            {/* YouTube Video */}
+                            {project.youtube_video_url && (
+                                <Card className="overflow-hidden">
+                                    <CardHeader className="bg-gray-50 border-b">
+                                        <CardTitle className="flex items-center">
+                                            <Video className="h-5 w-5 text-primary mr-2" />
+                                            Project Demo
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="pt-6">
+                                        <div className="relative aspect-video rounded-lg overflow-hidden">
+                                            <iframe
+                                                src={`https://www.youtube.com/embed/${getYouTubeVideoId(project.youtube_video_url)}`}
+                                                title="YouTube video player"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                                className="absolute top-0 left-0 w-full h-full"
+                                            ></iframe>
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            )}
 
                             {/* Tech Stack */}
                             <Card className="overflow-hidden">
@@ -245,18 +322,30 @@ export default function ProjectPage() {
                                 </CardHeader>
                                 <CardContent className="pt-6">
                                     <div className="flex flex-wrap gap-2">
-                                        <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                                            React
-                                        </span>
-                                        <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                                            Node.js
-                                        </span>
-                                        <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">
-                                            PostgreSQL
-                                        </span>
-                                        <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">
-                                            Tailwind CSS
-                                        </span>
+                                        {project.tech_stack && project.tech_stack.length > 0 ? (
+                                            project.tech_stack.map((tech, index) => {
+                                                // Generate a different color for each tech
+                                                const colors = [
+                                                    "bg-blue-100 text-blue-800",
+                                                    "bg-green-100 text-green-800",
+                                                    "bg-purple-100 text-purple-800",
+                                                    "bg-yellow-100 text-yellow-800",
+                                                    "bg-red-100 text-red-800",
+                                                    "bg-indigo-100 text-indigo-800",
+                                                    "bg-pink-100 text-pink-800",
+                                                    "bg-teal-100 text-teal-800",
+                                                ]
+                                                const colorClass = colors[index % colors.length]
+
+                                                return (
+                                                    <span key={index} className={`px-3 py-1 ${colorClass} rounded-full text-sm`}>
+                                                        {tech}
+                                                    </span>
+                                                )
+                                            })
+                                        ) : (
+                                            <span className="text-gray-500 text-sm">No technologies specified</span>
+                                        )}
                                     </div>
                                 </CardContent>
                             </Card>
@@ -314,23 +403,21 @@ export default function ProjectPage() {
                                         <div className="relative w-20 h-20 rounded-full overflow-hidden bg-gray-100 mb-3">
                                             {developer.profile_picture ? (
                                                 <Image
-                                                    src={developer.profile_picture}
+                                                    src={developer.profile_picture || "/placeholder.svg"}
                                                     alt={developer.name}
                                                     fill
                                                     className="object-cover"
                                                 />
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary font-medium text-xl">
-                                                    {developer.name?.charAt(0).toUpperCase() || 'D'}
+                                                    {developer.name?.charAt(0).toUpperCase() || "D"}
                                                 </div>
                                             )}
                                         </div>
                                         <h3 className="text-lg font-bold mb-1">{developer.name}</h3>
                                     </div>
 
-                                    {developer.bio && (
-                                        <p className="text-gray-600 mb-4 text-sm">{developer.bio}</p>
-                                    )}
+                                    {developer.bio && <p className="text-gray-600 mb-4 text-sm">{developer.bio}</p>}
 
                                     <div className="flex justify-center space-x-3 mb-4">
                                         {developer.github_url && (
@@ -367,5 +454,6 @@ export default function ProjectPage() {
                 </div>
             </div>
         </main>
-    );
+    )
 }
+

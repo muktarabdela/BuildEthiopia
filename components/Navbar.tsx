@@ -1,8 +1,8 @@
 'use client'
 
+import { useAuth } from './AuthProvider';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useAuth } from './AuthProvider';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
@@ -20,7 +20,7 @@ import { Button } from './ui/button';
 import { supabase } from '@/lib/supabase';
 
 export function Navbar() {
-    const { user } = useAuth();
+    const { user, session } = useAuth();
     console.log("user data from navbar", user)
     const pathname = usePathname();
     const [profile, setProfile] = useState(null);

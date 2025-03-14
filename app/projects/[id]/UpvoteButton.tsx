@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { ThumbsUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import axios from "axios"
-import { useAuth } from "@/components/AuthProvider"
+ import { useAuth } from "@/components/AuthProvider"
 import { supabase } from "@/lib/supabase"
 import { cn } from "@/lib/utils"
 

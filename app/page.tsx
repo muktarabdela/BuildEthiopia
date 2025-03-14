@@ -17,7 +17,7 @@ async function getProjects() {
       .from('projects')
       .select(`
         *,
-        developer:profiles!projects_developer_id_fkey(id, name, profile_picture)
+        developer:profiles!projects_developer_id_fkey(id, name, profile_picture, username)
       `)
       .order('upvotes_count', { ascending: false })
       .limit(6);
@@ -222,7 +222,7 @@ export default function Home() {
                 <p className="mb-4 text-white/90">
                   Connect with other Ethiopian developers, share ideas, and grow together.
                 </p>
-                <Link href="/projects/new">
+                <Link href={` ${user ? "/projects/new" : "/login"} `}>
                   <Button variant="secondary" className="w-full bg-white text-primary hover:bg-gray-100">
                     {user ? 'Add project' : 'Sign Up'}{' '}
                     {/* {session ? (

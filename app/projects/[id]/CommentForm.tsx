@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/components/AuthProvider';
+ import { useAuth } from '@/components/AuthProvider';
 
 export default function CommentForm({ projectId, onCommentAdded }) {
     const { user } = useAuth();

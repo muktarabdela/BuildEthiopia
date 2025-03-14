@@ -35,14 +35,14 @@ export default function AuthProvider({
         const {
           data: { session: currentSession },
         } = await supabase.auth.getSession();
-        console.log("Initial session check:", currentSession);
+        // console.log("Initial session check:", currentSession);
         setSession(currentSession);
         setUser(currentSession?.user ?? null);
 
-        if (currentSession?.user) {
-          console.log("Session found, redirecting to home");
-          router.replace("/");
-        }
+        // if (currentSession?.user) {
+        //   console.log("Session found, redirecting to home");
+        //   router.replace("/");
+        // }
       } catch (error) {
         console.error("Session check error:", error);
       } finally {
@@ -55,13 +55,13 @@ export default function AuthProvider({
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, newSession) => {
-      console.log("Auth state changed:", event, newSession?.user?.id);
+      console.log("Au/th state changed:", event, newSession?.user?.id);
       setSession(newSession);
       setUser(newSession?.user ?? null);
 
       if (event === "SIGNED_IN" && newSession) {
-        console.log("User signed in, redirecting to home");
-        // router.replace("/");
+        // console.log("User signed in, redirecting to home");
+        router.replace("/");
       }
 
       setLoading(false);

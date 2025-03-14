@@ -1,15 +1,17 @@
 import Link from 'next/link';
 
 import { MessageCircle, ArrowUp, Sparkles } from "lucide-react"
+import Image from 'next/image';
 
 export function ProjectCard({ project, index }) {
+    console.log("ProjectCard", project)
     return (
 
         <div className="group bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-300">
             <Link
                 key={project.id}
                 href={`/projects/${project.id}`}
-                className="block transition-transform hover:-translate-y-1 duration-200 cursor-pointer"
+                className="block "
             >
                 {/* Main content wrapper */}
                 <div className="flex justify-between gap-4">
@@ -53,7 +55,8 @@ export function ProjectCard({ project, index }) {
                             </div>
 
                             {/* Developer Info */}
-                            <div className="flex items-center gap-2 mt-4">
+                            <Link href={`/${project.developer.username}`}
+                                className="flex items-center gap-2 mt-4">
                                 <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-200 mr-2">
                                     {project.developer?.profile_picture ? (
                                         <Image
@@ -71,7 +74,7 @@ export function ProjectCard({ project, index }) {
                                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                                     {project.developer?.name || 'Anonymous Developer'}
                                 </span>
-                            </div>
+                            </Link>
                         </div>
                     </div>
 

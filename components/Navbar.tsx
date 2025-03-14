@@ -1,6 +1,5 @@
 'use client'
 
-import { useAuth } from './AuthProvider';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -18,10 +17,11 @@ import {
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from './AuthProvider';
 
 export function Navbar() {
     const { user, session } = useAuth();
-    console.log("user data from navbar", user)
+
     const pathname = usePathname();
     const [profile, setProfile] = useState(null);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -54,7 +54,7 @@ export function Navbar() {
         }
 
         getSession();
-    }, []);
+    }, [session, user]);
 
     const toggleMobileMenu = () => {
         setMobileMenuOpen(!mobileMenuOpen);
@@ -69,8 +69,8 @@ export function Navbar() {
     };
     // create function lo sign out  and clear the local storage
     const signOut = async () => {
+
         await supabase.auth.signOut();
-        setSession(null);
         setProfile(null);
         setUnreadCount(0);
         window.location.href = '/';

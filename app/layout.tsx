@@ -3,7 +3,7 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import Link from "next/link";
 import AuthProvider from "@/components/AuthProvider";
-// 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -26,9 +26,9 @@ export default function RootLayout({ children, }: { children: React.ReactNode; }
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#eef4f3]`}
       >
 
-        <Navbar />
 
         <AuthProvider>
+          <Navbar />
           {children}
           {/* Footer */}
           <footer className="bg-gray-900 text-white py-12">

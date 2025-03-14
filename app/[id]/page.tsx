@@ -12,8 +12,7 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/AuthProvider';
 
 export default function ProfilePage() {
-    const { user } = useAuth();
-
+    const { user, session } = useAuth();
     const params = useParams();
 
     const router = useRouter();
@@ -29,11 +28,11 @@ export default function ProfilePage() {
 
             const username = params?.id; // ✅ Now accessing username safely
 
-            if (!user) {
-                console.log("No valid session found, redirecting to login");
-                router.push('/login');
-                return;
-            }
+            // if (!session) {
+            //     console.log("No valid session found, redirecting to login");
+            //     router.push('/login');
+            //     return;
+            // }
 
             const { data: profile, error: profileError } = await supabase
                 .from('profiles')
@@ -55,12 +54,16 @@ export default function ProfilePage() {
         }
 
         getProfile();
-    }, [params]); // ⬅️ Re-run when params change
+    }, [params, user, session]); // ⬅️ Re-run when params change
+    console.log(profile); // Log the URL
 
     if (loading) return <div>Loading...</div>;
     if (!profile) return <div>Profile not found.</div>;
 
     const { projects } = profile;
+    // console.log("seession data from profile page", session)
+    // console.log("user data from profile page", user)
+    console.log("profile data from profile page", profile)
     const totalUpvotes = projects?.reduce((sum, project) => sum + project.upvotes_count, 0) || 0;
     const totalComments = projects?.reduce((sum, project) => sum + project.comments_count, 0) || 0;
     const generateColor = (name) => {
@@ -86,6 +89,8 @@ export default function ProfilePage() {
                                 width={96}
                                 height={96}
                                 className="h-full w-full object-cover rounded-full"
+                                unoptimized={true} // Add this line
+
                             />
                         ) : (
                             <div className={`w-full h-full flex items-center justify-center text-white text-3xl font-semibold ${generateColor(profile.name)}`}>

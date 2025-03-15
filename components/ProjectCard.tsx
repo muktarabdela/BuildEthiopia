@@ -5,10 +5,12 @@ import Image from 'next/image';
 import UpvoteButton from '@/app/projects/[id]/UpvoteButton';
 
 export function ProjectCard({ project, index }) {
-    console.log("ProjectCard", project)
     return (
-        <div className="group bg-gray-800 p-4 md:p-6 rounded-xl border border-gray-700 hover:border-primary/50 transition-all duration-300">
-            <div className="flex flex-col md:flex-row justify-between gap-4">
+        <div className="group bg-gray-800 p-4 md:p-6 rounded-xl border border-gray-700 hover:border-primary/50 transition-all duration-300 relative overflow-hidden">
+            {/* Subtle background pattern */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+            <div className="flex flex-col md:flex-row justify-between gap-6 relative z-10">
                 {/* Left section with project info */}
                 <Link
                     key={project.id}
@@ -16,9 +18,7 @@ export function ProjectCard({ project, index }) {
                     className="flex items-start gap-4 flex-1"
                 >
                     {/* Project Icon or Logo */}
-                    <div
-                        className={`w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center ${project.logo_url ? "bg-transparent" : "bg-primary/20"}`}
-                    >
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${project.logo_url ? "bg-transparent" : "bg-primary/20"} group-hover:bg-primary/30 transition-colors duration-300`}>
                         {project.logo_url ? (
                             <img
                                 src={project.logo_url}
@@ -26,30 +26,31 @@ export function ProjectCard({ project, index }) {
                                 className="w-full h-full object-cover rounded-lg"
                             />
                         ) : (
-                            <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-primary" />
+                            <Sparkles className="w-5 h-5 text-primary group-hover:text-primary-400 transition-colors duration-300" />
                         )}
                     </div>
 
                     {/* Project Details */}
-                    <div className="flex-1">
-                        <h2 className="text-base md:text-lg font-semibold text-gray-100 transition-colors">
+                    <div className="flex-1 space-y-2">
+                        <h2 className="text-lg font-semibold text-gray-100 group-hover:text-primary transition-colors duration-300">
                             {index + 1}. {project.title}
                         </h2>
-                        {/* Add category */}
+
                         {project.category && (
-                            <span className="text-xs md:text-sm text-primary font-medium mt-1">
+                            <span className="inline-block px-2 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full">
                                 {project.category}
                             </span>
                         )}
-                        <p className="text-gray-300 text-xs md:text-sm mt-1">{project.description}</p>
 
-                        {/* Add tech stack */}
+                        <p className="text-gray-300 text-sm line-clamp-2">{project.description}</p>
+
+                        {/* Tech stack */}
                         {project.tech_stack?.length > 0 && (
                             <div className="flex gap-2 flex-wrap mt-2">
                                 {project.tech_stack.map((tech) => (
                                     <span
                                         key={tech}
-                                        className="px-2 py-0.5 bg-gray-700 text-gray-300 rounded-full text-xs font-medium"
+                                        className="px-2 py-1 bg-gray-700/50 text-gray-300 rounded-full text-xs font-medium hover:bg-gray-700 transition-colors duration-200"
                                     >
                                         {tech}
                                     </span>
@@ -57,21 +58,26 @@ export function ProjectCard({ project, index }) {
                             </div>
                         )}
 
-                        <div className="flex gap-2 flex-wrap mt-2 md:mt-3">
-                            {project.tags?.map((tag) => (
-                                <span
-                                    key={tag}
-                                    className="px-2 py-0.5 md:px-2.5 bg-gray-700 text-gray-300 rounded-full text-xs font-medium"
-                                >
-                                    {tag}
-                                </span>
-                            ))}
-                        </div>
+                        {/* Tags */}
+                        {project.tags?.length > 0 && (
+                            <div className="flex gap-2 flex-wrap">
+                                {project.tags.map((tag) => (
+                                    <span
+                                        key={tag}
+                                        className="px-2 py-1 bg-gray-700/50 text-gray-300 rounded-full text-xs font-medium hover:bg-gray-700 transition-colors duration-200"
+                                    >
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
 
                         {/* Developer Info */}
-                        <Link href={`/${project.developer.username}`}
-                            className="flex items-center gap-2 mt-3 md:mt-4 hover:underline group-hover:text-primary text-gray-100 transition-colors">
-                            <div className="relative w-6 h-6 md:w-8 md:h-8 rounded-full overflow-hidden bg-gray-700 mr-2 group-hover:text-primary">
+                        <Link
+                            href={`/${project.developer.username}`}
+                            className="flex items-center gap-2 mt-4 hover:underline"
+                        >
+                            <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-700 group-hover:ring-2 group-hover:ring-primary transition-all duration-300">
                                 {project.developer?.profile_picture ? (
                                     <Image
                                         src={project.developer.profile_picture}
@@ -85,7 +91,7 @@ export function ProjectCard({ project, index }) {
                                     </div>
                                 )}
                             </div>
-                            <span className="text-xs md:text-sm font-medium text-gray-300">
+                            <span className="text-sm font-medium text-gray-300 group-hover:text-primary transition-colors duration-300">
                                 {project.developer?.name || 'Anonymous Developer'}
                             </span>
                         </Link>
@@ -93,15 +99,15 @@ export function ProjectCard({ project, index }) {
                 </Link>
 
                 {/* Right section with actions */}
-                <div className="flex flex-row md:flex-col items-start md:items-end gap-3 mt-4 md:mt-0">
+                <div className="flex flex-row md:flex-col items-start md:items-end gap-4">
                     {/* Stats */}
-                    <div className="flex items-center gap-3 text-gray-400">
-                        <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-4 text-gray-400">
+                        <div className="flex items-center gap-2 bg-gray-700/50 px-3 py-1.5 rounded-full hover:bg-gray-700 transition-colors duration-200">
                             <MessageCircle className="w-4 h-4" />
-                            <span className="text-xs md:text-sm">{project.comments_count}</span>
+                            <span className="text-sm">{project.comments_count}</span>
                         </div>
 
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-2 bg-gray-700/50 px-3 py-1.5 rounded-full hover:bg-gray-700 transition-colors duration-200">
                             <UpvoteButton
                                 projectId={project?.id}
                                 initialUpvotes={project.upvotes_count}
@@ -109,11 +115,6 @@ export function ProjectCard({ project, index }) {
                             />
                         </div>
                     </div>
-
-                    {/* Hire button */}
-                    {/* <button className="px-4 py-1.5 text-sm font-medium text-gray-700 dark:text-gray-200 border border-gray-200 dark:border-gray-700 rounded-full hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                        Hire {project.developer?.name || 'developer'}
-                    </button> */}
                 </div>
             </div>
         </div>

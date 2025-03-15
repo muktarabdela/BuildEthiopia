@@ -97,7 +97,7 @@ export default function Home() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
       {/* <Navbar /> */}
 
 
@@ -116,7 +116,7 @@ export default function Home() {
               Showcase Your Projects.{' '}
               <span className="text-primary">Get Hired!</span>
             </h1>
-            <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+            <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
               Join Ethiopia's premier platform for developers to showcase their work,
               connect with peers, and get discovered by potential employers.
             </p>
@@ -129,7 +129,7 @@ export default function Home() {
                 </Button>
               </Link>
               <Link href="/projects">
-                <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-primary/5 w-full md:w-auto">
+                <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-gray-700 w-full md:w-auto">
                   <Search className="mr-2 h-5 w-5" />
                   Explore Projects
                 </Button>
@@ -138,14 +138,14 @@ export default function Home() {
 
             {/* Search Bar */}
             <div className="relative max-w-2xl mx-auto">
-              <div className="flex items-center bg-white rounded-full shadow-md p-1 pl-6 border border-gray-200">
+              <div className="flex items-center bg-gray-800 rounded-full shadow-md p-1 pl-6 border border-gray-700">
                 <Search className="h-5 w-5 text-gray-400 mr-2" />
                 <input
                   type="text"
                   placeholder="Search for projects or developers..."
-                  className="flex-1 py-3 outline-none text-gray-700"
+                  className="flex-1 py-3 outline-none text-gray-300 bg-transparent"
                 />
-                <Button className="rounded-full">
+                <Button className="rounded-full bg-primary hover:bg-primary-dark">
                   Search
                 </Button>
               </div>
@@ -155,24 +155,24 @@ export default function Home() {
       </section>
 
       {/* Stats Section */}
-      <section className={`"py-10 bg-white border-y border-gray-100" ${user ? 'hidden' : ''}`}>
+      <section className={`py-10 bg-gray-800 border-y border-gray-700 ${user ? 'hidden' : ''}`}>
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
               <p className="text-3xl md:text-4xl font-bold text-primary mb-2">200+</p>
-              <p className="text-gray-500">Projects Showcased</p>
+              <p className="text-gray-300">Projects Showcased</p>
             </div>
             <div>
               <p className="text-3xl md:text-4xl font-bold text-primary mb-2">500+</p>
-              <p className="text-gray-500">Active Developers</p>
+              <p className="text-gray-300">Active Developers</p>
             </div>
             <div>
               <p className="text-3xl md:text-4xl font-bold text-primary mb-2">1,000+</p>
-              <p className="text-gray-500">Community Members</p>
+              <p className="text-gray-300">Community Members</p>
             </div>
             <div>
               <p className="text-3xl md:text-4xl font-bold text-primary mb-2">50+</p>
-              <p className="text-gray-500">Hiring Companies</p>
+              <p className="text-gray-300">Hiring Companies</p>
             </div>
           </div>
         </div>
@@ -188,7 +188,7 @@ export default function Home() {
               <div>
                 <div className="flex items-center mb-8">
                   <TrendingUp className="h-6 w-6 text-primary mr-2" />
-                  <h2 className="text-2xl md:text-3xl font-bold"> this week Featured Projects</h2>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-100">This Week Featured Projects</h2>
                 </div>
                 <FeaturedProjects
                   projects={trendingProjects}
@@ -201,13 +201,8 @@ export default function Home() {
               <div>
                 <div className="flex items-center mb-8">
                   <Clock className="h-6 w-6 text-primary mr-2" />
-                  <h2 className="text-2xl md:text-3xl font-bold">last week top Projects</h2>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-100">Last Week Top Projects</h2>
                 </div>
-                {/* <FeaturedProjects
-                  projects={recentProjects}
-                  title=""
-                  showHeader={false}
-                /> */}
               </div>
             </div>
 
@@ -218,47 +213,40 @@ export default function Home() {
 
               {/* Join Community Card */}
               <div className="bg-gradient-to-br from-primary/80 to-primary rounded-xl p-6 text-white shadow-lg">
-                <h3 className="text-xl font-bold mb-3"> Join Our Community</h3>
+                <h3 className="text-xl font-bold mb-3">Join Our Community</h3>
                 <p className="mb-4 text-white/90">
                   Connect with other Ethiopian developers, share ideas, and grow together.
                 </p>
-                <Link href={` ${user ? "/projects/new" : "/login"} `}>
+                <Link href={`${user ? "/projects/new" : "/login"}`}>
                   <Button variant="secondary" className="w-full bg-white text-primary hover:bg-gray-100">
-                    {user ? 'Add project' : 'Sign Up'}{' '}
-                    {/* {session ? (
-                    <Clock className="ml-2 h-4 w-4" />
-                    ) : (
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                    )}
-                    Sign Up Now
-                    <ArrowRight className="ml-2 h-4 w-4" /> */}
+                    {user ? 'Add project' : 'Sign Up'}
                   </Button>
                 </Link>
               </div>
 
               {/* How It Works */}
-              <div className="bg-white rounded-xl p-6 border border-gray-200 shadow-sm">
-                <h3 className="text-xl font-bold mb-4">How It Works</h3>
+              <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-sm">
+                <h3 className="text-xl font-bold mb-4 text-gray-100">How It Works</h3>
                 <div className="space-y-4">
                   <div className="flex items-start">
                     <div className="bg-primary/10 text-primary rounded-full w-8 h-8 flex items-center justify-center mr-3 mt-0.5">1</div>
                     <div>
-                      <h4 className="font-medium">Create an account</h4>
-                      <p className="text-sm text-gray-500">Sign up as a developer or regular user</p>
+                      <h4 className="font-medium text-gray-100">Create an account</h4>
+                      <p className="text-sm text-gray-300">Sign up as a developer or regular user</p>
                     </div>
                   </div>
                   <div className="flex items-start">
                     <div className="bg-primary/10 text-primary rounded-full w-8 h-8 flex items-center justify-center mr-3 mt-0.5">2</div>
                     <div>
-                      <h4 className="font-medium">Showcase your projects</h4>
-                      <p className="text-sm text-gray-500">Upload details, screenshots, and links</p>
+                      <h4 className="font-medium text-gray-100">Showcase your projects</h4>
+                      <p className="text-sm text-gray-300">Upload details, screenshots, and links</p>
                     </div>
                   </div>
                   <div className="flex items-start">
                     <div className="bg-primary/10 text-primary rounded-full w-8 h-8 flex items-center justify-center mr-3 mt-0.5">3</div>
                     <div>
-                      <h4 className="font-medium">Get feedback & connect</h4>
-                      <p className="text-sm text-gray-500">Receive upvotes, comments, and job offers</p>
+                      <h4 className="font-medium text-gray-100">Get feedback & connect</h4>
+                      <p className="text-sm text-gray-300">Receive upvotes, comments, and job offers</p>
                     </div>
                   </div>
                 </div>

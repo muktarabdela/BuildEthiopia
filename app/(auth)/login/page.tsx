@@ -96,19 +96,20 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center px-4">
-            <Card className="w-full max-w-md">
-                <CardHeader className="text-center">
-                    <CardTitle className="text-2xl">Welcome Back</CardTitle>
+            <Card className="w-full max-w-md bg-gray-900 border-gray-800 shadow-lg">
+                <CardHeader className="text-center space-y-2">
+                    <CardTitle className="text-2xl font-bold text-white">Welcome Back</CardTitle>
+                    <p className="text-sm text-gray-400">Sign in to continue to your account</p>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-6">
                     {error && (
-                        <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded-md text-sm text-destructive">
+                        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-md text-sm text-red-400">
                             {error}
                         </div>
                     )}
                     <form onSubmit={handleEmailLogin} className="space-y-4">
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-muted-foreground mb-1">
+                        <div className="space-y-2">
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
                                 Email
                             </label>
                             <input
@@ -119,13 +120,13 @@ export default function LoginPage() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
-                                className="w-full px-3 py-2 border rounded-md"
+                                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent"
                                 placeholder="you@example.com"
                             />
                         </div>
 
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-muted-foreground mb-1">
+                        <div className="space-y-2">
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
                                 Password
                             </label>
                             <div className="relative">
@@ -136,47 +137,50 @@ export default function LoginPage() {
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
-                                    className="w-full px-3 py-2 border rounded-md pr-10"
+                                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent pr-10"
                                     placeholder="••••••••"
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-500"
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-300"
                                 >
                                     {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
                                 </button>
                             </div>
                         </div>
-                        <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white" disabled={loading}>
+                        <Button
+                            type="submit"
+                            className="w-full bg-primary hover:bg-primary/90 text-white font-medium transition-all"
+                            disabled={loading}
+                        >
                             {loading ? "Signing in..." : "Sign In"}
                         </Button>
                     </form>
 
-                    <div className="mt-4 relative">
+                    <div className="relative">
                         <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t" />
+                            <span className="w-full border-t border-gray-700" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                            <span className="bg-gray-900 px-2 text-gray-400">Or continue with</span>
                         </div>
                     </div>
 
                     <Button
                         type="button"
-                        variant="outline"
-                        className="w-full mt-4 flex items-center justify-center gap-2"
+                        className="w-full bg-gray-800 hover:bg-gray-700 text-white font-medium transition-all"
                         onClick={handleGitHubLogin}
                         disabled={loading}
                     >
-                        <Github className="h-4 w-4" />
-                        <span>GitHub</span>
+                        <Github className="h-5 w-5 mr-2" />
+                        <span>Continue with GitHub</span>
                     </Button>
 
-                    <div className="mt-6 text-center">
-                        <p className="text-sm text-muted-foreground">
+                    <div className="mt-4 text-center">
+                        <p className="text-sm text-gray-400">
                             Don't have an account?{" "}
-                            <Link href="/register" className="text-primary hover:underline">
+                            <Link href="/register" className="text-primary hover:underline font-medium">
                                 Sign up
                             </Link>
                         </p>

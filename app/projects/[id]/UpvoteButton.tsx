@@ -1,14 +1,14 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ThumbsUp } from "lucide-react"
+import { Heart, ThumbsUp } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import axios from "axios"
- import { useAuth } from "@/components/AuthProvider"
+import { useAuth } from "@/components/AuthProvider"
 import { supabase } from "@/lib/supabase"
 import { cn } from "@/lib/utils"
 
-export default function UpvoteButton({ projectId, initialUpvotes }) {
+export default function UpvoteButton({ projectId, initialUpvotes, className }) {
     const { user, session } = useAuth()
     const [upvotes, setUpvotes] = useState(initialUpvotes)
     const [hasUpvoted, setHasUpvoted] = useState(false)
@@ -99,9 +99,10 @@ export default function UpvoteButton({ projectId, initialUpvotes }) {
             disabled={isLoading}
             variant={hasUpvoted ? "default" : "outline"}
             className={cn(
-                "flex items-center space-x-2 transition-all duration-300",
+                "flex items-center space-x-2 transition-all duration-300 cursor-pointer",
                 hasUpvoted ? "bg-primary text-white" : "",
                 isLoading && "opacity-70",
+                className
             )}
         >
             <span
@@ -110,9 +111,9 @@ export default function UpvoteButton({ projectId, initialUpvotes }) {
                     isAnimating && (hasUpvoted ? "animate-upvote-in" : "animate-upvote-out"),
                 )}
             >
-                <ThumbsUp className={cn("h-4 w-4 transition-all duration-300", hasUpvoted ? "fill-current" : "")} />
+                <Heart className={cn("h-4 w-4 transition-all duration-300", hasUpvoted ? "fill-current" : "")} />
             </span>
-            <span>{upvotes} Upvotes</span>
+            <span>{upvotes} Likes</span>
         </Button>
     )
 }

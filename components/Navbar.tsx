@@ -77,7 +77,7 @@ export function Navbar() {
     }
     // console.log(profile)
     return (
-        <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+        <header className="sticky top-0 z-50 bg-gradient-to-br from-gray-900 to-gray-800 border-b border-gray-700 shadow-sm">
             <div className="container mx-auto px-4">
                 <div className="flex items-center justify-between h-16">
                     {/* Logo */}
@@ -85,7 +85,7 @@ export function Navbar() {
                         <div className="w-8 h-8 rounded-md bg-primary flex items-center justify-center">
                             <Code className="h-5 w-5 text-white" />
                         </div>
-                        <span className="text-xl font-bold text-gray-900">BuildEthiopia</span>
+                        <span className="text-xl font-bold text-gray-100">BuildEthiopia</span>
                     </Link>
 
                     {/* Desktop Navigation */}
@@ -93,8 +93,8 @@ export function Navbar() {
                         <Link
                             href="/"
                             className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/')
-                                ? 'text-primary bg-primary/5'
-                                : 'text-gray-700 hover:text-primary hover:bg-gray-50'
+                                ? 'text-primary bg-gray-800'
+                                : 'text-gray-300 hover:text-primary hover:bg-gray-700'
                                 }`}
                         >
                             <div className="flex items-center space-x-1">
@@ -105,8 +105,8 @@ export function Navbar() {
                         <Link
                             href="/projects"
                             className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/projects')
-                                ? 'text-primary bg-primary/5'
-                                : 'text-gray-700 hover:text-primary hover:bg-gray-50'
+                                ? 'text-primary bg-gray-800'
+                                : 'text-gray-300 hover:text-primary hover:bg-gray-700'
                                 }`}
                         >
                             <div className="flex items-center space-x-1">
@@ -118,8 +118,8 @@ export function Navbar() {
                             <Link
                                 href="/projects/new"
                                 className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/projects/new')
-                                    ? 'text-primary bg-primary/5'
-                                    : 'text-gray-700 hover:text-primary hover:bg-gray-50'
+                                    ? 'text-primary bg-gray-800'
+                                    : 'text-gray-300 hover:text-primary hover:bg-gray-700'
                                     }`}
                             >
                                 <div className="flex items-center space-x-1">
@@ -131,8 +131,8 @@ export function Navbar() {
                         <Link
                             href="/developers"
                             className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/developers')
-                                ? 'text-primary bg-primary/5'
-                                : 'text-gray-700 hover:text-primary hover:bg-gray-50'
+                                ? 'text-primary bg-gray-800'
+                                : 'text-gray-300 hover:text-primary hover:bg-gray-700'
                                 }`}
                         >
                             <div className="flex items-center space-x-1">
@@ -149,7 +149,7 @@ export function Navbar() {
 
                                 <Link
                                     href="/profile/notifications"
-                                    className="relative p-2 text-gray-700 hover:text-primary rounded-full hover:bg-gray-100"
+                                    className="relative p-2 text-gray-300 hover:text-primary rounded-full hover:bg-gray-700"
                                 >
                                     <Bell className="h-5 w-5" />
                                     {unreadCount > 0 && (
@@ -161,7 +161,7 @@ export function Navbar() {
 
                                 <Link
                                     href={`${profile?.username}`}
-                                    className="hidden md:flex items-center space-x-2 p-2 text-gray-700 hover:text-primary rounded-md hover:bg-gray-100"
+                                    className="hidden md:flex items-center space-x-2 p-2 text-gray-300 hover:text-primary rounded-md hover:bg-gray-700"
                                 >
                                     <UserRound className="h-5 w-5" />
                                     <span className="text-sm font-medium">Profile</span>
@@ -170,7 +170,7 @@ export function Navbar() {
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        className="border-gray-300 text-gray-700"
+                                        className="border-gray-600 text-gray-300 hover:bg-gray-700"
                                     >
                                         <LogOut className="h-4 w-4 mr-1" />
                                         Sign Out
@@ -183,7 +183,7 @@ export function Navbar() {
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="text-gray-700 hover:text-primary hover:bg-gray-100"
+                                        className="text-gray-300 hover:text-primary hover:bg-gray-700"
                                     >
                                         Sign In
                                     </Button>
@@ -202,7 +202,7 @@ export function Navbar() {
 
                         {/* Mobile Menu Button */}
                         <button
-                            className="md:hidden p-2 rounded-md text-gray-700 hover:text-primary hover:bg-gray-100"
+                            className="md:hidden p-2 rounded-md text-gray-300 hover:text-primary hover:bg-gray-700"
                             onClick={toggleMobileMenu}
                         >
                             {mobileMenuOpen ? (
@@ -217,13 +217,13 @@ export function Navbar() {
 
             {/* Mobile Menu */}
             {mobileMenuOpen && (
-                <div className="md:hidden bg-white border-t border-gray-200">
+                <div className="md:hidden bg-gray-900 border-t border-gray-700">
                     <div className="container mx-auto px-4 py-3 space-y-1">
                         <Link
                             href="/"
                             className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/')
-                                ? 'text-primary bg-primary/5'
-                                : 'text-gray-700 hover:text-primary hover:bg-gray-50'
+                                ? 'text-primary bg-gray-800'
+                                : 'text-gray-300 hover:text-primary hover:bg-gray-700'
                                 }`}
                             onClick={closeMobileMenu}
                         >
@@ -235,8 +235,8 @@ export function Navbar() {
                         <Link
                             href="/projects"
                             className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/projects')
-                                ? 'text-primary bg-primary/5'
-                                : 'text-gray-700 hover:text-primary hover:bg-gray-50'
+                                ? 'text-primary bg-gray-800'
+                                : 'text-gray-300 hover:text-primary hover:bg-gray-700'
                                 }`}
                             onClick={closeMobileMenu}
                         >
@@ -249,8 +249,8 @@ export function Navbar() {
                             <Link
                                 href="/projects/new"
                                 className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/projects/new')
-                                    ? 'text-primary bg-primary/5'
-                                    : 'text-gray-700 hover:text-primary hover:bg-gray-50'
+                                    ? 'text-primary bg-gray-800'
+                                    : 'text-gray-300 hover:text-primary hover:bg-gray-700'
                                     }`}
                                 onClick={closeMobileMenu}
                             >
@@ -263,8 +263,8 @@ export function Navbar() {
                         <Link
                             href="/developers"
                             className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/developers')
-                                ? 'text-primary bg-primary/5'
-                                : 'text-gray-700 hover:text-primary hover:bg-gray-50'
+                                ? 'text-primary bg-gray-800'
+                                : 'text-gray-300 hover:text-primary hover:bg-gray-700'
                                 }`}
                             onClick={closeMobileMenu}
                         >
@@ -279,8 +279,8 @@ export function Navbar() {
                                 <Link
                                     href="/profile"
                                     className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/profile')
-                                        ? 'text-primary bg-primary/5'
-                                        : 'text-gray-700 hover:text-primary hover:bg-gray-50'
+                                        ? 'text-primary bg-gray-800'
+                                        : 'text-gray-300 hover:text-primary hover:bg-gray-700'
                                         }`}
                                     onClick={closeMobileMenu}
                                 >
@@ -292,7 +292,7 @@ export function Navbar() {
                                 <div className="px-3 py-2">
                                     <Button onClick={signOut}
                                         variant="outline"
-                                        className="w-full justify-start border-gray-300 text-gray-700"
+                                        className="w-full justify-start border-gray-600 text-gray-300 hover:bg-gray-700"
                                     >
                                         <LogOut className="h-5 w-5 mr-2" />
                                         Sign Out
@@ -304,7 +304,7 @@ export function Navbar() {
                                 <Link href="/login" onClick={closeMobileMenu}>
                                     <Button
                                         variant="outline"
-                                        className="w-full justify-center border-gray-300 text-gray-700"
+                                        className="w-full justify-center border-gray-600 text-gray-300 hover:bg-gray-700"
                                     >
                                         Sign In
                                     </Button>

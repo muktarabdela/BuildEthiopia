@@ -27,6 +27,7 @@ export default function CommentForm({ projectId, onCommentAdded }) {
                 return;
             }
 
+            // First, insert the comment
             const { data, error } = await supabase
                 .from('comments')
                 .insert({
@@ -35,14 +36,25 @@ export default function CommentForm({ projectId, onCommentAdded }) {
                     user_id: user.id
                 })
                 .select(`
-          id,
-          content,
-          created_at,
-          user:profiles(id, name,profile_picture)
-        `)
+                    id,
+                    content,
+                    created_at,
+                    user:profiles(id, name,profile_picture)
+                `)
                 .single();
 
             if (error) throw error;
+
+            // Then, increment the comments count
+            const { error: countError } = await supabase
+                .rpc('increment', {
+                    table_name: 'projects',
+                    column_name: 'comments_count',
+                    id: projectId,
+                    increment_value: 1
+                });
+
+            if (countError) throw countError;
 
             setContent('');
 

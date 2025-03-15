@@ -1,29 +1,16 @@
 "use client"
 
-import Link from "next/link"
-import Image from "next/image"
+import React from "react"
 import { useParams, useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
-import {
-    Github,
-    Globe,
-    Calendar,
-    User,
-    Share2,
-    Bookmark,
-    Code,
-    Layers,
-    CheckCircle,
-    Linkedin,
-    MessageSquare,
-    Video,
-} from "lucide-react"
-import UpvoteButton from "./UpvoteButton"
-import CommentsSection from "./CommentsSection"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import React, { useEffect } from "react"
+import { useEffect } from "react"
 import { useAuth } from "@/components/AuthProvider"
+import ProjectHero from "@/components/ProjectHero"
+import ProjectActionBar from "@/components/ProjectActionBar"
+import ProjectContent from "@/components/ProjectContent"
+import ProjectSidebar from "@/components/ProjectSidebar"
+
+
 
 // Custom hook to fetch project data
 function useProject(projectId: string | undefined) {
@@ -97,359 +84,23 @@ export default function ProjectPage() {
         return <div className="min-h-screen flex justify-center items-center">Loading...</div>
     }
 
-    const developer = project.developer
-    const comments = project.comments
-
-    // Helper function to extract YouTube video ID from URL
-    const getYouTubeVideoId = (url: string | null): string => {
-        if (!url) return ""
-
-        // Handle different YouTube URL formats
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
-        const match = url.match(regExp)
-
-        return match && match[2].length === 11 ? match[2] : ""
-    }
-
-    // Generate a random color for the project banner
-    const getRandomColor = () => {
-        const colors = [
-            "bg-gradient-to-r from-blue-500 to-indigo-600",
-            "bg-gradient-to-r from-purple-500 to-pink-500",
-            "bg-gradient-to-r from-green-500 to-teal-500",
-            "bg-gradient-to-r from-orange-500 to-red-500",
-            "bg-gradient-to-r from-indigo-500 to-purple-600",
-        ]
-        return colors[Math.floor(Math.random() * colors.length)]
-    }
-
     return (
-        <main className="min-h-screen bg-gray-50">
+        <main className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
             {/* Hero Section */}
-            <div className={`${getRandomColor()} text-white`}>
-                <div className="container mx-auto px-4 py-16">
-                    <div className="max-w-4xl mx-auto">
-                        {/* Project Header */}
-                        <div className="mb-8">
-                            <div className="flex items-center space-x-2 mb-4">
-                                <Link href="/projects" className="text-white/80 hover:text-white text-sm font-medium">
-                                    Projects
-                                </Link>
-                                <span className="text-white/60">/</span>
-                                <span className="text-white/80 text-sm font-medium truncate">{project.title}</span>
-                            </div>
-                            <div className="flex items-center gap-4 mb-4">
-                                {project.logo_url && (
-                                    <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-white/20 flex-shrink-0">
-                                        <Image
-                                            src={project.logo_url || "/placeholder.svg"}
-                                            alt={`${project.title} logo`}
-                                            fill
-                                            className="object-contain p-1"
-                                        />
-                                    </div>
-                                )}
-                                <h1 className="text-4xl md:text-5xl font-bold">{project.title}</h1>
-                            </div>
-                            <p className="text-xl text-white/90 mb-6 max-w-3xl">{project.description?.split("\n")[0]}</p>
-
-                            {/* Developer Info */}
-                            <div className="flex items-center">
-                                <Link href={`/developers/${developer?.id}`} className="flex items-center group">
-                                    <div className="relative w-10 h-10 rounded-full overflow-hidden bg-white/20 mr-3">
-                                        {developer?.profile_picture ? (
-                                            <Image
-                                                src={developer.profile_picture || "/placeholder.svg"}
-                                                alt={developer.name}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-white font-medium">
-                                                {developer.name?.charAt(0).toUpperCase() || "D"}
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div>
-                                        <p className="font-medium text-white group-hover:underline">{developer.name}</p>
-                                        <div className="flex items-center text-white/70 text-sm">
-                                            <Calendar className="h-3.5 w-3.5 mr-1" />
-                                            <span>{new Date(project.created_at).toLocaleDateString()}</span>
-                                        </div>
-                                    </div>
-                                </Link>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <ProjectHero project={project} />
 
             {/* Main Content */}
             <div className="container mx-auto px-4 py-8">
                 <div className="max-w-4xl mx-auto">
                     {/* Action Bar */}
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 -mt-8 mb-8 flex flex-wrap gap-4 justify-between items-center">
-                        <div className="flex items-center gap-3">
-                            <UpvoteButton projectId={project?.id} initialUpvotes={project.upvotes_count} />
-                            <div className="flex items-center text-gray-500">
-                                <MessageSquare className="h-5 w-5 mr-1" />
-                                <span>{project.comments_count} Comments</span>
-                            </div>
-                            {project.is_open_source && (
-                                <div className="flex items-center text-green-600">
-                                    <Code className="h-5 w-5 mr-1" />
-                                    <span>Open Source</span>
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                            {project.github_url && (
-                                <a
-                                    href={project.github_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg transition-colors"
-                                >
-                                    <Github className="h-5 w-5" />
-                                    <span>GitHub</span>
-                                </a>
-                            )}
-
-                            {project.live_url && (
-                                <a
-                                    href={project.live_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg transition-colors"
-                                >
-                                    <Globe className="h-5 w-5" />
-                                    <span>Live Demo</span>
-                                </a>
-                            )}
-
-                            <Button variant="outline" size="icon" className="text-gray-500 hover:text-gray-700">
-                                <Share2 className="h-5 w-5" />
-                            </Button>
-
-                            <Button variant="outline" size="icon" className="text-gray-500 hover:text-gray-700">
-                                <Bookmark className="h-5 w-5" />
-                            </Button>
-                        </div>
-                    </div>
+                    <ProjectActionBar project={project} />
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {/* Main Content Column */}
-                        <div className="md:col-span-2 space-y-8">
-                            {/* Project Description */}
-                            <Card className="overflow-hidden">
-                                <CardHeader className="bg-gray-50 border-b">
-                                    <CardTitle className="flex items-center">
-                                        <Layers className="h-5 w-5 text-primary mr-2" />
-                                        Project Overview
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="pt-6">
-                                    <div className="prose max-w-none">
-                                        <p className="whitespace-pre-wrap">{project.description}</p>
-
-                                        {project.post_content && (
-                                            <div className="mt-6 pt-6 border-t">
-                                                <h3 className="text-lg font-medium mb-3">Detailed Information</h3>
-                                                <p className="whitespace-pre-wrap">{project.post_content}</p>
-                                            </div>
-                                        )}
-                                    </div>
-                                </CardContent>
-                            </Card>
-
-                            {/* Project Images Gallery */}
-                            {project.images && project.images.length > 0 && (
-                                <Card className="overflow-hidden">
-                                    <CardHeader className="bg-gray-50 border-b">
-                                        <CardTitle className="flex items-center">
-                                            <Image className="h-5 w-5 text-primary mr-2" />
-                                            Project Gallery
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="pt-6">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                            {project.images.map((image, index) => (
-                                                <div key={index} className="relative aspect-video rounded-lg overflow-hidden border">
-                                                    <Image
-                                                        src={image || "/placeholder.svg"}
-                                                        alt={`Project image ${index + 1}`}
-                                                        fill
-                                                        className="object-cover hover:scale-105 transition-transform duration-300"
-                                                    />
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            )}
-
-                            {/* YouTube Video */}
-                            {project.youtube_video_url && (
-                                <Card className="overflow-hidden">
-                                    <CardHeader className="bg-gray-50 border-b">
-                                        <CardTitle className="flex items-center">
-                                            <Video className="h-5 w-5 text-primary mr-2" />
-                                            Project Demo
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="pt-6">
-                                        <div className="relative aspect-video rounded-lg overflow-hidden">
-                                            <iframe
-                                                src={`https://www.youtube.com/embed/${getYouTubeVideoId(project.youtube_video_url)}`}
-                                                title="YouTube video player"
-                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                allowFullScreen
-                                                className="absolute top-0 left-0 w-full h-full"
-                                            ></iframe>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            )}
-
-                            {/* Tech Stack */}
-                            <Card className="overflow-hidden">
-                                <CardHeader className="bg-gray-50 border-b">
-                                    <CardTitle className="flex items-center">
-                                        <Code className="h-5 w-5 text-primary mr-2" />
-                                        Tech Stack
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="pt-6">
-                                    <div className="flex flex-wrap gap-2">
-                                        {project.tech_stack && project.tech_stack.length > 0 ? (
-                                            project.tech_stack.map((tech, index) => {
-                                                // Generate a different color for each tech
-                                                const colors = [
-                                                    "bg-blue-100 text-blue-800",
-                                                    "bg-green-100 text-green-800",
-                                                    "bg-purple-100 text-purple-800",
-                                                    "bg-yellow-100 text-yellow-800",
-                                                    "bg-red-100 text-red-800",
-                                                    "bg-indigo-100 text-indigo-800",
-                                                    "bg-pink-100 text-pink-800",
-                                                    "bg-teal-100 text-teal-800",
-                                                ]
-                                                const colorClass = colors[index % colors.length]
-
-                                                return (
-                                                    <span key={index} className={`px-3 py-1 ${colorClass} rounded-full text-sm`}>
-                                                        {tech}
-                                                    </span>
-                                                )
-                                            })
-                                        ) : (
-                                            <span className="text-gray-500 text-sm">No technologies specified</span>
-                                        )}
-                                    </div>
-                                </CardContent>
-                            </Card>
-
-                            {/* Key Features */}
-                            <Card className="overflow-hidden">
-                                <CardHeader className="bg-gray-50 border-b">
-                                    <CardTitle className="flex items-center">
-                                        <CheckCircle className="h-5 w-5 text-primary mr-2" />
-                                        Key Features
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="pt-6">
-                                    <ul className="space-y-3">
-                                        <li className="flex items-start">
-                                            <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                                            <span>Responsive design that works on all devices</span>
-                                        </li>
-                                        <li className="flex items-start">
-                                            <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                                            <span>Real-time updates using WebSockets</span>
-                                        </li>
-                                        <li className="flex items-start">
-                                            <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                                            <span>Authentication with social login options</span>
-                                        </li>
-                                        <li className="flex items-start">
-                                            <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                                            <span>Optimized performance with server-side rendering</span>
-                                        </li>
-                                    </ul>
-                                </CardContent>
-                            </Card>
-
-                            {/* Comments Section */}
-                            <CommentsSection
-                                projectId={project?.id}
-                                initialComments={comments}
-                                commentsCount={project.comments_count}
-                            />
-                        </div>
+                        <ProjectContent project={project} />
 
                         {/* Sidebar */}
-                        <div className="space-y-8">
-                            {/* Developer Info */}
-                            <Card className="overflow-hidden">
-                                <CardHeader className="bg-gray-50 border-b">
-                                    <CardTitle className="flex items-center">
-                                        <User className="h-5 w-5 text-primary mr-2" />
-                                        About the Developer
-                                    </CardTitle>
-                                </CardHeader>
-                                <CardContent className="pt-6">
-                                    <div className="flex flex-col items-center text-center mb-4">
-                                        <div className="relative w-20 h-20 rounded-full overflow-hidden bg-gray-100 mb-3">
-                                            {developer.profile_picture ? (
-                                                <Image
-                                                    src={developer.profile_picture || "/placeholder.svg"}
-                                                    alt={developer.name}
-                                                    fill
-                                                    className="object-cover"
-                                                />
-                                            ) : (
-                                                <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary font-medium text-xl">
-                                                    {developer.name?.charAt(0).toUpperCase() || "D"}
-                                                </div>
-                                            )}
-                                        </div>
-                                        <h3 className="text-lg font-bold mb-1">{developer.name}</h3>
-                                    </div>
-
-                                    {developer.bio && <p className="text-gray-600 mb-4 text-sm">{developer.bio}</p>}
-
-                                    <div className="flex justify-center space-x-3 mb-4">
-                                        {developer.github_url && (
-                                            <a
-                                                href={developer.github_url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-gray-500 hover:text-gray-900"
-                                            >
-                                                <Github className="h-5 w-5" />
-                                            </a>
-                                        )}
-                                        {developer.linkedin_url && (
-                                            <a
-                                                href={developer.linkedin_url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-gray-500 hover:text-gray-900"
-                                            >
-                                                <Linkedin className="h-5 w-5" />
-                                            </a>
-                                        )}
-                                    </div>
-
-                                    <Link href={`/developers/${developer.id}`}>
-                                        <Button variant="outline" className="w-full">
-                                            View Profile
-                                        </Button>
-                                    </Link>
-                                </CardContent>
-                            </Card>
-                        </div>
+                        <ProjectSidebar developer={project.developer} />
                     </div>
                 </div>
             </div>

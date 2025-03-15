@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
- import { useAuth } from '@/components/AuthProvider';
+import { useAuth } from '@/components/AuthProvider';
 
 export default function CommentForm({ projectId, onCommentAdded }) {
     const { user } = useAuth();
@@ -20,7 +20,6 @@ export default function CommentForm({ projectId, onCommentAdded }) {
         try {
             setIsSubmitting(true);
             setError(null);
-
 
             if (!user) {
                 // Redirect to login
@@ -59,17 +58,17 @@ export default function CommentForm({ projectId, onCommentAdded }) {
     };
 
     return (
-        <Card className="mt-6">
+        <Card className="mt-6 bg-gray-800 border-gray-700">
             <CardContent className="pt-6">
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                        <label htmlFor="comment" className="block text-sm font-medium text-muted-foreground mb-1">
+                        <label htmlFor="comment" className="block text-sm font-medium text-gray-300 mb-1">
                             Add a Comment
                         </label>
                         <textarea
                             id="comment"
                             rows={3}
-                            className="w-full px-3 py-2 border rounded-md"
+                            className="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100 placeholder-gray-400 focus:border-primary focus:ring-primary"
                             placeholder="Share your thoughts about this project..."
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
@@ -78,7 +77,7 @@ export default function CommentForm({ projectId, onCommentAdded }) {
                     </div>
 
                     {error && (
-                        <div className="mb-4 text-red-500 text-sm">
+                        <div className="mb-4 text-red-400 text-sm">
                             {error}
                         </div>
                     )}
@@ -87,6 +86,7 @@ export default function CommentForm({ projectId, onCommentAdded }) {
                         <Button
                             type="submit"
                             disabled={isSubmitting || !content.trim()}
+                            className="bg-primary hover:bg-primary-dark text-white"
                         >
                             {isSubmitting ? 'Submitting...' : 'Post Comment'}
                         </Button>

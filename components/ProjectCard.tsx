@@ -33,7 +33,7 @@ export function ProjectCard({ project, index }) {
 
                     {/* Project Details */}
                     <div className="flex-1">
-                        <h2 className="text-lg font-semibold text-gray-100 group-hover:text-primary transition-colors">
+                        <h2 className="text-lg font-semibold text-gray-100 transition-colors">
                             {index + 1}. {project.title}
                         </h2>
                         <p className="text-gray-300 text-sm mt-1">{project.description}</p>
@@ -56,7 +56,7 @@ export function ProjectCard({ project, index }) {
                         {/* Developer Info */}
                         <Link href={`/${project.developer.username}`}
                             className="flex items-center gap-2 mt-4 hover:underline group-hover:text-primary text-gray-100 transition-colors">
-                            <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-700 mr-2">
+                            <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-700 mr-2 group-hover:text-primary">
                                 {project.developer?.profile_picture ? (
                                     <Image
                                         src={project.developer.profile_picture}
@@ -65,7 +65,7 @@ export function ProjectCard({ project, index }) {
                                         className="object-cover"
                                     />
                                 ) : (
-                                    <div className="w-full h-full flex items-center justify-center bg-primary/20 text-primary font-medium">
+                                    <div className="w-full h-full flex items-center justify-center bg-primary/20 text-primary font-medium  ">
                                         {project.developer?.name?.charAt(0).toUpperCase() || 'D'}
                                     </div>
                                 )}

@@ -36,7 +36,8 @@ function useProject(projectId: string | undefined) {
                           github_url,
                           linkedin_url,
                           contact_visible,
-                          profile_picture
+                          profile_picture,
+                            username
                         ),
                         comments(
                           id,

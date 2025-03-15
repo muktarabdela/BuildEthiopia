@@ -5,13 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
 export default function ProjectSidebar({ developer }) {
+    console.log("ProjectSidebar Developer Data:", developer)   
     return (
+
         <div className="space-y-8">
             {/* Developer Info */}
             <Card className="overflow-hidden bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 hover:border-gray-700/50 transition-all duration-300 sticky top-4">
-                <CardHeader className="bg-gray-800/30 border-b border-gray-700/30">
-                    <CardTitle className="flex items-center text-gray-100">
-                        <User className="h-5 w-5 text-primary mr-2" />
+                <CardHeader className="bg-gray0/30 rounded-md border-b border-gray-700/30">
+                    <CardTitle className="flex items-center text-gray-100 text-lg">
+                        <User className="h-5 w-5 text-primary mr-2 " />
                         About the Developer
                     </CardTitle>
                 </CardHeader>
@@ -59,7 +61,7 @@ export default function ProjectSidebar({ developer }) {
                         )}
                     </div>
 
-                    <Link href={`/developers/${developer.id}`}>
+                    <Link href={`/${developer.username}`}>
                         <Button
                             variant="outline"
                             className="w-full text-gray-200 border-gray-700 hover:bg-gray-700 hover:text-white"

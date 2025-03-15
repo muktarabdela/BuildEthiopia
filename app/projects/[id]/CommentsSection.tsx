@@ -19,11 +19,11 @@ export default function CommentsSection({ projectId, initialComments, commentsCo
 
     return (
         <Card className="overflow-hidden bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 hover:border-gray-700/50 transition-all duration-300">
-            <CardHeader className="bg-gray-800/30 border-b border-gray-700/30">
+            <CardHeader className="bg- border-b rounded-md border-gray-700/30">
                 <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center text-gray-100">
+                    <CardTitle className="flex items-center text-gray-100 text-lg">
                         <MessageSquare className="h-5 w-5 text-primary mr-2" />
-                        Discussion ({count})
+                        Discussion
                     </CardTitle>
                 </div>
             </CardHeader>

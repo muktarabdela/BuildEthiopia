@@ -49,7 +49,7 @@ export default function ProjectHero({ project }) {
 
                         {/* Developer Info */}
                         <div className="flex items-center">
-                            <Link href={`/developers/${developer?.id}`} className="flex items-center group">
+                            <Link href={`/${developer?.username}`} className="flex items-center group">
                                 <div className="relative w-10 h-10 rounded-full overflow-hidden bg-white/20 mr-3">
                                     {developer?.profile_picture ? (
                                         <Image

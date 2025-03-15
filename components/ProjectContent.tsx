@@ -180,7 +180,7 @@ function ProjectMediaGallery({ project }) {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6">
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-2 gap-6 overflow-y-auto">
                         {/* YouTube Video */}
                         {hasVideo && (
                             <div
@@ -200,7 +200,7 @@ function ProjectMediaGallery({ project }) {
                         {/* Image Gallery */}
                         {hasImages && (
                             <div
-                                className={`grid grid-cols-1 ${project.images.length > 1 ? "sm:grid-cols-2" : ""} gap-4 lg:col-span-1`}
+                                className={`relative aspect-video rounded-lg overflow-hidden border border-gray-700/30 cursor-pointer`}
                             >
                                 {project.images.slice(0, 4).map((image, index) => (
                                     <div

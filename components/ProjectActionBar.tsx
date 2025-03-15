@@ -14,7 +14,7 @@ export default function ProjectActionBar({ project }) {
                 />
                 <div className="flex items-center text-gray-300">
                     <MessageSquare className="h-5 w-5 mr-1" />
-                    <span className="whitespace-nowrap">{project.comments_count} Comments</span>
+                    <span className="whitespace-nowrap">{project?.comments?.length} Comments</span>
                 </div>
                 {project.is_open_source && (
                     <div className="flex items-center text-green-400">

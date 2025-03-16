@@ -28,7 +28,7 @@ export default function ProfilePage() {
 
             // Fetch profile through protected API endpoint
             const response = await fetch(`/api/profile/${username}`);
-            console.log("response from profile page", response)
+            // console.log("response from profile page", response)
             if (!response.ok) {
                 // Handle unauthorized access
                 router.push('/login');

@@ -5,7 +5,28 @@ import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { ProjectCard } from './ProjectCard';
 
-export default function FeaturedProjects({ projects, title = "Featured Projects", showViewAll = true, showHeader = true }) {
+interface FeaturedProjectsProps {
+    projects: Array<{
+        id: string;
+        title: string;
+        description: string;
+        featured: boolean;
+        // ... other project fields
+    }>;
+    title?: string;
+    showViewAll?: boolean;
+    showHeader?: boolean;
+}
+
+export default function FeaturedProjects({
+    projects,
+    title = "Featured Projects",
+    showViewAll = true,
+    showHeader = true
+}: FeaturedProjectsProps) {
+    // Filter projects to only show featured ones
+    const featuredProjects = projects.filter(project => project.featured);
+
     // Generate a random color for project cards without images
     const getRandomColor = () => {
         const colors = [
@@ -31,7 +52,7 @@ export default function FeaturedProjects({ projects, title = "Featured Projects"
                 <div className="flex justify-between items-center mb-6">
                     <div>
                         <h2 className="text-2xl md:text-3xl font-bold mb-2">
-                            this week Featured Projects
+                            {title}
                         </h2>
                         <p className="text-gray-500">
                             Discover the most popular projects from Ethiopian developers
@@ -46,14 +67,17 @@ export default function FeaturedProjects({ projects, title = "Featured Projects"
             )}
 
             <div className="grid grid-cols-1 gap-6">
-                {projects && projects.length > 0 ? (
-                    projects.map((project, index) => (
-                        <ProjectCard key={project.id} project={project} index={index} />
-
+                {featuredProjects.length > 0 ? (
+                    featuredProjects.map((project, index) => (
+                        <ProjectCard
+                            key={project.id}
+                            project={project}
+                            index={index}
+                        />
                     ))
                 ) : (
                     <div className="text-center py-8 text-gray-500">
-                        No projects available
+                        No featured projects available
                     </div>
                 )}
             </div>

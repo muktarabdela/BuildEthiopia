@@ -61,7 +61,7 @@ export default function AuthProvider({
 
       if (event === "SIGNED_IN" && newSession) {
         // console.log("User signed in, redirecting to home");
-        router.replace("/");
+        // router.replace("/");
       }
 
       setLoading(false);

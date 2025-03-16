@@ -1,73 +1,70 @@
 -- Users Table
-CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    email TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL, -- Stored securely (hashed)
-    name TEXT NOT NULL,
-    bio TEXT,
-    profile_picture TEXT,
-    github_link TEXT,
-    linkedin_link TEXT,
-    role TEXT CHECK (role IN ('user', 'moderator', 'admin')) DEFAULT 'user',
-    created_at TIMESTAMP DEFAULT NOW()
-);
+create table public.profiles (
+  id uuid not null,
+  name text null,
+  bio text null,
+  github_url text null,
+  linkedin_url text null,
+  contact_visible boolean null default false,
+  profile_picture text null,
+  created_at timestamp with time zone not null default timezone ('utc'::text, now()),
+  updated_at timestamp with time zone not null default timezone ('utc'::text, now()),
+  username text null,
+  telegram_url text null,
+  email text null,
+  is_verify_email boolean null default false,
+  constraint profiles_pkey primary key (id),
+  constraint profiles_email_key unique (email),
+  constraint profiles_username_key unique (username),
+  constraint profiles_id_fkey foreign KEY (id) references auth.users (id) on delete CASCADE
+) TABLESPACE pg_default;
 
 -- Projects Table
-CREATE TABLE projects (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    title TEXT NOT NULL,
-    description TEXT NOT NULL,
-    tech_stack TEXT[],
-    live_demo_link TEXT,
-    github_link TEXT,
-    cover_image TEXT,
-    tags TEXT[],
-    upvotes INT DEFAULT 0,
-    downvotes INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+create table public.projects (
+  id uuid not null default extensions.uuid_generate_v4 (),
+  title text not null,
+  description text not null,
+  category text not null,
+  post_content text not null,
+  images text[] null,
+  logo_url text null,
+  youtube_video_url text null,
+  tech_stack text[] null,
+  github_url text null,
+  live_url text null,
+  developer_id uuid not null,
+  upvotes_count integer null default 0,
+  comments_count integer null default 0,
+  featured boolean null default false,
+  is_open_source boolean null default true,
+  created_at timestamp with time zone not null default timezone ('utc'::text, now()),
+  updated_at timestamp with time zone not null default timezone ('utc'::text, now()),
+  constraint projects_pkey primary key (id),
+  constraint projects_developer_id_fkey foreign KEY (developer_id) references profiles (id) on delete CASCADE
+) TABLESPACE pg_default;
 
 -- Votes Table
-CREATE TABLE votes (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
-    vote_type TEXT CHECK (vote_type IN ('upvote', 'downvote')),
-    created_at TIMESTAMP DEFAULT NOW(),
-    UNIQUE (user_id, project_id) -- Ensures a user can vote only once per project
-);
+create table public.upvotes (
+  id uuid not null default gen_random_uuid (),
+  user_id uuid null,
+  project_id uuid null,
+  constraint upvotes_pkey primary key (id),
+  constraint upvotes_user_id_project_id_key unique (user_id, project_id),
+  constraint upvotes_user_id_fkey foreign KEY (user_id) references profiles (id) on delete CASCADE
+) TABLESPACE pg_default;
 
 -- Comments Table
-CREATE TABLE comments (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
-    parent_comment_id UUID REFERENCES comments(id) ON DELETE CASCADE, -- For threaded comments
-    content TEXT NOT NULL,
-    upvotes INT DEFAULT 0,
-    downvotes INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT NOW()
-);
+create table public.comments (
+  id serial not null,
+  project_id uuid not null,
+  user_id uuid not null,
+  content text not null,
+  created_at timestamp with time zone null default now(),
+  constraint comments_pkey primary key (id),
+  constraint comments_project_id_fkey foreign KEY (project_id) references projects (id) on delete CASCADE,
+  constraint comments_user_id_fkey foreign KEY (user_id) references profiles (id)
+) TABLESPACE pg_default;
 
--- Comment Votes Table
-CREATE TABLE comment_votes (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    comment_id UUID REFERENCES comments(id) ON DELETE CASCADE,
-    vote_type TEXT CHECK (vote_type IN ('upvote', 'downvote')),
-    created_at TIMESTAMP DEFAULT NOW(),
-    UNIQUE (user_id, comment_id)
-);
-
--- Portfolios Table
-CREATE TABLE portfolios (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
-    project_id UUID REFERENCES projects(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT NOW(),
-    UNIQUE (user_id, project_id) -- Prevents duplicate entries in portfolio
-);
 
 -- Saved Projects Table
 CREATE TABLE saved_projects (

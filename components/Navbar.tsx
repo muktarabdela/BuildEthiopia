@@ -277,7 +277,7 @@ export function Navbar() {
                         {user ? (
                             <>
                                 <Link
-                                    href="/profile"
+                                    href={`${profile?.username}`}
                                     className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/profile')
                                         ? 'text-primary bg-gray-800'
                                         : 'text-gray-300 hover:text-primary hover:bg-gray-700'

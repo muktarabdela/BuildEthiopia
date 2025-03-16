@@ -14,48 +14,42 @@ import { useAuth } from '@/components/AuthProvider';
 export default function ProfilePage() {
     const { user, session } = useAuth();
     const params = useParams();
-
     const router = useRouter();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [showDialog, setShowDialog] = useState(false);
-
-
+    const [isOwner, setIsOwner] = useState(false);
 
     useEffect(() => {
         async function getProfile() {
             if (!params) return;
 
-            const username = params?.id; // ✅ Now accessing username safely
+            const username = params?.id;
 
-            // if (!session) {
-            //     console.log("No valid session found, redirecting to login");
-            //     router.push('/login');
-            //     return;
-            // }
+            // Fetch profile through protected API endpoint
+            const response = await fetch(`/api/profile/${username}`);
+            console.log("response from profile page", response)
+            if (!response.ok) {
+                // Handle unauthorized access
+                router.push('/login');
+                return;
+            }
 
-            const { data: profile, error: profileError } = await supabase
-                .from('profiles')
-                .select(`*`)
-                .eq('username', username)
-                .maybeSingle();
+            const profile = await response.json();
+            setProfile(profile);
 
-            if (profileError) {
-                console.error("Profile fetch error:", profileError);
-            } else {
-                console.log("Profile data:", profile);
-                setProfile(profile);
+            // Verify ownership
+            if (user?.id === profile?.id) {
+                setIsOwner(true);
                 if (!profile?.bio || !profile?.github_url) {
                     setShowDialog(true);
                 }
             }
-
             setLoading(false);
         }
 
         getProfile();
-    }, [params, user, session]); // ⬅️ Re-run when params change
-    console.log(profile); // Log the URL
+    }, [params, user, session]);
 
     if (loading) return <div>Loading...</div>;
     if (!profile) return <div>Profile not found.</div>;
@@ -78,8 +72,6 @@ export default function ProfilePage() {
         <main className="container mx-auto px-4 py-8">
             <div className="max-w-4xl mx-auto">
                 {/* Profile Header */}
-
-
                 <div className="mb-8 flex items-center">
                     <div className="h-24 w-24 rounded-full border-2 border-gray-300 shadow-lg overflow-hidden flex items-center justify-center">
                         {profile.profile_picture ? (
@@ -89,8 +81,7 @@ export default function ProfilePage() {
                                 width={96}
                                 height={96}
                                 className="h-full w-full object-cover rounded-full"
-                                unoptimized={true} // Add this line
-
+                                unoptimized={true}
                             />
                         ) : (
                             <div className={`w-full h-full flex items-center justify-center text-white text-3xl font-semibold ${generateColor(profile.name)}`}>
@@ -101,54 +92,58 @@ export default function ProfilePage() {
                     <div className="ml-4">
                         <h1 className="text-4xl font-bold">{profile.name}</h1>
                         <p className="text-lg text-gray-600">{profile.bio || 'No bio added yet.'}</p>
-                        <div className="mt-2">
-                            <Button asChild>
-                                <a href="/profile/edit">Edit Profile</a>
-                            </Button>
-                        </div>
+                        {isOwner && (
+                            <div className="mt-2">
+                                <Button asChild>
+                                    <a href="/profile/edit">Edit Profile</a>
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 </div>
 
-                {/* Contact Information */}
-                <Card className="mb-8">
-                    <CardHeader>
-                        <CardTitle>Contact Information</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <dl className="space-y-4">
-                            <div>
-                                <dt className="font-medium">Email</dt>
-                                <dd>{profile.email}</dd>
-                            </div>
-                            <div>
-                                <dt className="font-medium">GitHub</dt>
-                                <dd>
-                                    {profile.github_url ? (
-                                        <a href={profile.github_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                                            {profile.github_url}
-                                        </a>
-                                    ) : 'Not added'}
-                                </dd>
-                            </div>
-                            <div>
-                                <dt className="font-medium">LinkedIn</dt>
-                                <dd>
-                                    {profile.linkedin_url ? (
-                                        <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                                            {profile.linkedin_url}
-                                        </a>
-                                    ) : 'Not added'}
-                                </dd>
-                            </div>
-                            <div>
-                                <dt className="font-medium">Telegram</dt>
-                                <dd>{profile.telegram_url || 'Not added'}</dd>
-                            </div>
-                        </dl>
-                    </CardContent>
-                </Card>
+                {/* Contact Information - Only show to owner */}
+                {isOwner && (
+                    <Card className="mb-8">
+                        <CardHeader>
+                            <CardTitle>Contact Information</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <dl className="space-y-4">
+                                <div>
+                                    <dt className="font-medium">Email</dt>
+                                    <dd>{profile.email}</dd>
+                                </div>
+                                <div>
+                                    <dt className="font-medium">GitHub</dt>
+                                    <dd>
+                                        {profile.github_url ? (
+                                            <a href={profile.github_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                                                {profile.github_url}
+                                            </a>
+                                        ) : 'Not added'}
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt className="font-medium">LinkedIn</dt>
+                                    <dd>
+                                        {profile.linkedin_url ? (
+                                            <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                                                {profile.linkedin_url}
+                                            </a>
+                                        ) : 'Not added'}
+                                    </dd>
+                                </div>
+                                <div>
+                                    <dt className="font-medium">Telegram</dt>
+                                    <dd>{profile.telegram_url || 'Not added'}</dd>
+                                </div>
+                            </dl>
+                        </CardContent>
+                    </Card>
+                )}
 
-                {/* Profile Stats */}
+                {/* Profile Stats - Show to everyone */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <Card>
                         <CardHeader>
@@ -177,7 +172,7 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Skills Section - Only for developers */}
-                {profile.role === 'developer' && (
+                {profile.role === 'developer' && isOwner && (
                     <SkillsManager userId={profile.id} />
                 )}
 
@@ -211,8 +206,8 @@ export default function ProfilePage() {
                     </div>
                 )} */}
             </div>
-            {/* ✅ Show profile completion dialog if needed */}
-            {showDialog && <ProfileCompletionDialog userId={profile.id} onClose={() => setShowDialog(false)} />}
+            {/* ✅ Show profile completion dialog only to owner */}
+            {showDialog && isOwner && <ProfileCompletionDialog userId={profile.id} onClose={() => setShowDialog(false)} />}
         </main>
     );
 } 

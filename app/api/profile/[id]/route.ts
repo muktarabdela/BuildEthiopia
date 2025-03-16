@@ -7,26 +7,39 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Await params to ensure they're resolved
     const { id } = await params;
 
-    // Fetch profile from Supabase
-    const { data: profile, error } = await supabase
+    // Fetch profile
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("*")
       .eq("username", id)
       .maybeSingle();
 
-    if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+    if (profileError || !profile) {
+      return NextResponse.json(
+        { error: profileError?.message || "Profile not found" },
+        { status: profileError ? 400 : 404 }
+      );
     }
 
-    if (!profile) {
-      return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+    // Fetch projects
+    const { data: projects, error: projectsError } = await supabase
+      .from("projects")
+      .select(
+        "id, title, description, images, upvotes_count, comments_count, created_at"
+      )
+      .eq("developer_id", profile.id);
+
+    if (projectsError) {
+      return NextResponse.json(
+        { error: projectsError.message },
+        { status: 400 }
+      );
     }
 
-    // Return profile data
-    return NextResponse.json(profile, { status: 200 });
+    // Return combined data
+    return NextResponse.json({ ...profile, projects }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
       { error: "Internal server error" },

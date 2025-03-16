@@ -10,6 +10,103 @@ import ProfileCompletionDialog from '@/components/ProfileCompletionDialog';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/AuthProvider';
+import ProfileHeader from '@/components/profile/profile-header';
+import PortfolioSection from '@/components/profile/portfolio';
+import AchievementsSection from '@/components/profile/achievements';
+import SettingsSection from '@/components/profile/settings';
+
+// API or database
+const userData = {
+    id: "1",
+    username: "janedoe",
+    displayName: "Jane Doe",
+    bio: "Full-stack developer passionate about creating beautiful, functional web applications",
+    profilePicture: "/placeholder.svg?height=150&width=150",
+    socialLinks: {
+        github: "https://github.com/janedoe",
+        linkedin: "https://linkedin.com/in/janedoe",
+        twitter: "https://twitter.com/janedoe",
+    },
+    featured: {
+        isTopDeveloper: true,
+        featuredProduct: true,
+    },
+    stats: {
+        totalUpvotes: 1243,
+        totalComments: 85,
+    },
+    badges: [
+        { id: 1, name: "Top Developer", icon: "trophy" },
+        { id: 2, name: "Most Upvoted Project", icon: "award" },
+        { id: 3, name: "Community Contributor", icon: "heart" },
+    ],
+    projects: [
+        {
+            id: 1,
+            title: "E-commerce Dashboard",
+            thumbnail: "/placeholder.svg?height=200&width=300",
+            upvotes: 423,
+            featured: true,
+        },
+        {
+            id: 2,
+            title: "Task Management App",
+            thumbnail: "/placeholder.svg?height=200&width=300",
+            upvotes: 287,
+            featured: false,
+        },
+        {
+            id: 3,
+            title: "Portfolio Template",
+            thumbnail: "/placeholder.svg?height=200&width=300",
+            upvotes: 189,
+            featured: false,
+        },
+        {
+            id: 4,
+            title: "Weather Forecast App",
+            thumbnail: "/placeholder.svg?height=200&width=300",
+            upvotes: 156,
+            featured: false,
+        },
+    ],
+}
+
+const transformProfileData = (profile) => {
+    return {
+        id: profile.id,
+        username: profile.username,
+        displayName: profile.name,
+        bio: profile.bio || "No bio available",
+        profilePicture: profile.profile_picture,
+        status: profile.status || 'none',
+        socialLinks: {
+            github: profile.github_url || "#",
+            linkedin: profile.linkedin_url || "#",
+            twitter: profile.telegram_url || "#",
+        },
+        featured: {
+            isTopDeveloper: false,
+            featuredProduct: false,
+        },
+        stats: {
+            totalUpvotes: profile.projects?.reduce((sum, project) => sum + (project.upvotes_count || 0), 0) || 0,
+            totalComments: profile.projects?.reduce((sum, project) => sum + (project.comments_count || 0), 0) || 0,
+        },
+        badges: [
+            { id: 1, name: "New Member", icon: "award" },
+        ],
+        projects: profile.projects?.map(project => ({
+            id: project.id,
+            title: project.title,
+            description: project.description,
+            thumbnail: project.images[0] || "/placeholder.svg?height=200&width=300",
+            upvotes: project.upvotes_count || 0,
+            featured: false,
+            createdAt: project.created_at
+        })) || []
+    };
+};
 
 export default function ProfilePage() {
     const { user, session } = useAuth();
@@ -25,20 +122,18 @@ export default function ProfilePage() {
             if (!params) return;
 
             const username = params?.id;
-
-            // Fetch profile through protected API endpoint
             const response = await fetch(`/api/profile/${username}`);
-            // console.log("response from profile page", response)
+
             if (!response.ok) {
-                // Handle unauthorized access
                 router.push('/login');
                 return;
             }
 
             const profile = await response.json();
-            setProfile(profile);
+            console.log("profile data from api", profile)
+            const transformedProfile = transformProfileData(profile);
+            setProfile(transformedProfile);
 
-            // Verify ownership
             if (user?.id === profile?.id) {
                 setIsOwner(true);
                 if (!profile?.bio || !profile?.github_url) {
@@ -55,9 +150,7 @@ export default function ProfilePage() {
     if (!profile) return <div>Profile not found.</div>;
 
     const { projects } = profile;
-    // console.log("seession data from profile page", session)
-    // console.log("user data from profile page", user)
-    console.log("profile data from profile page", profile)
+
     const totalUpvotes = projects?.reduce((sum, project) => sum + project.upvotes_count, 0) || 0;
     const totalComments = projects?.reduce((sum, project) => sum + project.comments_count, 0) || 0;
     const generateColor = (name) => {
@@ -69,145 +162,41 @@ export default function ProfilePage() {
         return colors[index]; // Choose a color based on the first letter
     };
     return (
-        <main className="container mx-auto px-4 py-8">
-            <div className="max-w-4xl mx-auto">
-                {/* Profile Header */}
-                <div className="mb-8 flex items-center">
-                    <div className="h-24 w-24 rounded-full border-2 border-gray-300 shadow-lg overflow-hidden flex items-center justify-center">
-                        {profile.profile_picture ? (
-                            <Image
-                                src={profile.profile_picture}
-                                alt={profile.name}
-                                width={96}
-                                height={96}
-                                className="h-full w-full object-cover rounded-full"
-                                unoptimized={true}
-                            />
-                        ) : (
-                            <div className={`w-full h-full flex items-center justify-center text-white text-3xl font-semibold ${generateColor(profile.name)}`}>
-                                {profile.name?.charAt(0).toUpperCase() || "?"}
-                            </div>
-                        )}
-                    </div>
-                    <div className="ml-4">
-                        <h1 className="text-4xl font-bold">{profile.name}</h1>
-                        <p className="text-lg text-gray-600">{profile.bio || 'No bio added yet.'}</p>
-                        {isOwner && (
-                            <div className="mt-2">
-                                <Button asChild>
-                                    <a href="/profile/edit">Edit Profile</a>
-                                </Button>
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Contact Information - Only show to owner */}
-
-                <Card className="mb-8">
-                    <CardHeader>
-                        <CardTitle>Contact Information</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <dl className="space-y-4">
-                            <div>
-                                <dt className="font-medium">Email</dt>
-                                <dd>{profile.email}</dd>
-                            </div>
-                            <div>
-                                <dt className="font-medium">GitHub</dt>
-                                <dd>
-                                    {profile.github_url ? (
-                                        <a href={profile.github_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                                            {profile.github_url}
-                                        </a>
-                                    ) : 'Not added'}
-                                </dd>
-                            </div>
-                            <div>
-                                <dt className="font-medium">LinkedIn</dt>
-                                <dd>
-                                    {profile.linkedin_url ? (
-                                        <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                                            {profile.linkedin_url}
-                                        </a>
-                                    ) : 'Not added'}
-                                </dd>
-                            </div>
-                            <div>
-                                <dt className="font-medium">Telegram</dt>
-                                <dd>{profile.telegram_url || 'Not added'}</dd>
-                            </div>
-                        </dl>
-                    </CardContent>
-                </Card>
-
-
-                {/* Profile Stats - Show to everyone */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-center">{profile.projects?.length || 0}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-center text-muted-foreground">Projects</p>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-center">{totalUpvotes}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-center text-muted-foreground">Total Upvotes</p>
-                        </CardContent>
-                    </Card>
-                    <Card>
-                        <CardHeader>
-                            <CardTitle className="text-center">{totalComments}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-center text-muted-foreground">Total Comments</p>
-                        </CardContent>
-                    </Card>
-                </div>
-
-                {/* Skills Section - Only for developers */}
-                {profile.role === 'developer' && isOwner && (
-                    <SkillsManager userId={profile.id} />
-                )}
-
-                {/* Projects Section */}
-                {/* {profile.role === 'developer' && (
-                    <div className="mb-8">
-                        <div className="flex justify-between items-center mb-6">
-                            <h2 className="text-2xl font-bold">My Projects</h2>
-                            <Button asChild>
-                                <a href="/projects/new">Add New Project</a>
-                            </Button>
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+            <main className="container mx-auto py-8 px-4 md:px-6">
+                <div className="grid gap-8">
+                    {profile && <ProfileHeader user={profile} />}
+                    <div className="grid gap-8 md:grid-cols-3">
+                        <div className="md:col-span-2">
+                            {profile && <PortfolioSection user={profile} />}
                         </div>
-                        {projects?.length > 0 ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {projects.map((project) => (
-                                    <ProjectCard key={project.id} project={project} />
-                                ))}
-                            </div>
-                        ) : (
-                            <Card>
-                                <CardContent className="text-center py-12">
-                                    <p className="text-muted-foreground mb-4">
-                                        You haven't added any projects yet.
-                                    </p>
-                                    <Button asChild>
-                                        <a href="/projects/new">Add Your First Project</a>
-                                    </Button>
-                                </CardContent>
-                            </Card>
-                        )}
+                        <div className="space-y-8">
+                            {profile && <AchievementsSection user={profile} />}
+                            {profile && isOwner && <SettingsSection user={profile} />}
+                        </div>
                     </div>
-                )} */}
-            </div>
-            {/* ✅ Show profile completion dialog only to owner */}
-            {showDialog && isOwner && <ProfileCompletionDialog userId={profile.id} onClose={() => setShowDialog(false)} />}
-        </main>
+                </div>
+            </main>
+        </div>
+        // <main className="container mx-auto px-4 py-8">
+        //     <div className="max-w-4xl mx-auto">
+        //         {/* Profile Header */}
+
+        //         {/* Contact Information - Only show to owner */}
+
+
+        //         {/* Profile Stats - Show to everyone */}
+
+        //         {/* Skills Section - Only for developers */}
+        //         {profile.role === 'developer' && isOwner && (
+        //             <SkillsManager userId={profile.id} />
+        //         )}
+
+        //         {/* Projects Section */}
+        //     </div>
+        //     {/* ✅ Show profile completion dialog only to owner */}
+        //     {showDialog && isOwner && <ProfileCompletionDialog userId={profile.id} onClose={() => setShowDialog(false)} />}
+        // </main>
     );
-} 
+}
+

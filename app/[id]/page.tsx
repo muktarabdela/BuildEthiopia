@@ -103,45 +103,45 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Contact Information - Only show to owner */}
-                {isOwner && (
-                    <Card className="mb-8">
-                        <CardHeader>
-                            <CardTitle>Contact Information</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <dl className="space-y-4">
-                                <div>
-                                    <dt className="font-medium">Email</dt>
-                                    <dd>{profile.email}</dd>
-                                </div>
-                                <div>
-                                    <dt className="font-medium">GitHub</dt>
-                                    <dd>
-                                        {profile.github_url ? (
-                                            <a href={profile.github_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                                                {profile.github_url}
-                                            </a>
-                                        ) : 'Not added'}
-                                    </dd>
-                                </div>
-                                <div>
-                                    <dt className="font-medium">LinkedIn</dt>
-                                    <dd>
-                                        {profile.linkedin_url ? (
-                                            <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
-                                                {profile.linkedin_url}
-                                            </a>
-                                        ) : 'Not added'}
-                                    </dd>
-                                </div>
-                                <div>
-                                    <dt className="font-medium">Telegram</dt>
-                                    <dd>{profile.telegram_url || 'Not added'}</dd>
-                                </div>
-                            </dl>
-                        </CardContent>
-                    </Card>
-                )}
+
+                <Card className="mb-8">
+                    <CardHeader>
+                        <CardTitle>Contact Information</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <dl className="space-y-4">
+                            <div>
+                                <dt className="font-medium">Email</dt>
+                                <dd>{profile.email}</dd>
+                            </div>
+                            <div>
+                                <dt className="font-medium">GitHub</dt>
+                                <dd>
+                                    {profile.github_url ? (
+                                        <a href={profile.github_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                                            {profile.github_url}
+                                        </a>
+                                    ) : 'Not added'}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt className="font-medium">LinkedIn</dt>
+                                <dd>
+                                    {profile.linkedin_url ? (
+                                        <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                                            {profile.linkedin_url}
+                                        </a>
+                                    ) : 'Not added'}
+                                </dd>
+                            </div>
+                            <div>
+                                <dt className="font-medium">Telegram</dt>
+                                <dd>{profile.telegram_url || 'Not added'}</dd>
+                            </div>
+                        </dl>
+                    </CardContent>
+                </Card>
+
 
                 {/* Profile Stats - Show to everyone */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">

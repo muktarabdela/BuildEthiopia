@@ -1,10 +1,14 @@
+'use client'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Code, Search } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import { useState } from "react";
+import { Slider } from "@/components/ui/slider";
+// import { MultiSelect } from "@/components/ui/multi-select";
 
-async function getProjects() {
+async function getProjects(filters) {
     const { data: projects } = await supabase
         .from('projects')
         .select('*')
@@ -13,8 +17,33 @@ async function getProjects() {
     return projects || [];
 }
 
-export default async function ProjectsPage() {
-    const projects = await getProjects();
+const techStackOptions = [
+    { value: 'react', label: 'React' },
+    { value: 'nextjs', label: 'Next.js' },
+    { value: 'node', label: 'Node.js' },
+    { value: 'typescript', label: 'TypeScript' },
+];
+
+export default function ProjectsPage() {
+    const [projects, setProjects] = useState([]);
+    const [filters, setFilters] = useState({
+        minProjects: 0,
+        maxProjects: 100,
+        minUpvotes: 0,
+        maxUpvotes: 1000,
+        techStack: []
+    });
+
+    const handleFilterChange = async (newFilters) => {
+        const filteredProjects = await getProjects({
+            min_projects: newFilters.minProjects,
+            max_projects: newFilters.maxProjects,
+            min_upvotes: newFilters.minUpvotes,
+            max_upvotes: newFilters.maxUpvotes,
+            tech_stack: newFilters.techStack
+        });
+        setProjects(filteredProjects);
+    };
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -29,6 +58,51 @@ export default async function ProjectsPage() {
                     </Link>
                 </div>
 
+                {/* Filter Section */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div>
+                        <label className="block text-sm font-medium mb-2">Number of Projects</label>
+                        <Slider
+                            min={0}
+                            max={100}
+                            value={[filters.minProjects, filters.maxProjects]}
+                            onValueChange={([min, max]) => {
+                                const newFilters = { ...filters, minProjects: min, maxProjects: max };
+                                setFilters(newFilters);
+                                handleFilterChange(newFilters);
+                            }}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium mb-2">Total Upvotes</label>
+                        <Slider
+                            min={0}
+                            max={1000}
+                            value={[filters.minUpvotes, filters.maxUpvotes]}
+                            onValueChange={([min, max]) => {
+                                const newFilters = { ...filters, minUpvotes: min, maxUpvotes: max };
+                                setFilters(newFilters);
+                                handleFilterChange(newFilters);
+                            }}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium mb-2">Tech Stack</label>
+                        {/* <MultiSelect
+                            options={techStackOptions}
+                            selected={filters.techStack}
+                            onChange={(selected) => {
+                                const newFilters = { ...filters, techStack: selected };
+                                setFilters(newFilters);
+                                handleFilterChange(newFilters);
+                            }}
+                        /> */}
+                    </div>
+                </div>
+
+                {/* Projects Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {projects.map((project) => (
                         <Card key={project.id} className="hover:shadow-lg transition-shadow">

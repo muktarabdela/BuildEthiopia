@@ -1,4 +1,5 @@
 import { Profile } from '@/lib/types';
+import Link from 'next/link';
 
 interface DeveloperTableProps {
     developers: Profile[];
@@ -46,9 +47,14 @@ export const DeveloperTable = ({ developers }: DeveloperTableProps) => {
                                 </span>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <a href={`/developers/${developer.id}`} className="text-indigo-600 hover:text-indigo-900">
+                                <Link
+                                    href={`/${developer.username}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-indigo-600 hover:text-indigo-900"
+                                >
                                     View
-                                </a>
+                                </Link>
                             </td>
                         </tr>
                     ))}

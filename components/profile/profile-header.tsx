@@ -4,13 +4,18 @@ import { Github, Linkedin, Twitter } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 
+
 const statusOptions = [
-    { value: 'open_to_work', label: 'Open to Work', color: 'bg-green-500' },
-    { value: 'hiring', label: 'Hiring', color: 'bg-blue-500' },
-    { value: 'none', label: '', color: 'bg-transparent' }
+    { value: 'Open to work', label: 'Open to Work' },
+    { value: 'Hiring', label: 'Hiring' },
+    { value: 'none', label: 'None' }
 ];
 
+
 export default function ProfileHeader({ user }) {
+    console.log("user data from profile_header", user)
+    console.log("User status:", user?.status);
+    console.log("Status options:", statusOptions);
     return (
         <Card className="overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800">
             <CardContent className="p-6">

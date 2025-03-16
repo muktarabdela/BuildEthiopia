@@ -9,16 +9,32 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { supabase } from "@/lib/supabase"
+import { toast } from "sonner"
+
+type FormData = {
+    displayName: string
+    username: string
+    bio: string
+    github: string
+    linkedin: string
+    twitter: string
+    telegram: string
+    profilePicture: string
+}
 
 export default function SettingsSection({ user }) {
     const [isEditProfileOpen, setIsEditProfileOpen] = useState(false)
-    const [formData, setFormData] = useState({
+    const [isLoading, setIsLoading] = useState(false)
+    const [formData, setFormData] = useState<FormData>({
         displayName: user.displayName,
         username: user.username,
         bio: user.bio,
         github: user.socialLinks.github,
         linkedin: user.socialLinks.linkedin,
         twitter: user.socialLinks.twitter,
+        telegram: user.socialLinks.telegram || "",
+        profilePicture: user.profilePicture || ""
     })
     const [status, setStatus] = useState(user.status || "none")
 
@@ -30,11 +46,43 @@ export default function SettingsSection({ user }) {
         }))
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        // In a real app, you would save the data to the backend here
-        console.log("Form submitted:", formData)
-        setIsEditProfileOpen(false)
+        setIsLoading(true)
+
+        try {
+            const { error } = await supabase
+                .from('profiles')
+                .update({
+                    name: formData.displayName,
+                    username: formData.username,
+                    bio: formData.bio,
+                    github_url: formData.github,
+                    linkedin_url: formData.linkedin,
+                    telegram_url: formData.twitter,
+                    profile_picture: formData.profilePicture,
+                    status: status,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', user.id)
+
+            if (error) throw error
+
+            toast({
+                title: "Success!",
+                description: "Your profile has been updated.",
+                variant: "default",
+            })
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: error.message,
+                variant: "destructive",
+            })
+        } finally {
+            setIsLoading(false)
+            setIsEditProfileOpen(false)
+        }
     }
 
     const handleStatusChange = (value) => {
@@ -61,8 +109,8 @@ export default function SettingsSection({ user }) {
                             </SelectContent>
                         </Select>
                     </div>
-                    <Button className="w-full bg-indigo-600 hover:bg-indigo-700">
-                        Save Changes
+                    <Button onClick={handleSubmit} className="w-full bg-indigo-600 hover:bg-indigo-700" disabled={isLoading}>
+                        {isLoading ? "Updating..." : "Save Changes"}
                     </Button>
                 </div>
             </CardContent>

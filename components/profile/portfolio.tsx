@@ -3,6 +3,7 @@ import { ThumbsUp, MessageSquare } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import Link from "next/link"
 
 export default function PortfolioSection({ user }) {
     console.log("user", user.projects)
@@ -14,7 +15,7 @@ export default function PortfolioSection({ user }) {
             <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {user.projects.map(project => (
-                        <div key={project.id} className="bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-colors">
+                        <Link href={`/projects/${project.id}`} key={project.id} className="bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-colors">
                             <div className="relative h-40 w-full mb-4">
                                 <Image
                                     src={project.thumbnail}
@@ -29,7 +30,7 @@ export default function PortfolioSection({ user }) {
                                 <ThumbsUp className="h-4 w-4 mr-1" />
                                 <span>{project.upvotes} upvotes</span>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </CardContent>

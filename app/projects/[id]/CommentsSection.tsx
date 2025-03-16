@@ -84,12 +84,12 @@ function CommentItem({ comment }) {
                     {/* Comment Header */}
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                            <Link
-                                href={`/developers/${comment.user.id}`}
-                                className="font-medium text-gray-200 hover:text-primary transition-colors"
+                            <div
+                                // href={`/${comment.user.username}` || "#"}
+                                className="font-medium text-gray-200  transition-colors"
                             >
                                 {comment.user.name}
-                            </Link>
+                            </div>
                             <span className="text-gray-400 text-sm">
                                 {new Date(comment.created_at).toLocaleDateString(undefined, {
                                     year: "numeric",
@@ -98,10 +98,10 @@ function CommentItem({ comment }) {
                                 })}
                             </span>
                         </div>
-
+                        {/* 
                         <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-gray-200">
                             <MoreHorizontal className="h-4 w-4" />
-                        </Button>
+                        </Button> */}
                     </div>
 
                     {/* Comment Text */}
@@ -115,14 +115,14 @@ function CommentItem({ comment }) {
                             className={`h-8 px-2 gap-1.5 text-sm ${liked ? "text-primary" : "text-gray-400 hover:text-gray-200"}`}
                             onClick={handleLike}
                         >
-                            <Heart className={`h-4 w-4 ${liked ? "fill-primary" : ""}`} />
-                            <span>{likeCount}</span>
+                            {/* <Heart className={`h-4 w-4 ${liked ? "fill-primary" : ""}`} />
+                            <span>{likeCount}</span> */}
                         </Button>
 
-                        <Button variant="ghost" size="sm" className="h-8 px-2 gap-1.5 text-sm text-gray-400 hover:text-gray-200">
+                        {/* <Button variant="ghost" size="sm" className="h-8 px-2 gap-1.5 text-sm text-gray-400 hover:text-gray-200">
                             <Reply className="h-4 w-4" />
                             <span>Reply</span>
-                        </Button>
+                        </Button> */}
                     </div>
                 </div>
             </div>

@@ -5,7 +5,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
 export default function ProjectSidebar({ developer }) {
-    console.log("ProjectSidebar Developer Data:", developer)   
+
+    const statusOptions = [
+        { value: 'Open to work', label: 'Open to Work' },
+        { value: 'Hiring', label: 'Hiring' },
+        { value: 'none', label: 'None' }
+    ];
     return (
 
         <div className="space-y-8">
@@ -62,6 +67,20 @@ export default function ProjectSidebar({ developer }) {
                     </div>
 
                     <Link href={`/${developer.username}`}>
+                        {/* developer status */}
+                        <div className="flex flex-col items-center justify-center mb-4">
+                            {/* <span className="text-sm text-gray-400">
+                                @{developer.username}
+                            </span> */}
+                            {/* <span className="mx-2 text-gray-400">|</span> */}
+                            <span className="text-sm text-gray-400">
+                                {developer?.status && developer.status !== 'none' && (
+                                    <div className={`px-4 py-2 rounded-full ${statusOptions.find(opt => opt.value === developer.status)?.color || 'bg-gray-700'} text-white text-sm font-medium`}>
+                                        {statusOptions.find(opt => opt.value === developer.status)?.label}
+                                    </div>
+                                )}
+                            </span>
+                        </div>
                         <Button
                             variant="outline"
                             className="w-full text-gray-200 border-gray-700 hover:bg-gray-700 hover:text-white"

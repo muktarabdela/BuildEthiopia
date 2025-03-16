@@ -37,7 +37,8 @@ function useProject(projectId: string | undefined) {
                           linkedin_url,
                           contact_visible,
                           profile_picture,
-                            username
+                            username,
+                            status
                         ),
                         comments(
                           id,

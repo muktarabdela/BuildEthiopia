@@ -72,6 +72,8 @@ function useProject(projectId: string | undefined) {
 export default function ProjectPage() {
     const { id } = useParams()
     const router = useRouter()
+        
+    // @ts-ignore
     const { project, loading, error } = useProject(id)
 
     // Redirect to a 404 page if there is an error

@@ -1,19 +1,25 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Heart, ThumbsUp } from "lucide-react"
+import { Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import axios from "axios"
 import { useAuth } from "@/components/AuthProvider"
 import { supabase } from "@/lib/supabase"
 import { cn } from "@/lib/utils"
 
-export default function UpvoteButton({ projectId, initialUpvotes, className }) {
+type Props = {
+    projectId: string;
+    initialUpvotes: number;
+    className?: string;
+};
+
+export default function UpvoteButton({ projectId, initialUpvotes, className }: Props) {
     const { user, session } = useAuth()
-    const [upvotes, setUpvotes] = useState(initialUpvotes)
-    const [hasUpvoted, setHasUpvoted] = useState(false)
-    const [isLoading, setIsLoading] = useState(false)
-    const [isAnimating, setIsAnimating] = useState(false)
+    const [upvotes, setUpvotes] = useState<number>(initialUpvotes)
+    const [hasUpvoted, setHasUpvoted] = useState<boolean>(false)
+    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [isAnimating, setIsAnimating] = useState<boolean>(false)
 
     // Fetch the upvote count on mount
     useEffect(() => {
@@ -39,7 +45,7 @@ export default function UpvoteButton({ projectId, initialUpvotes, className }) {
         }
 
         checkUserUpvote()
-    }, [projectId, session])
+    }, [projectId, session, user])
 
     const handleUpvote = async () => {
         if (!user) {

@@ -1,18 +1,39 @@
 'use client'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Code, Search } from "lucide-react";
+import { Code } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Slider } from "@/components/ui/slider";
 // import { MultiSelect } from "@/components/ui/multi-select";
 
-async function getProjects(filters) {
-    const { data: projects } = await supabase
+type Project = {
+    id: string;
+    title: string;
+    description: string;
+    created_at: string;
+    // Add other project fields as needed
+};
+
+type Filters = {
+    minProjects: number;
+    maxProjects: number;
+    minUpvotes: number;
+    maxUpvotes: number;
+    techStack: string[];
+};
+
+async function getProjects(filters?: Partial<Filters>): Promise<Project[]> {
+    const { data: projects, error } = await supabase
         .from('projects')
         .select('*')
         .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching projects:', error);
+        return [];
+    }
 
     return projects || [];
 }
@@ -25,8 +46,8 @@ const techStackOptions = [
 ];
 
 export default function ProjectsPage() {
-    const [projects, setProjects] = useState([]);
-    const [filters, setFilters] = useState({
+    const [projects, setProjects] = useState<Project[]>([]);
+    const [filters, setFilters] = useState<Filters>({
         minProjects: 0,
         maxProjects: 100,
         minUpvotes: 0,
@@ -34,14 +55,16 @@ export default function ProjectsPage() {
         techStack: []
     });
 
-    const handleFilterChange = async (newFilters) => {
-        const filteredProjects = await getProjects({
-            min_projects: newFilters.minProjects,
-            max_projects: newFilters.maxProjects,
-            min_upvotes: newFilters.minUpvotes,
-            max_upvotes: newFilters.maxUpvotes,
-            tech_stack: newFilters.techStack
-        });
+    useEffect(() => {
+        const fetchProjects = async () => {
+            const projects = await getProjects();
+            setProjects(projects);
+        };
+        fetchProjects();
+    }, []);
+
+    const handleFilterChange = async (newFilters: Filters) => {
+        const filteredProjects = await getProjects(newFilters);
         setProjects(filteredProjects);
     };
 

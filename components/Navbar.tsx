@@ -250,7 +250,7 @@ export function Navbar() {
                                 href="/projects/new"
                                 className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/projects/new')
                                     ? 'text-primary bg-gray-800'
-                                    : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
+                                    : ' hover:text-primary hover:bg-gray-700 text-white'
                                     }`}
                                 onClick={closeMobileMenu}
                             >
@@ -264,7 +264,7 @@ export function Navbar() {
                             href="/developers"
                             className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/developers')
                                 ? 'text-primary bg-gray-800'
-                                : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
+                                : 'hover:text-primary hover:bg-gray-700 text-white'
                                 }`}
                             onClick={closeMobileMenu}
                         >
@@ -280,7 +280,7 @@ export function Navbar() {
                                     href={`${profile?.username}`}
                                     className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/profile')
                                         ? 'text-primary bg-gray-800'
-                                        : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
+                                        : 'hover:text-primary hover:bg-gray-700 text-white'
                                         }`}
                                     onClick={closeMobileMenu}
                                 >

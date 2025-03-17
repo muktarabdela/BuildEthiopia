@@ -1,6 +1,7 @@
 "use client"
 import Link from "next/link"
 import type React from "react"
+import Image from "next/image"
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -8,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { supabase } from "@/lib/supabase"
 import { Eye, EyeOff, Github } from "lucide-react"
+
+
 
 export default function LoginPage() {
     const router = useRouter()
@@ -94,6 +97,30 @@ export default function LoginPage() {
         }
     }
 
+    const handleGoogleLogin = async () => {
+        try {
+            setLoading(true)
+            setError("")
+
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: "google",
+                options: {
+                    redirectTo: `${window.location.origin}/auth/callback`,
+                },
+            })
+
+            if (error) {
+                console.error("Google login error:", error)
+                throw error
+            }
+        } catch (error: any) {
+            console.error("Google login error:", error)
+            setError(error.message || "An error occurred during Google login")
+        } finally {
+            setLoading(false)
+        }
+    }
+
     return (
         <div className="min-h-screen flex items-center justify-center px-4">
             <Card className="w-full max-w-md bg-gray-900 border-gray-800 shadow-lg">
@@ -167,15 +194,34 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    <Button
-                        type="button"
-                        className="w-full bg-gray-800 hover:bg-gray-700 text-white text-white font-medium transition-all"
-                        onClick={handleGitHubLogin}
-                        disabled={loading}
-                    >
-                        <Github className="h-5 w-5 mr-2" />
-                        <span>Continue with GitHub</span>
-                    </Button>
+                    <div className="space-y-4">
+                        <Button
+                            type="button"
+                            className="w-full bg-white hover:bg-gray-100 text-gray-700 font-medium transition-all"
+                            onClick={handleGoogleLogin}
+                            disabled={loading}
+                        >
+                            <div className="relative w-5 h-5 mr-2">
+                                <Image
+                                    src="/google-icon-logo-svgrepo-com.svg"
+                                    alt="Google logo"
+                                    fill
+                                    className="object-contain"
+                                />
+                            </div>
+                            <span>Continue with Google</span>
+                        </Button>
+
+                        <Button
+                            type="button"
+                            className="w-full bg-gray-800 hover:bg-gray-700 text-white font-medium transition-all"
+                            onClick={handleGitHubLogin}
+                            disabled={loading}
+                        >
+                            <Github className="h-5 w-5 mr-2" />
+                            <span>Continue with GitHub</span>
+                        </Button>
+                    </div>
 
                     <div className="mt-4 text-center">
                         <p className="text-sm text-gray-400">

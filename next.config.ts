@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
       "picsum.photos",
       "avatars.githubusercontent.com",
       "cvsolymnpaopcgtoxgke.supabase.co",
+      "lh3.googleusercontent.com",
     ],
   },
 };

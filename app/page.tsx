@@ -10,6 +10,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { LoadingOverlay } from '@/components/LoadingOverlay';
+import { useLoading } from '@/components/LoadingProvider';
 
 async function getProjects(setIsFeatureProjectsLoading: (loading: boolean) => void) {
   try {
@@ -72,7 +74,7 @@ async function getFeaturedDevelopers(setIsFeatureDeveloperLoading: (loading: boo
 
 export default function Home() {
   const { user, loading } = useAuth();
-  // console.log("User from page:", user);
+  const { setIsLoading } = useLoading();
   const [trendingProjects, setTrendingProjects] = useState([]);
   const [featuredDevelopers, setFeaturedDevelopers] = useState([]);
   const [isFeatureProjectsLoading, setIsFeatureProjectsLoading] = useState(true);
@@ -107,88 +109,110 @@ export default function Home() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    // Set loading to false when your data is ready
+    setIsLoading(false);
+  }, [setIsLoading]);
+
+  // Early return if loading
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900">
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <p className="text-xl font-medium text-gray-300">Loading your experience...</p>
+          {/* <p className="text-sm text-gray-500">Please wait while we prepare everything</p> */}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+      <LoadingOverlay />
       {/* <Navbar /> */}
 
+      {/* Conditionally render sections for unauthenticated users */}
+      {!user && (
+        <>
+          {/* Hero Section */}
+          <section className="relative py-20 md:py-28 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 z-0"></div>
+            <div className="absolute right-0 top-0 w-1/3 h-full bg-gradient-to-l from-primary/20 to-transparent z-0 opacity-70"></div>
 
-      {/* Hero Section */}
-      <section className={`relative py-20 md:py-28 overflow-hidden ${user ? 'hidden' : ''}`}>
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 z-0"></div>
-        <div className="absolute right-0 top-0 w-1/3 h-full bg-gradient-to-l from-primary/20 to-transparent z-0 opacity-70"></div>
+            {/* Decorative Elements */}
+            <div className="absolute left-10 top-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl z-0"></div>
+            <div className="absolute right-10 bottom-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl z-0"></div>
 
-        {/* Decorative Elements */}
-        <div className="absolute left-10 top-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl z-0"></div>
-        <div className="absolute right-10 bottom-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl z-0"></div>
+            <div className="container mx-auto px-4 relative z-10">
+              <div className="max-w-3xl mx-auto text-center">
+                <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
+                  Showcase Your Projects.{' '}
+                  <span className="bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">Get Hired!</span>
+                </h1>
+                <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+                  Join Ethiopia's premier platform for developers to showcase their work,
+                  connect with peers, and get discovered by potential employers.
+                </p>
 
-        <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
-              Showcase Your Projects.{' '}
-              <span className="bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">Get Hired!</span>
-            </h1>
-            <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
-              Join Ethiopia's premier platform for developers to showcase their work,
-              connect with peers, and get discovered by potential employers.
-            </p>
+                <div className="flex flex-col md:flex-row justify-center gap-4 mb-12">
+                  <Link href="/projects/new">
+                    <Button size="lg" className="bg-primary text-white hover:bg-primary-dark w-full md:w-auto">
+                      <Code className="mr-2 h-5 w-5" />
+                      Post Your Project
+                    </Button>
+                  </Link>
+                  <Link href="/projects">
+                    <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-gray-700 text-white w-full md:w-auto">
+                      <Search className="mr-2 h-5 w-5" />
+                      Explore Projects
+                    </Button>
+                  </Link>
+                </div>
 
-            <div className="flex flex-col md:flex-row justify-center gap-4 mb-12">
-              <Link href="/projects/new">
-                <Button size="lg" className="bg-primary text-white hover:bg-primary-dark w-full md:w-auto">
-                  <Code className="mr-2 h-5 w-5" />
-                  Post Your Project
-                </Button>
-              </Link>
-              <Link href="/projects">
-                <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-gray-700 text-white w-full md:w-auto">
-                  <Search className="mr-2 h-5 w-5" />
-                  Explore Projects
-                </Button>
-              </Link>
-            </div>
-
-            {/* Search Bar */}
-            <div className="relative max-w-2xl mx-auto">
-              <div className="flex items-center bg-gray-800 rounded-full shadow-md p-1 pl-6 border border-gray-700">
-                <Search className="h-5 w-5 text-gray-400 mr-2" />
-                <input
-                  type="text"
-                  placeholder="Search for projects or developers..."
-                  className="flex-1 py-3 outline-none text-gray-300 bg-transparent"
-                />
-                <Button className="rounded-full bg-primary hover:bg-primary-dark">
-                  Search
-                </Button>
+                {/* Search Bar */}
+                <div className="relative max-w-2xl mx-auto">
+                  <div className="flex items-center bg-gray-800 rounded-full shadow-md p-1 pl-6 border border-gray-700">
+                    <Search className="h-5 w-5 text-gray-400 mr-2" />
+                    <input
+                      type="text"
+                      placeholder="Search for projects or developers..."
+                      className="flex-1 py-3 outline-none text-gray-300 bg-transparent"
+                    />
+                    <Button className="rounded-full bg-primary hover:bg-primary-dark">
+                      Search
+                    </Button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
+          </section>
 
-      {/* Stats Section */}
-      <section className={`py-10 bg-gray-800 border-y border-gray-700 ${user ? 'hidden' : ''}`}>
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <p className="text-3xl md:text-4xl font-bold text-primary mb-2">200+</p>
-              <p className="text-gray-300">Projects Showcased</p>
+          {/* Stats Section */}
+          <section className="py-10 bg-gray-800 border-y border-gray-700">
+            <div className="container mx-auto px-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div>
+                  <p className="text-3xl md:text-4xl font-bold text-primary mb-2">200+</p>
+                  <p className="text-gray-300">Projects Showcased</p>
+                </div>
+                <div>
+                  <p className="text-3xl md:text-4xl font-bold text-primary mb-2">500+</p>
+                  <p className="text-gray-300">Active Developers</p>
+                </div>
+                <div>
+                  <p className="text-3xl md:text-4xl font-bold text-primary mb-2">1,000+</p>
+                  <p className="text-gray-300">Community Members</p>
+                </div>
+                <div>
+                  <p className="text-3xl md:text-4xl font-bold text-primary mb-2">50+</p>
+                  <p className="text-gray-300">Hiring Companies</p>
+                </div>
+              </div>
             </div>
-            <div>
-              <p className="text-3xl md:text-4xl font-bold text-primary mb-2">500+</p>
-              <p className="text-gray-300">Active Developers</p>
-            </div>
-            <div>
-              <p className="text-3xl md:text-4xl font-bold text-primary mb-2">1,000+</p>
-              <p className="text-gray-300">Community Members</p>
-            </div>
-            <div>
-              <p className="text-3xl md:text-4xl font-bold text-primary mb-2">50+</p>
-              <p className="text-gray-300">Hiring Companies</p>
-            </div>
-          </div>
-        </div>
-      </section>
+          </section>
+        </>
+      )}
 
       {/* Main Content */}
       <section className="py-16">
@@ -268,8 +292,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-
     </div>
   );
 }

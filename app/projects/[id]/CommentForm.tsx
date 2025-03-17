@@ -80,7 +80,7 @@ export default function CommentForm({ projectId, onCommentAdded }) {
                         <textarea
                             id="comment"
                             rows={3}
-                            className="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-gray-100 placeholder-gray-400 focus:border-primary focus:ring-primary"
+                            className="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white text-gray-100 placeholder-gray-400 focus:border-primary focus:ring-primary"
                             placeholder="Share your thoughts about this project..."
                             value={content}
                             onChange={(e) => setContent(e.target.value)}

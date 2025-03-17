@@ -24,7 +24,7 @@ export default function ProjectSidebar({ developer }) {
                 </CardHeader>
                 <CardContent className="pt-6">
                     <div className="flex flex-col items-center text-center mb-4">
-                        <div className="relative w-20 h-20 rounded-full overflow-hidden bg-gray-700 mb-3 ring-2 ring-primary/20">
+                        <div className="relative w-20 h-20 rounded-full overflow-hidden bg-gray-700 text-white mb-3 ring-2 ring-primary/20">
                             {developer.profile_picture ? (
                                 <Image
                                     src={developer.profile_picture || "/placeholder.svg"}
@@ -75,7 +75,7 @@ export default function ProjectSidebar({ developer }) {
                             {/* <span className="mx-2 text-gray-400">|</span> */}
                             <span className="text-sm text-gray-400">
                                 {developer?.status && developer.status !== 'none' && (
-                                    <div className={`px-4 py-2 rounded-full ${statusOptions.find(opt => opt.value === developer.status)?.color || 'bg-gray-700'} text-white text-sm font-medium`}>
+                                    <div className={`px-4 py-2 rounded-full ${statusOptions.find(opt => opt.value === developer.status)?.color || 'bg-gray-700 text-white'} text-white text-sm font-medium`}>
                                         {statusOptions.find(opt => opt.value === developer.status)?.label}
                                     </div>
                                 )}
@@ -83,7 +83,7 @@ export default function ProjectSidebar({ developer }) {
                         </div>
                         <Button
                             variant="outline"
-                            className="w-full text-gray-200 border-gray-700 hover:bg-gray-700 hover:text-white"
+                            className="w-full text-gray-200 border-gray-700 hover:bg-gray-700 text-white hover:text-white"
                         >
                             View Profile
                         </Button>
@@ -103,7 +103,7 @@ export default function ProjectSidebar({ developer }) {
                     <div className="space-y-4">
                         {/* This would be populated with actual data in a real implementation */}
                         <div className="flex items-start gap-3 group">
-                            <div className="w-12 h-12 rounded-md bg-gray-700 flex-shrink-0 overflow-hidden">
+                            <div className="w-12 h-12 rounded-md bg-gray-700 text-white flex-shrink-0 overflow-hidden">
                                 <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary">P</div>
                             </div>
                             <div>
@@ -117,7 +117,7 @@ export default function ProjectSidebar({ developer }) {
                         </div>
 
                         <div className="flex items-start gap-3 group">
-                            <div className="w-12 h-12 rounded-md bg-gray-700 flex-shrink-0 overflow-hidden">
+                            <div className="w-12 h-12 rounded-md bg-gray-700 text-white flex-shrink-0 overflow-hidden">
                                 <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary">P</div>
                             </div>
                             <div>

@@ -31,7 +31,7 @@ export default function ProjectActionBar({ project }) {
                         href={project.github_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors whitespace-nowrap"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 text-white hover:bg-gray-600 text-white rounded-lg transition-colors whitespace-nowrap"
                     >
                         <Github className="h-5 w-5" />
                         <span className="hidden sm:inline">GitHub</span>

@@ -84,7 +84,7 @@ export function DevelopersList({ developers }: DevelopersListProps) {
                             </div>
                         </div>
 
-                        <Separator className="bg-gray-700" />
+                        <Separator className="bg-gray-700 text-white" />
 
                         {/* Upvotes Filter */}
                         <div>
@@ -109,7 +109,7 @@ export function DevelopersList({ developers }: DevelopersListProps) {
                             </div>
                         </div>
 
-                        <Separator className="bg-gray-700" />
+                        <Separator className="bg-gray-700 text-white" />
 
                         {/* Tech Stack Filter */}
                         <div>

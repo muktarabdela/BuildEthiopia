@@ -39,7 +39,7 @@ export function Navbar() {
                 setProfile(profile);
 
                 // If user is a developer, check for unread contact requests
-                if (user?.role === 'developer') {
+                if (profile?.role === 'developer') {
                     const { count, error } = await supabase
                         .from('contact_requests')
                         .select('*', { count: 'exact', head: true })
@@ -75,7 +75,7 @@ export function Navbar() {
         setUnreadCount(0);
         window.location.href = '/';
     }
-    // console.log(profile)
+    console.log(profile)
     return (
         <header className="sticky top-0 z-50 bg-gradient-to-br from-gray-900 to-gray-800 border-b border-gray-700 shadow-sm">
             <div className="container mx-auto px-4">
@@ -94,7 +94,7 @@ export function Navbar() {
                             href="/"
                             className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/')
                                 ? 'text-primary bg-gray-800'
-                                : 'text-gray-300 hover:text-primary hover:bg-gray-700'
+                                : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                 }`}
                         >
                             <div className="flex items-center space-x-1">
@@ -106,7 +106,7 @@ export function Navbar() {
                             href="/projects"
                             className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/projects')
                                 ? 'text-primary bg-gray-800'
-                                : 'text-gray-300 hover:text-primary hover:bg-gray-700'
+                                : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                 }`}
                         >
                             <div className="flex items-center space-x-1">
@@ -114,12 +114,12 @@ export function Navbar() {
                                 <span>Explore</span>
                             </div>
                         </Link>
-                        {user?.role === 'developer' && (
+                        {profile?.role === 'developer' && (
                             <Link
                                 href="/projects/new"
                                 className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/projects/new')
                                     ? 'text-primary bg-gray-800'
-                                    : 'text-gray-300 hover:text-primary hover:bg-gray-700'
+                                    : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                     }`}
                             >
                                 <div className="flex items-center space-x-1">
@@ -132,7 +132,7 @@ export function Navbar() {
                             href="/developers"
                             className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/developers')
                                 ? 'text-primary bg-gray-800'
-                                : 'text-gray-300 hover:text-primary hover:bg-gray-700'
+                                : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                 }`}
                         >
                             <div className="flex items-center space-x-1">
@@ -149,7 +149,7 @@ export function Navbar() {
 
                                 <Link
                                     href="/profile/notifications"
-                                    className="relative p-2 text-gray-300 hover:text-primary rounded-full hover:bg-gray-700"
+                                    className="relative p-2 text-gray-300 hover:text-primary rounded-full hover:bg-gray-700 text-white"
                                 >
                                     <Bell className="h-5 w-5" />
                                     {unreadCount > 0 && (
@@ -160,8 +160,8 @@ export function Navbar() {
                                 </Link>
 
                                 <Link
-                                    href={`${user?.username}`}
-                                    className="hidden md:flex items-center space-x-2 p-2 text-gray-300 hover:text-primary rounded-md hover:bg-gray-700"
+                                    href={`${profile?.username}`}
+                                    className="hidden md:flex items-center space-x-2 p-2 text-gray-300 hover:text-primary rounded-md hover:bg-gray-700 text-white"
                                 >
                                     <UserRound className="h-5 w-5" />
                                     <span className="text-sm font-medium">Profile</span>
@@ -170,7 +170,7 @@ export function Navbar() {
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                                        className="border-gray-600 text-gray-300 hover:bg-gray-700 text-white"
                                     >
                                         <LogOut className="h-4 w-4 mr-1" />
                                         Sign Out
@@ -183,7 +183,7 @@ export function Navbar() {
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="text-gray-300 hover:text-primary hover:bg-gray-700"
+                                        className="text-gray-300 hover:text-primary hover:bg-gray-700 text-white"
                                     >
                                         Sign In
                                     </Button>
@@ -202,7 +202,7 @@ export function Navbar() {
 
                         {/* Mobile Menu Button */}
                         <button
-                            className="md:hidden p-2 rounded-md text-gray-300 hover:text-primary hover:bg-gray-700"
+                            className="md:hidden p-2 rounded-md text-gray-300 hover:text-primary hover:bg-gray-700 text-white"
                             onClick={toggleMobileMenu}
                         >
                             {mobileMenuOpen ? (
@@ -223,7 +223,7 @@ export function Navbar() {
                             href="/"
                             className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/')
                                 ? 'text-primary bg-gray-800'
-                                : 'text-gray-300 hover:text-primary hover:bg-gray-700'
+                                : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                 }`}
                             onClick={closeMobileMenu}
                         >
@@ -236,7 +236,7 @@ export function Navbar() {
                             href="/projects"
                             className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/projects')
                                 ? 'text-primary bg-gray-800'
-                                : 'text-gray-300 hover:text-primary hover:bg-gray-700'
+                                : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                 }`}
                             onClick={closeMobileMenu}
                         >
@@ -250,7 +250,7 @@ export function Navbar() {
                                 href="/projects/new"
                                 className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/projects/new')
                                     ? 'text-primary bg-gray-800'
-                                    : 'text-gray-300 hover:text-primary hover:bg-gray-700'
+                                    : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                     }`}
                                 onClick={closeMobileMenu}
                             >
@@ -264,7 +264,7 @@ export function Navbar() {
                             href="/developers"
                             className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/developers')
                                 ? 'text-primary bg-gray-800'
-                                : 'text-gray-300 hover:text-primary hover:bg-gray-700'
+                                : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                 }`}
                             onClick={closeMobileMenu}
                         >
@@ -280,7 +280,7 @@ export function Navbar() {
                                     href={`${profile?.username}`}
                                     className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/profile')
                                         ? 'text-primary bg-gray-800'
-                                        : 'text-gray-300 hover:text-primary hover:bg-gray-700'
+                                        : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                         }`}
                                     onClick={closeMobileMenu}
                                 >
@@ -292,7 +292,7 @@ export function Navbar() {
                                 <div className="px-3 py-2">
                                     <Button onClick={signOut}
                                         variant="outline"
-                                        className="w-full justify-start border-gray-600 text-gray-300 hover:bg-gray-700"
+                                        className="w-full justify-start border-gray-600 text-gray-300 hover:bg-gray-700 text-white"
                                     >
                                         <LogOut className="h-5 w-5 mr-2" />
                                         Sign Out
@@ -304,7 +304,7 @@ export function Navbar() {
                                 <Link href="/login" onClick={closeMobileMenu}>
                                     <Button
                                         variant="outline"
-                                        className="w-full justify-center border-gray-600 text-gray-300 hover:bg-gray-700"
+                                        className="w-full justify-center border-gray-600 text-gray-300 hover:bg-gray-700 text-white"
                                     >
                                         Sign In
                                     </Button>

@@ -10,7 +10,7 @@ export function SkeletonFeaturedDevelopers() {
             {/* <CardHeader className="bg-gradient-to-r from-primary/20 to-primary/10 border-b border-gray-700">
                 <div className="flex items-center">
                     <Award className="h-5 w-5 text-primary mr-2" />
-                    <Skeleton className="h-6 w-32 bg-gray-700" />
+                    <Skeleton className="h-6 w-32 bg-gray-700 text-white" />
                 </div>
             </CardHeader> */}
             <CardContent className="p-0">
@@ -19,10 +19,10 @@ export function SkeletonFeaturedDevelopers() {
                         key={index}
                         className={`flex items-center gap-4 p-4 ${index !== 2 ? 'border-b border-gray-700' : ''}`}
                     >
-                        <Skeleton className="w-12 h-12 rounded-full bg-gray-700" />
+                        <Skeleton className="w-12 h-12 rounded-full bg-gray-700 text-white" />
                         <div className="flex-1 space-y-2">
-                            <Skeleton className="h-4 w-3/4 bg-gray-700" />
-                            <Skeleton className="h-3 w-1/2 bg-gray-700" />
+                            <Skeleton className="h-4 w-3/4 bg-gray-700 text-white" />
+                            <Skeleton className="h-3 w-1/2 bg-gray-700 text-white" />
                         </div>
                     </div>
                 ))}
@@ -51,9 +51,9 @@ export default function FeaturedDevelopers({ developers, isLoading }) {
                                     <Link
                                         key={developer.id}
                                         href={`/${developer.username}`}
-                                        className={`flex items-center gap-4 p-4 hover:bg-gray-700 transition-colors ${index !== developers.length - 1 ? 'border-b border-gray-700' : ''}`}
+                                        className={`flex items-center gap-4 p-4 hover:bg-gray-700 text-white transition-colors ${index !== developers.length - 1 ? 'border-b border-gray-700' : ''}`}
                                     >
-                                        <div className="relative w-12 h-12 rounded-full overflow-hidden bg-gray-700 flex-shrink-0">
+                                        <div className="relative w-12 h-12 rounded-full overflow-hidden bg-gray-700 text-white flex-shrink-0">
                                             {developer.avatar_url ? (
                                                 <Image
                                                     src={developer.avatar_url}

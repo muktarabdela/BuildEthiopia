@@ -169,7 +169,7 @@ export default function LoginPage() {
 
                     <Button
                         type="button"
-                        className="w-full bg-gray-800 hover:bg-gray-700 text-white font-medium transition-all"
+                        className="w-full bg-gray-800 hover:bg-gray-700 text-white text-white font-medium transition-all"
                         onClick={handleGitHubLogin}
                         disabled={loading}
                     >

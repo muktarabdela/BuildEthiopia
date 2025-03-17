@@ -80,6 +80,9 @@ const transformProfileData = (profile) => {
         bio: profile.bio || "No bio available",
         profilePicture: profile.profile_picture,
         status: profile.status || 'none',
+        skill: profile.skill || [],
+        location: profile.location || "Location not specified",
+        website_url: profile.website_url || "https://example.com",
         socialLinks: {
             github: profile.github_url,
             linkedin: profile.linkedin_url,

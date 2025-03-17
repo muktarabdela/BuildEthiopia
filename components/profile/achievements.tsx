@@ -24,7 +24,7 @@ export default function AchievementsSection({ user }) {
             <CardContent>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {user.badges.map(badge => (
-                        <div key={badge.id} className="flex flex-col items-center p-4 bg-gray-700 rounded-lg">
+                        <div key={badge.id} className="flex flex-col items-center p-4 bg-gray-700 text-white rounded-lg">
                             <Trophy className="h-8 w-8 text-yellow-400" />
                             <span className="mt-2 text-sm text-center text-white">{badge.name}</span>
                         </div>

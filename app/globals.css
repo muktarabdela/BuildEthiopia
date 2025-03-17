@@ -98,7 +98,7 @@ body {
   }
 
   .tag {
-    @apply px-3 py-1 text-sm rounded-full bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200;
+    @apply px-3 py-1 text-sm rounded-full bg-gray-100 dark:bg-gray-700 text-white text-gray-700 dark:text-gray-200;
   }
 
   .input-field {

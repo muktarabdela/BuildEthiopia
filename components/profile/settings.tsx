@@ -30,13 +30,18 @@ const profileSchema = z.object({
         .refine(val => !val || val.startsWith('https://'), "Must be a valid URL starting with https://")
         .or(z.literal("")),
     telegram: z.string()
-        .refine(val => !val || val.startsWith('https://'), "Must be a valid URL starting with https://")
+        .refine(val => !val || val.startsWith('@'), "Must start with @")
         .or(z.literal("")),
     profilePicture: z.string()
         .refine(val => !val || val.startsWith('https://'), "Must be a valid URL starting with https://")
         .optional(),
-    techStack: z.array(z.string().min(1)).optional(),
-    status: z.enum(["none", "open_to_work", "hiring"])
+    skill: z.array(z.string().min(1)).optional(),
+    status: z.enum(["none", "open_to_work", "hiring"]),
+    website_url: z.string()
+        .refine(val => !val || val.startsWith('https://'), "Must be a valid URL starting with https://")
+        .or(z.literal("")),
+    location: z.string().max(100, "Location must be less than 100 characters").optional(),
+    badges: z.array(z.string().min(1)).optional()
 })
 
 type FormData = z.infer<typeof profileSchema>
@@ -67,23 +72,39 @@ export default function SettingsModal({ isOpen, onClose, user }: SettingsModalPr
             twitter: user.socialLinks.twitter || "",
             telegram: user.socialLinks.telegram || "",
             profilePicture: user.profilePicture || "",
-            status: user.status || "none"
+            status: user.status || "none",
+            website_url: user.website_url || "",
+            location: user.location || "",
+            skill: user.skill || [], // Assuming user.skill is an array of strings
+            badges: user.badges?.map(badge => badge.name) || []
         }
     })
-
     const [isLoading, setIsLoading] = useState(false)
-    const [techStackInput, setTechStackInput] = useState("")
-    const techStack = watch("techStack") || []
+    const [skillInput, setSkillInput] = useState("")
+    const [badgeInput, setBadgeInput] = useState("")
+    const skill = watch("skill") || []
+    const badges = watch("badges") || []
 
     const handleAddTech = () => {
-        if (techStackInput.trim() && !techStack.includes(techStackInput)) {
-            setValue("techStack", [...techStack, techStackInput], { shouldValidate: true })
-            setTechStackInput("")
+        if (skillInput.trim() && !skill.includes(skillInput)) {
+            setValue("skill", [...skill, skillInput], { shouldValidate: true })
+            setSkillInput("")
         }
     }
 
     const handleRemoveTech = (tech: string) => {
-        setValue("techStack", techStack.filter(t => t !== tech), { shouldValidate: true })
+        setValue("skill", skill.filter(t => t !== tech), { shouldValidate: true })
+    }
+
+    const handleAddBadge = () => {
+        if (badgeInput.trim() && !badges.includes(badgeInput)) {
+            setValue("badges", [...badges, badgeInput], { shouldValidate: true })
+            setBadgeInput("")
+        }
+    }
+
+    const handleRemoveBadge = (badge: string) => {
+        setValue("badges", badges.filter(b => b !== badge), { shouldValidate: true })
     }
 
     const onSubmit = async (data: FormData) => {
@@ -102,7 +123,10 @@ export default function SettingsModal({ isOpen, onClose, user }: SettingsModalPr
                     telegram_url: data.twitter,
                     profile_picture: data.profilePicture,
                     status: data.status,
-                    tech_stack: data.techStack
+                    skill: data.skill,
+                    website_url: data.website_url,
+                    location: data.location,
+                    badges: data.badges
                 }),
                 updated_at: new Date().toISOString()
             }
@@ -152,7 +176,7 @@ export default function SettingsModal({ isOpen, onClose, user }: SettingsModalPr
                             <Input
                                 id="displayName"
                                 {...register("displayName")}
-                                className="bg-gray-700 border-gray-600 text-white"
+                                className="bg-gray-700 text-white border-gray-600 text-white"
                                 placeholder="Your name"
                                 aria-invalid={!!errors.displayName}
                             />
@@ -167,7 +191,7 @@ export default function SettingsModal({ isOpen, onClose, user }: SettingsModalPr
                             <Input
                                 id="username"
                                 {...register("username")}
-                                className="bg-gray-700 border-gray-600 text-white"
+                                className="bg-gray-700 text-white border-gray-600 text-white"
                                 placeholder="Your username"
                                 aria-invalid={!!errors.username}
                             />
@@ -182,7 +206,7 @@ export default function SettingsModal({ isOpen, onClose, user }: SettingsModalPr
                             <Textarea
                                 id="bio"
                                 {...register("bio")}
-                                className="bg-gray-700 border-gray-600 text-white min-h-[100px]"
+                                className="bg-gray-700 text-white border-gray-600 text-white min-h-[100px]"
                                 placeholder="Tell us about yourself"
                                 aria-invalid={!!errors.bio}
                             />
@@ -193,10 +217,10 @@ export default function SettingsModal({ isOpen, onClose, user }: SettingsModalPr
 
                         {/* Tech Stack */}
                         <div className="space-y-2">
-                            <Label htmlFor="techStack" className="text-white">Tech Stack</Label>
+                            <Label htmlFor="skill" className="text-white">Skill</Label>
                             <div className="flex gap-2 flex-wrap">
-                                {techStack.map(tech => (
-                                    <Badge key={tech} variant="secondary" className="bg-gray-700 hover:bg-gray-600">
+                                {skill.map(tech => (
+                                    <Badge key={tech} variant="secondary" className="bg-gray-700 text-white hover:bg-gray-600 text-white">
                                         {tech}
                                         <button
                                             type="button"
@@ -211,9 +235,9 @@ export default function SettingsModal({ isOpen, onClose, user }: SettingsModalPr
                             </div>
                             <div className="flex gap-2">
                                 <Input
-                                    value={techStackInput}
-                                    onChange={(e) => setTechStackInput(e.target.value)}
-                                    className="bg-gray-700 border-gray-600 text-white"
+                                    value={skillInput}
+                                    onChange={(e) => setskillInput(e.target.value)}
+                                    className="bg-gray-700 text-white border-gray-600 text-white"
                                     placeholder="Add a technology"
                                     onKeyDown={(e) => e.key === 'Enter' && handleAddTech()}
                                 />
@@ -221,7 +245,7 @@ export default function SettingsModal({ isOpen, onClose, user }: SettingsModalPr
                                     type="button"
                                     onClick={handleAddTech}
                                     variant="outline"
-                                    className="bg-gray-700 hover:bg-gray-600"
+                                    className="bg-gray-700 text-white hover:bg-gray-600"
                                 >
                                     Add
                                 </Button>
@@ -235,7 +259,7 @@ export default function SettingsModal({ isOpen, onClose, user }: SettingsModalPr
                                 <Input
                                     id="github"
                                     {...register("github")}
-                                    className="bg-gray-700 border-gray-600 text-white"
+                                    className="bg-gray-700 text-white border-gray-600 text-white"
                                     placeholder="https://github.com/username"
                                     aria-invalid={!!errors.github}
                                 />
@@ -249,7 +273,7 @@ export default function SettingsModal({ isOpen, onClose, user }: SettingsModalPr
                                 <Input
                                     id="linkedin"
                                     {...register("linkedin")}
-                                    className="bg-gray-700 border-gray-600 text-white"
+                                    className="bg-gray-700 text-white border-gray-600 text-white"
                                     placeholder="https://linkedin.com/in/username"
                                     aria-invalid={!!errors.linkedin}
                                 />
@@ -263,7 +287,7 @@ export default function SettingsModal({ isOpen, onClose, user }: SettingsModalPr
                                 <Input
                                     id="twitter"
                                     {...register("twitter")}
-                                    className="bg-gray-700 border-gray-600 text-white"
+                                    className="bg-gray-700 text-white border-gray-600 text-white"
                                     placeholder="https://twitter.com/username"
                                     aria-invalid={!!errors.twitter}
                                 />
@@ -277,8 +301,8 @@ export default function SettingsModal({ isOpen, onClose, user }: SettingsModalPr
                                 <Input
                                     id="telegram"
                                     {...register("telegram")}
-                                    className="bg-gray-700 border-gray-600 text-white"
-                                    placeholder="https://t.me/username"
+                                    className="bg-gray-700 text-white border-gray-600 text-white"
+                                    placeholder="@username"
                                     aria-invalid={!!errors.telegram}
                                 />
                                 {errors.telegram && (
@@ -293,7 +317,7 @@ export default function SettingsModal({ isOpen, onClose, user }: SettingsModalPr
                             <Input
                                 id="profilePicture"
                                 {...register("profilePicture")}
-                                className="bg-gray-700 border-gray-600 text-white"
+                                className="bg-gray-700 text-white border-gray-600 text-white"
                                 placeholder="https://example.com/avatar.png"
                                 aria-invalid={!!errors.profilePicture}
                             />
@@ -310,18 +334,85 @@ export default function SettingsModal({ isOpen, onClose, user }: SettingsModalPr
                                 control={control}
                                 render={({ field }) => (
                                     <Select value={field.value} onValueChange={field.onChange}>
-                                        <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                                        <SelectTrigger className="bg-gray-700 text-white border-gray-600 text-white">
                                             <SelectValue placeholder="Select status" />
                                         </SelectTrigger>
                                         <SelectContent className="bg-gray-800 border-gray-700">
-                                            <SelectItem value="none" className="hover:bg-gray-700">None</SelectItem>
-                                            <SelectItem value="Open to work" className="hover:bg-gray-700">Open to Work</SelectItem>
-                                            <SelectItem value="Hiring" className="hover:bg-gray-700">Hiring</SelectItem>
+                                            <SelectItem value="none" className="hover:bg-gray-700 text-white">None</SelectItem>
+                                            <SelectItem value="Open to work" className="hover:bg-gray-700 text-white">Open to Work</SelectItem>
+                                            <SelectItem value="Hiring" className="hover:bg-gray-700 text-white">Hiring</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 )}
                             />
                         </div>
+
+                        {/* Website */}
+                        <div className="space-y-2">
+                            <Label htmlFor="website_url" className="text-white">Website</Label>
+                            <Input
+                                id="website_url"
+                                {...register("website_url")}
+                                className="bg-gray-700 text-white border-gray-600 text-white"
+                                placeholder="https://example.com"
+                                aria-invalid={!!errors.website_url}
+                            />
+                            {errors.website_url && (
+                                <p className="text-sm text-red-400">{errors.website_url.message}</p>
+                            )}
+                        </div>
+
+                        {/* Location */}
+                        <div className="space-y-2">
+                            <Label htmlFor="location" className="text-white">Location</Label>
+                            <Input
+                                id="location"
+                                {...register("location")}
+                                className="bg-gray-700 text-white border-gray-600 text-white"
+                                placeholder="City, Country"
+                                aria-invalid={!!errors.location}
+                            />
+                            {errors.location && (
+                                <p className="text-sm text-red-400">{errors.location.message}</p>
+                            )}
+                        </div>
+
+                        {/* Badges */}
+                        {/* <div className="space-y-2">
+                            <Label htmlFor="badges" className="text-white">Badges</Label>
+                            <div className="flex gap-2 flex-wrap">
+                                {badges.map((badge, index) => (
+                                    <Badge key={index} variant="secondary" className="bg-gray-700 text-white hover:bg-gray-600">
+                                        {badge}
+                                        <button
+                                            type="button"
+                                            onClick={() => handleRemoveBadge(badge)}
+                                            className="ml-2 hover:text-red-400"
+                                            aria-label={`Remove ${badge}`}
+                                        >
+                                            ×
+                                        </button>
+                                    </Badge>
+                                ))}
+                            </div>
+                            <div className="flex gap-2">
+                                <Input
+                                    value={badgeInput}
+                                    onChange={(e) => setBadgeInput(e.target.value)}
+                                    className="bg-gray-700 text-white border-gray-600 text-white"
+                                    placeholder="Add a badge"
+                                    onKeyDown={(e) => e.key === 'Enter' && handleAddBadge()}
+                                />
+                                <Button
+                                    type="button"
+                                    onClick={handleAddBadge}
+                                    variant="outline"
+                                    className="bg-gray-700 text-white hover:bg-gray-600"
+                                >
+                                    Add
+                                </Button>
+                            </div>
+                        </div> */}
 
                         {/* Submit Button */}
                         <Button

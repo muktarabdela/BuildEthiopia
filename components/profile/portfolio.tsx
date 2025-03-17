@@ -15,7 +15,7 @@ export default function PortfolioSection({ user }) {
             <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {user.projects.map(project => (
-                        <Link href={`/projects/${project.id}`} key={project.id} className="bg-gray-700 rounded-lg p-4 hover:bg-gray-600 transition-colors">
+                        <Link href={`/projects/${project.id}`} key={project.id} className="bg-gray-700 text-white rounded-lg p-4 hover:bg-gray-600 transition-colors">
                             <div className="relative h-40 w-full mb-4">
                                 <Image
                                     src={project.thumbnail}

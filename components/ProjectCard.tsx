@@ -51,7 +51,7 @@ export function ProjectCard({ project, index }) {
                                 {project.tech_stack.map((tech) => (
                                     <span
                                         key={tech}
-                                        className="px-2 py-1 bg-gray-700/50 text-gray-300 rounded-full text-xs font-medium hover:bg-gray-700 transition-colors duration-200"
+                                        className="px-2 py-1 bg-gray-700 text-white/50 text-gray-300 rounded-full text-xs font-medium hover:bg-gray-700 text-white transition-colors duration-200"
                                     >
                                         {tech}
                                     </span>
@@ -65,7 +65,7 @@ export function ProjectCard({ project, index }) {
                                 {project.tags.map((tag) => (
                                     <span
                                         key={tag}
-                                        className="px-2 py-1 bg-gray-700/50 text-gray-300 rounded-full text-xs font-medium hover:bg-gray-700 transition-colors duration-200"
+                                        className="px-2 py-1 bg-gray-700 text-white/50 text-gray-300 rounded-full text-xs font-medium hover:bg-gray-700 text-white transition-colors duration-200"
                                     >
                                         {tag}
                                     </span>
@@ -78,7 +78,7 @@ export function ProjectCard({ project, index }) {
                             href={`/${project.developer.username}`}
                             className="flex items-center gap-2 mt-4 hover:underline"
                         >
-                            <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-700 group-hover:ring-2 group-hover:ring-primary transition-all duration-300">
+                            <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-700 text-white group-hover:ring-2 group-hover:ring-primary transition-all duration-300">
                                 {project.developer?.profile_picture ? (
                                     <Image
                                         src={project.developer.profile_picture}
@@ -103,12 +103,12 @@ export function ProjectCard({ project, index }) {
                 <div className="flex flex-row md:flex-col items-start md:items-end gap-4">
                     {/* Stats */}
                     <div className="flex items-center gap-4 text-gray-400">
-                        <div className="flex items-center gap-2 bg-gray-700/50 px-3 py-1.5 rounded-full hover:bg-gray-700 transition-colors duration-200">
+                        <div className="flex items-center gap-2 bg-gray-700 text-white/50 px-3 py-1.5 rounded-full hover:bg-gray-700 text-white transition-colors duration-200">
                             <MessageCircle className="w-4 h-4" />
                             <span className="text-sm">{project.comments_count}</span>
                         </div>
 
-                        <div className="flex items-center gap-2 bg-gray-700/50 px-3 py-1.5 rounded-full hover:bg-gray-700 transition-colors duration-200">
+                        <div className="flex items-center gap-2 bg-gray-700 text-white/50 px-3 py-1.5 rounded-full hover:bg-gray-700 text-white transition-colors duration-200">
                             <UpvoteButton
                                 projectId={project?.id}
                                 initialUpvotes={project.upvotes_count}
@@ -129,25 +129,25 @@ export function SkeletonProjectCard() {
                 {/* Left section */}
                 <div className="flex items-start gap-4 flex-1">
                     {/* Project Icon */}
-                    <Skeleton className="w-10 h-10 rounded-lg bg-gray-700" />
+                    <Skeleton className="w-10 h-10 rounded-lg bg-gray-700 text-white" />
 
                     {/* Project Details */}
                     <div className="flex-1 space-y-3">
-                        <Skeleton className="h-6 w-3/4 bg-gray-700" />
-                        <Skeleton className="h-4 w-1/4 bg-gray-700" />
-                        <Skeleton className="h-4 w-full bg-gray-700" />
-                        <Skeleton className="h-4 w-2/3 bg-gray-700" />
+                        <Skeleton className="h-6 w-3/4 bg-gray-700 text-white" />
+                        <Skeleton className="h-4 w-1/4 bg-gray-700 text-white" />
+                        <Skeleton className="h-4 w-full bg-gray-700 text-white" />
+                        <Skeleton className="h-4 w-2/3 bg-gray-700 text-white" />
 
                         {/* Tech stack */}
                         <div className="flex gap-2">
-                            <Skeleton className="h-6 w-16 bg-gray-700 rounded-full" />
-                            <Skeleton className="h-6 w-16 bg-gray-700 rounded-full" />
+                            <Skeleton className="h-6 w-16 bg-gray-700 text-white rounded-full" />
+                            <Skeleton className="h-6 w-16 bg-gray-700 text-white rounded-full" />
                         </div>
 
                         {/* Developer Info */}
                         <div className="flex items-center gap-2 mt-4">
-                            <Skeleton className="w-8 h-8 rounded-full bg-gray-700" />
-                            <Skeleton className="h-4 w-24 bg-gray-700" />
+                            <Skeleton className="w-8 h-8 rounded-full bg-gray-700 text-white" />
+                            <Skeleton className="h-4 w-24 bg-gray-700 text-white" />
                         </div>
                     </div>
                 </div>
@@ -155,8 +155,8 @@ export function SkeletonProjectCard() {
                 {/* Right section */}
                 <div className="flex flex-row md:flex-col items-start md:items-end gap-4">
                     <div className="flex items-center gap-4">
-                        <Skeleton className="h-8 w-8 bg-gray-700 rounded-full" />
-                        <Skeleton className="h-8 w-8 bg-gray-700 rounded-full" />
+                        <Skeleton className="h-8 w-8 bg-gray-700 text-white rounded-full" />
+                        <Skeleton className="h-8 w-8 bg-gray-700 text-white rounded-full" />
                     </div>
                 </div>
             </div>

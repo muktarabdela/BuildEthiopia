@@ -28,14 +28,11 @@ type UpdateProfileRequest = {
 
 export async function GET(
   req: Request,
-  { params }: { params: { id: string | string[] } }
+  { params }: { params: { [key: string]: string | string[] } }
 ) {
   try {
-    // Await params to ensure they're resolved
-    const resolvedParams = await params;
-    const id = Array.isArray(resolvedParams.id)
-      ? resolvedParams.id[0]
-      : resolvedParams.id;
+    // Convert id to string if it's an array
+    const id = Array.isArray(params.id) ? params.id[0] : params.id;
 
     // Fetch profile
     const { data: profile, error: profileError } = await supabase
@@ -81,14 +78,11 @@ export async function GET(
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string | string[] } }
+  { params }: { params: { [key: string]: string | string[] } }
 ) {
   try {
-    // Await params to ensure they're resolved
-    const resolvedParams = await params;
-    const id = Array.isArray(resolvedParams.id)
-      ? resolvedParams.id[0]
-      : resolvedParams.id;
+    // Convert id to string if it's an array
+    const id = Array.isArray(params.id) ? params.id[0] : params.id;
     const session = await requireAuth(req);
 
     // Verify if the requesting user is the profile owner

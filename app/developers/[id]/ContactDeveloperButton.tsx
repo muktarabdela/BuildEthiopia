@@ -1,35 +1,51 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, ChangeEvent, FormEvent } from 'react';
 import { Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-export default function ContactDeveloperButton({ developer }) {
-    const [showForm, setShowForm] = useState(false);
-    const [formData, setFormData] = useState({
+type Developer = {
+    id: string;
+    name: string;
+    contact_visible: boolean;
+};
+
+type FormData = {
+    name: string;
+    email: string;
+    message: string;
+    company: string;
+};
+
+type Props = {
+    developer: Developer;
+};
+
+export default function ContactDeveloperButton({ developer }: Props) {
+    const [showForm, setShowForm] = useState<boolean>(false);
+    const [formData, setFormData] = useState<FormData>({
         name: '',
         email: '',
         message: '',
         company: ''
     });
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState(null);
-    const [success, setSuccess] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState<boolean>(false);
 
-    const handleChange = (e) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         try {
             setIsSubmitting(true);
             setError(null);
 
-            // Send contact request to API
             const response = await fetch('/api/contact', {
                 method: 'POST',
                 headers: {
@@ -55,15 +71,17 @@ export default function ContactDeveloperButton({ developer }) {
                 company: ''
             });
 
-            // Close form after 3 seconds
             setTimeout(() => {
                 setShowForm(false);
                 setSuccess(false);
             }, 3000);
 
-        } catch (err) {
-            console.error('Error sending contact request:', err);
-            setError(err.message || 'Failed to send message. Please try again.');
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Failed to send message. Please try again.');
+            }
         } finally {
             setIsSubmitting(false);
         }

@@ -1,7 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { Button } from '@/components/ui/Button';
 import {
   Github,
   Globe,
@@ -21,9 +20,42 @@ import ContactDeveloperButton from './ContactDeveloperButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/lib/supabase';
 
-async function getDeveloper(id) {
+type Skill = {
+  id: string;
+  skill: string;
+};
 
-  const { data: developer } = await supabase
+type Project = {
+  id: string;
+  title: string;
+  description: string;
+  images: string[];
+  upvotes_count: number;
+  comments_count: number;
+  created_at: string;
+  github_url?: string;
+  live_url?: string;
+};
+
+type Developer = {
+  id: string;
+  name: string;
+  bio?: string;
+  avatar_url?: string;
+  github_url?: string;
+  linkedin_url?: string;
+  created_at: string;
+  contact_visible: boolean;
+  projects: Project[];
+  skills: Skill[];
+};
+
+type PageParams = {
+  id: string;
+};
+
+async function getDeveloper(id: string): Promise<Developer> {
+  const { data: developer, error } = await supabase
     .from('profiles')
     .select(`
       *,
@@ -40,23 +72,23 @@ async function getDeveloper(id) {
     .eq('role', 'developer')
     .single();
 
-  if (!developer) {
+  if (error || !developer) {
     notFound();
   }
 
-  return developer;
+  return developer as Developer;
 }
 
-export default async function DeveloperPage({ params }) {
+export default async function DeveloperPage({ params }: { params: PageParams }) {
   const developer = await getDeveloper(params.id);
   const { projects, skills } = developer;
 
   // Calculate total upvotes and comments
-  const totalUpvotes = projects.reduce((sum, project) => sum + project.upvotes_count, 0);
-  const totalComments = projects.reduce((sum, project) => sum + project.comments_count, 0);
+  const totalUpvotes = projects.reduce((sum, project) => sum + (project.upvotes_count || 0), 0);
+  const totalComments = projects.reduce((sum, project) => sum + (project.comments_count || 0), 0);
 
   // Sort projects by upvotes
-  const sortedProjects = [...projects].sort((a, b) => b.upvotes_count - a.upvotes_count);
+  const sortedProjects = [...projects].sort((a, b) => (b.upvotes_count || 0) - (a.upvotes_count || 0));
   const topProject = sortedProjects.length > 0 ? sortedProjects[0] : null;
 
   return (

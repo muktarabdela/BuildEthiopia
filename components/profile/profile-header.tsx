@@ -3,6 +3,8 @@ import Link from "next/link"
 import { Github, Linkedin, Twitter } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { useState } from "react"
+import SettingsModal from "./settings"
 
 
 const statusOptions = [
@@ -13,6 +15,8 @@ const statusOptions = [
 
 
 export default function ProfileHeader({ user }) {
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+
     console.log("user data from profile_header", user)
     console.log("User status:", user?.status);
     console.log("Status options:", statusOptions);
@@ -55,6 +59,17 @@ export default function ProfileHeader({ user }) {
                         </div>
                     )}
                 </div>
+                <Button
+                    onClick={() => setIsSettingsOpen(true)}
+                    className="bg-indigo-600 hover:bg-indigo-700"
+                >
+                    Edit Profile
+                </Button>
+                <SettingsModal
+                    isOpen={isSettingsOpen}
+                    onClose={() => setIsSettingsOpen(false)}
+                    user={user}
+                />
             </CardContent>
         </Card>
     )

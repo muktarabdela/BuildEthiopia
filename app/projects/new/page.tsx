@@ -16,6 +16,7 @@ import { supabase } from "@/lib/supabase"
 import { useAuth } from "@/components/AuthProvider"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 
 export default function NewProjectPage() {
     const { user } = useAuth()
@@ -51,6 +52,8 @@ export default function NewProjectPage() {
 
     // Add a new state for managing tech stack input
     const [techInput, setTechInput] = useState("")
+
+    const supabase = createClientComponentClient()
 
     useEffect(() => {
         async function checkAccess() {
@@ -190,40 +193,66 @@ export default function NewProjectPage() {
         setFormData((prev) => ({ ...prev, [name]: checked }))
     }
 
+    const handleImageUpload = async (files: File[]) => {
+        try {
+            const uploadedUrls: string[] = []
+
+            for (const file of files) {
+                const fileExt = file.name.split('.').pop()
+                const fileName = `${Math.random()}.${fileExt}`
+                const filePath = `${user?.id}/${fileName}`
+
+                const { data, error } = await supabase.storage
+                    .from('project')
+                    .upload(filePath, file)
+
+                if (error) throw error
+
+                const { data: urlData } = supabase.storage
+                    .from('project')
+                    .getPublicUrl(data.path)
+
+                uploadedUrls.push(urlData.publicUrl)
+            }
+
+            return uploadedUrls
+        } catch (error) {
+            console.error('Error uploading images:', error)
+            throw error
+        }
+    }
+
     const handleSubmit = async () => {
         if (!validateStep()) return
 
         setSubmitting(true)
         setError("")
 
-        // In a real implementation, you would upload images to storage
-        // and get back URLs to store in the database
-        const mockImageUrls =
-            imageFiles.length > 0
-                ? imageFiles.map((_, i) => `/placeholder.svg?height=300&width=400&text=Image${i + 1}`)
-                : ["https://picsum.photos/200/300?grayscale", "https://picsum.photos/200/300"]
-
-        const data = {
-            title: formData.title,
-            description: formData.description,
-            images: mockImageUrls,
-            logo_url: formData.logo_url || null,
-            developer_id: uuid,
-            github_url: formData.github_url || null,
-            live_url: formData.live_url || null,
-            category: formData.category,
-            post_content: formData.post_content,
-            youtube_video_url: formData.youtube_video_url || null,
-            tech_stack: formData.tech_stack,
-            is_open_source: formData.is_open_source,
-        }
-
         try {
+            // Upload images
+            const imageUrls = await handleImageUpload(imageFiles)
+            console.log("Uploaded image URLs:", imageUrls)
+            const data = {
+                title: formData.title,
+                description: formData.description,
+                images: imageUrls,
+                logo_url: formData.logo_url || null,
+                developer_id: uuid,
+                github_url: formData.github_url || null,
+                live_url: formData.live_url || null,
+                category: formData.category,
+                post_content: formData.post_content,
+                youtube_video_url: formData.youtube_video_url || null,
+                tech_stack: formData.tech_stack,
+                is_open_source: formData.is_open_source,
+            }
+
             const response = await axios.post("/api/projects", data, {
                 headers: {
                     "Content-Type": "application/json",
                 },
             })
+
             console.log("Project created successfully:", response.data)
             toast({
                 title: "Success!",
@@ -233,14 +262,10 @@ export default function NewProjectPage() {
             router.push("/")
         } catch (err) {
             console.error("Error:", err)
-            if (axios.isAxiosError(err) && err.response) {
-                setError(err.response.data?.error || "Failed to create project. Please try again.")
-            } else {
-                setError("An unexpected error occurred. Please try again later.")
-            }
+            setError("Failed to upload images. Please try again.")
             toast({
                 title: "Error",
-                description: "Failed to submit your project. Please try again.",
+                description: "Failed to upload images. Please try again.",
                 variant: "destructive",
             })
         } finally {
@@ -263,8 +288,8 @@ export default function NewProjectPage() {
         <main className="container mx-auto px-4 py-8">
             <div className="max-w-3xl mx-auto">
                 <div className="mb-8">
-                    <h1 className="text-4xl font-bold mb-4">Submit a New Project</h1>
-                    <p className="text-muted-foreground">Share your project with the Ethiopian developer community.</p>
+                    <h1 className="text-4xl font-bold mb-4 text-white">Submit a New Project</h1>
+                    <p className=" text-gray-200">Share your project with the Ethiopian developer community.</p>
                 </div>
 
                 <div className="mb-8">

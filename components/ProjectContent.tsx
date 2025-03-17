@@ -180,12 +180,16 @@ function ProjectMediaGallery({ project }) {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6">
-                    <div className="grid grid-cols-2 gap-6 overflow-y-auto">
+                    <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800">
                         {/* YouTube Video */}
                         {hasVideo && (
                             <div
-                                className="relative aspect-video rounded-lg overflow-hidden border border-gray-700/30 cursor-pointer"
+                                className="relative aspect-video min-w-[300px] rounded-lg overflow-hidden border border-gray-700/30 cursor-pointer hover:border-gray-700/50 transition-all"
                                 onClick={handleVideoClick}
+                                role="button"
+                                tabIndex={0}
+                                aria-label="Open project video"
+                                onKeyDown={(e) => e.key === 'Enter' && handleVideoClick()}
                             >
                                 <iframe
                                     src={`https://www.youtube.com/embed/${getYouTubeVideoId(project.youtube_video_url)}`}
@@ -198,43 +202,25 @@ function ProjectMediaGallery({ project }) {
                         )}
 
                         {/* Image Gallery */}
-                        {hasImages && (
+                        {hasImages && project.images.map((image, index) => (
                             <div
-                                className={`relative aspect-video rounded-lg overflow-hidden border border-gray-700/30 cursor-pointer`}
+                                key={index}
+                                className="relative aspect-video min-w-[300px] rounded-lg overflow-hidden border border-gray-700/30 hover:border-gray-700/50 transition-all group cursor-pointer"
+                                onClick={() => handleImageClick(index)}
+                                role="button"
+                                tabIndex={0}
+                                aria-label={`Open project image ${index + 1}`}
+                                onKeyDown={(e) => e.key === 'Enter' && handleImageClick(index)}
                             >
-                                {project.images.slice(0, 4).map((image, index) => (
-                                    <div
-                                        key={index}
-                                        className="relative aspect-video rounded-lg overflow-hidden border border-gray-700/30 hover:border-gray-700/50 transition-all group cursor-pointer"
-                                        onClick={() => handleImageClick(index)}
-                                    >
-                                        <Image
-                                            src={image || "/placeholder.svg"}
-                                            alt={`Project image ${index + 1}`}
-                                            fill
-                                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                        />
-                                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                    </div>
-                                ))}
-                                {project.images.length > 4 && (
-                                    <div
-                                        className="relative aspect-video rounded-lg overflow-hidden border border-gray-700/30 hover:border-gray-700/50 transition-all group cursor-pointer"
-                                        onClick={() => handleImageClick(4)}
-                                    >
-                                        <Image
-                                            src={project.images[4] || "/placeholder.svg"}
-                                            alt="Project image 5"
-                                            fill
-                                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                        />
-                                        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                                            <span className="text-white font-medium text-lg">+{project.images.length - 4} more</span>
-                                        </div>
-                                    </div>
-                                )}
+                                <Image
+                                    src={image || "/placeholder.svg"}
+                                    alt={`Project image ${index + 1}`}
+                                    fill
+                                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                />
+                                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                             </div>
-                        )}
+                        ))}
                     </div>
                 </CardContent>
             </Card>

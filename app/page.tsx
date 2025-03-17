@@ -124,9 +124,9 @@ export default function Home() {
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-primary-dark bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
               Showcase Your Projects.{' '}
-              <span className="text-primary">Get Hired!</span>
+              <span className="bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">Get Hired!</span>
             </h1>
             <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
               Join Ethiopia's premier platform for developers to showcase their work,

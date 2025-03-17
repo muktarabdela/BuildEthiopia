@@ -1,4 +1,6 @@
 import { supabase } from "@/lib/supabase";
+import { NextResponse } from "next/server";
+import { getProjects } from "@/lib/api/admin";
 
 export interface Project {
   id: string;
@@ -12,14 +14,23 @@ export interface Project {
   // ... other fields
 }
 
-export const getProjects = async (): Promise<Project[]> => {
-  const { data, error } = await supabase
-    .from("projects")
-    .select("*, developer:profiles(id, name)")
-    .order("created_at", { ascending: false });
+export const GET = async () => {
+  try {
+    const projects = await getProjects();
+    return NextResponse.json(projects);
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to fetch projects" },
+      { status: 500 }
+    );
+  }
+};
 
-  if (error) throw error;
-  return data;
+export const POST = async () => {
+  return NextResponse.json(
+    { error: "Method not implemented" },
+    { status: 501 }
+  );
 };
 
 export const updateFeaturedStatus = async (

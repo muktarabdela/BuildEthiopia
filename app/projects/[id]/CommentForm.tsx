@@ -1,18 +1,34 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, FormEvent, ChangeEvent } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/AuthProvider';
 
-export default function CommentForm({ projectId, onCommentAdded }) {
-    const { user } = useAuth();
-    const [content, setContent] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState(null);
+type Comment = {
+    id: string;
+    content: string;
+    created_at: string;
+    user: {
+        id: string;
+        name: string;
+        profile_picture?: string;
+    };
+};
 
-    const handleSubmit = async (e) => {
+type Props = {
+    projectId: string;
+    onCommentAdded?: (comment: Comment) => void;
+};
+
+export default function CommentForm({ projectId, onCommentAdded }: Props) {
+    const { user } = useAuth();
+    const [content, setContent] = useState<string>('');
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (!content.trim()) return;
@@ -28,7 +44,7 @@ export default function CommentForm({ projectId, onCommentAdded }) {
             }
 
             // First, insert the comment
-            const { data, error } = await supabase
+            const { data, error: commentError } = await supabase
                 .from('comments')
                 .insert({
                     content: content.trim(),
@@ -43,7 +59,7 @@ export default function CommentForm({ projectId, onCommentAdded }) {
                 `)
                 .single();
 
-            if (error) throw error;
+            if (commentError) throw commentError;
 
             // Then, increment the comments count
             const { error: countError } = await supabase
@@ -57,16 +73,23 @@ export default function CommentForm({ projectId, onCommentAdded }) {
             if (countError) throw countError;
 
             setContent('');
-
             if (onCommentAdded && data) {
+                // @ts-ignore
                 onCommentAdded(data);
             }
-        } catch (err) {
-            console.error('Error adding comment:', err);
-            setError('Failed to add comment. Please try again.');
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message);
+            } else {
+                setError('Failed to add comment. Please try again.');
+            }
         } finally {
             setIsSubmitting(false);
         }
+    };
+
+    const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+        setContent(e.target.value);
     };
 
     return (
@@ -83,7 +106,7 @@ export default function CommentForm({ projectId, onCommentAdded }) {
                             className="w-full px-3 py-2 border border-gray-600 rounded-md bg-gray-700 text-white text-gray-100 placeholder-gray-400 focus:border-primary focus:ring-primary"
                             placeholder="Share your thoughts about this project..."
                             value={content}
-                            onChange={(e) => setContent(e.target.value)}
+                            onChange={handleChange}
                             required
                         />
                     </div>

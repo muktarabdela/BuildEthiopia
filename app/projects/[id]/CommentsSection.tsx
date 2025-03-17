@@ -8,11 +8,30 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-export default function CommentsSection({ projectId, initialComments, commentsCount }) {
-    const [comments, setComments] = useState(initialComments || [])
-    const [count, setCount] = useState(commentsCount || 0)
+type User = {
+    id: string;
+    name: string;
+    profile_picture?: string;
+};
 
-    const handleCommentAdded = (newComment) => {
+type Comment = {
+    id: string;
+    content: string;
+    created_at: string;
+    user: User;
+};
+
+type Props = {
+    projectId: string;
+    initialComments?: Comment[];
+    commentsCount?: number;
+};
+
+export default function CommentsSection({ projectId, initialComments = [], commentsCount = 0 }: Props) {
+    const [comments, setComments] = useState<Comment[]>(initialComments)
+    const [count, setCount] = useState<number>(commentsCount)
+
+    const handleCommentAdded = (newComment: Comment) => {
         setComments((prevComments) => [newComment, ...prevComments])
         setCount((prevCount) => prevCount + 1)
     }
@@ -52,16 +71,16 @@ export default function CommentsSection({ projectId, initialComments, commentsCo
     )
 }
 
-function CommentItem({ comment }) {
-    const [liked, setLiked] = useState(false)
-    const [likeCount, setLikeCount] = useState(Math.floor(Math.random() * 5)) // Random like count for demo
+type CommentItemProps = {
+    comment: Comment;
+};
+
+function CommentItem({ comment }: CommentItemProps) {
+    const [liked, setLiked] = useState<boolean>(false)
+    const [likeCount, setLikeCount] = useState<number>(Math.floor(Math.random() * 5))
 
     const handleLike = () => {
-        if (liked) {
-            setLikeCount((prev) => prev - 1)
-        } else {
-            setLikeCount((prev) => prev + 1)
-        }
+        setLikeCount((prev) => (liked ? prev - 1 : prev + 1))
         setLiked(!liked)
     }
 
@@ -115,8 +134,8 @@ function CommentItem({ comment }) {
                             className={`h-8 px-2 gap-1.5 text-sm ${liked ? "text-primary" : "text-gray-400 hover:text-gray-200"}`}
                             onClick={handleLike}
                         >
-                            {/* <Heart className={`h-4 w-4 ${liked ? "fill-primary" : ""}`} />
-                            <span>{likeCount}</span> */}
+                            <Heart className={`h-4 w-4 ${liked ? "fill-primary" : ""}`} />
+                            <span>{likeCount}</span>
                         </Button>
 
                         {/* <Button variant="ghost" size="sm" className="h-8 px-2 gap-1.5 text-sm text-gray-400 hover:text-gray-200">

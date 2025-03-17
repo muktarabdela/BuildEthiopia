@@ -1,6 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { NextResponse } from "next/server";
-import { getProjects } from "@/lib/api/admin";
+import { getProjects, updateFeaturedStatus } from "@/lib/api/admin";
 
 export interface Project {
   id: string;
@@ -33,14 +33,23 @@ export const POST = async () => {
   );
 };
 
-export const updateFeaturedStatus = async (
-  projectId: string,
-  featured: boolean
-) => {
-  const { error } = await supabase
-    .from("projects")
-    .update({ featured })
-    .eq("id", projectId);
+export const PATCH = async (request: Request) => {
+  try {
+    const { projectId, featured } = await request.json();
 
-  if (error) throw error;
+    if (!projectId || typeof featured !== "boolean") {
+      return NextResponse.json(
+        { error: "Invalid request body" },
+        { status: 400 }
+      );
+    }
+
+    const updatedProject = await updateFeaturedStatus(projectId, featured);
+    return NextResponse.json(updatedProject);
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to update featured status" },
+      { status: 500 }
+    );
+  }
 };

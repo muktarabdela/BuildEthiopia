@@ -81,9 +81,9 @@ const transformProfileData = (profile) => {
         profilePicture: profile.profile_picture,
         status: profile.status || 'none',
         socialLinks: {
-            github: profile.github_url || "#",
-            linkedin: profile.linkedin_url || "#",
-            twitter: profile.telegram_url || "#",
+            github: profile.github_url,
+            linkedin: profile.linkedin_url,
+            twitter: profile.telegram_url,
         },
         featured: {
             isTopDeveloper: false,

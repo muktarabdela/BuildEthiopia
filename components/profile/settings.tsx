@@ -20,11 +20,21 @@ const profileSchema = z.object({
     displayName: z.string().min(2, "Name must be at least 2 characters").max(50),
     username: z.string().min(3, "Username must be at least 3 characters").max(20),
     bio: z.string().max(500, "Bio must be less than 500 characters").optional(),
-    github: z.string().url("Invalid GitHub URL").or(z.literal("")),
-    linkedin: z.string().url("Invalid LinkedIn URL").or(z.literal("")),
-    twitter: z.string().url("Invalid Twitter URL").or(z.literal("")),
-    telegram: z.string().url("Invalid Telegram URL").or(z.literal("")),
-    profilePicture: z.string().url("Invalid image URL").optional(),
+    github: z.string()
+        .refine(val => !val || val.startsWith('https://'), "Must be a valid URL starting with https://")
+        .or(z.literal("")),
+    linkedin: z.string()
+        .refine(val => !val || val.startsWith('https://'), "Must be a valid URL starting with https://")
+        .or(z.literal("")),
+    twitter: z.string()
+        .refine(val => !val || val.startsWith('https://'), "Must be a valid URL starting with https://")
+        .or(z.literal("")),
+    telegram: z.string()
+        .refine(val => !val || val.startsWith('https://'), "Must be a valid URL starting with https://")
+        .or(z.literal("")),
+    profilePicture: z.string()
+        .refine(val => !val || val.startsWith('https://'), "Must be a valid URL starting with https://")
+        .optional(),
     techStack: z.array(z.string().min(1)).optional(),
     status: z.enum(["none", "open_to_work", "hiring"])
 })
@@ -52,9 +62,9 @@ export default function SettingsModal({ isOpen, onClose, user }: SettingsModalPr
             displayName: user.displayName,
             username: user.username,
             bio: user.bio,
-            github: user.socialLinks.github,
-            linkedin: user.socialLinks.linkedin,
-            twitter: user.socialLinks.twitter,
+            github: user.socialLinks.github || "",
+            linkedin: user.socialLinks.linkedin || "",
+            twitter: user.socialLinks.twitter || "",
             telegram: user.socialLinks.telegram || "",
             profilePicture: user.profilePicture || "",
             status: user.status || "none"
@@ -77,11 +87,13 @@ export default function SettingsModal({ isOpen, onClose, user }: SettingsModalPr
     }
 
     const onSubmit = async (data: FormData) => {
+        console.log("Form data:", data)
         setIsLoading(true)
+
         try {
-            const { error } = await supabase
-                .from('profiles')
-                .update({
+            // Create update object with only changed fields
+            const updateData = {
+                ...(isDirty && {
                     name: data.displayName,
                     username: data.username,
                     bio: data.bio,
@@ -90,17 +102,37 @@ export default function SettingsModal({ isOpen, onClose, user }: SettingsModalPr
                     telegram_url: data.twitter,
                     profile_picture: data.profilePicture,
                     status: data.status,
-                    tech_stack: data.techStack,
-                    updated_at: new Date().toISOString()
-                })
-                .eq('id', user.id)
+                    tech_stack: data.techStack
+                }),
+                updated_at: new Date().toISOString()
+            }
 
-            if (error) throw error
+            // Filter out undefined values
+            const filteredUpdateData = Object.fromEntries(
+                Object.entries(updateData).filter(([_, value]) => value !== undefined)
+            )
+
+            console.log("Update data:", filteredUpdateData)
+
+            const { data: response, error } = await supabase
+                .from('profiles')
+                .update(filteredUpdateData)
+                .eq('id', user.id)
+                .select()
+
+            console.log("Supabase response:", response)
+
+            if (error) {
+                console.error("Supabase error:", error)
+                throw error
+            }
 
             toast.success("Profile updated successfully!")
-            reset(data) // Reset form state to new values
+            reset(data, { keepValues: true })
+            onClose()
         } catch (error) {
-            toast.error(error.message)
+            console.error("Update error:", error)
+            toast.error(error.message || "Failed to update profile")
         } finally {
             setIsLoading(false)
         }
@@ -283,8 +315,8 @@ export default function SettingsModal({ isOpen, onClose, user }: SettingsModalPr
                                         </SelectTrigger>
                                         <SelectContent className="bg-gray-800 border-gray-700">
                                             <SelectItem value="none" className="hover:bg-gray-700">None</SelectItem>
-                                            <SelectItem value="open_to_work" className="hover:bg-gray-700">Open to Work</SelectItem>
-                                            <SelectItem value="hiring" className="hover:bg-gray-700">Hiring</SelectItem>
+                                            <SelectItem value="Open to work" className="hover:bg-gray-700">Open to Work</SelectItem>
+                                            <SelectItem value="Hiring" className="hover:bg-gray-700">Hiring</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 )}

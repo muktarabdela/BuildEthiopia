@@ -21,7 +21,7 @@ import { useAuth } from './AuthProvider';
 
 export function Navbar() {
     const { user, session } = useAuth();
-
+    console.log("user", user)
     const pathname = usePathname();
     const [profile, setProfile] = useState(null);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -39,7 +39,7 @@ export function Navbar() {
                 setProfile(profile);
 
                 // If user is a developer, check for unread contact requests
-                if (profile?.role === 'developer') {
+                if (user?.role === 'developer') {
                     const { count, error } = await supabase
                         .from('contact_requests')
                         .select('*', { count: 'exact', head: true })
@@ -114,7 +114,7 @@ export function Navbar() {
                                 <span>Explore</span>
                             </div>
                         </Link>
-                        {profile?.role === 'developer' && (
+                        {user?.role === 'developer' && (
                             <Link
                                 href="/projects/new"
                                 className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/projects/new')
@@ -160,7 +160,7 @@ export function Navbar() {
                                 </Link>
 
                                 <Link
-                                    href={`${profile?.username}`}
+                                    href={`${user?.username}`}
                                     className="hidden md:flex items-center space-x-2 p-2 text-gray-300 hover:text-primary rounded-md hover:bg-gray-700"
                                 >
                                     <UserRound className="h-5 w-5" />

@@ -31,8 +31,11 @@ export async function GET(
   { params }: { params: { id: string | string[] } }
 ) {
   try {
-    // Convert id to string if it's an array
-    const id = Array.isArray(params.id) ? params.id[0] : params.id;
+    // Await params to ensure they're resolved
+    const resolvedParams = await params;
+    const id = Array.isArray(resolvedParams.id)
+      ? resolvedParams.id[0]
+      : resolvedParams.id;
 
     // Fetch profile
     const { data: profile, error: profileError } = await supabase
@@ -81,8 +84,11 @@ export async function POST(
   { params }: { params: { id: string | string[] } }
 ) {
   try {
-    // Convert id to string if it's an array
-    const id = Array.isArray(params.id) ? params.id[0] : params.id;
+    // Await params to ensure they're resolved
+    const resolvedParams = await params;
+    const id = Array.isArray(resolvedParams.id)
+      ? resolvedParams.id[0]
+      : resolvedParams.id;
     const session = await requireAuth(req);
 
     // Verify if the requesting user is the profile owner

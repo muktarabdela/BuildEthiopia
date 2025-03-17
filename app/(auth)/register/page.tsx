@@ -77,6 +77,30 @@ export default function RegisterPage() {
             setLoading(false)
         }
     }
+    const handleGitHubLogin = async () => {
+        try {
+            setLoading(true)
+            setError("")
+
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: "github",
+                options: {
+                    redirectTo: `${window.location.origin}/auth/callback`,
+                },
+            })
+            console.log("GitHub login response:", data)
+
+            if (error) {
+                console.error("GitHub login error:", error)
+                throw error
+            }
+        } catch (error: any) {
+            console.error("GitHub login error:", error)
+            setError(error.message || "An error occurred during GitHub login")
+        } finally {
+            setLoading(false)
+        }
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center px-4">
@@ -198,7 +222,7 @@ export default function RegisterPage() {
                         <Button
                             type="button"
                             className="w-full bg-gray-800 hover:bg-gray-700 text-white font-medium transition-all"
-                            // onClick={handleGitHubLogin}
+                            onClick={handleGitHubLogin}
                             disabled={loading}
                         >
                             <Github className="h-5 w-5 mr-2" />

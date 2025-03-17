@@ -173,7 +173,7 @@ export function Navbar() {
                                         className="border-gray-600 text-gray-300 hover:bg-gray-700 text-white"
                                     >
                                         <LogOut className="h-4 w-4 mr-1" />
-                                        Sign Out
+                                        Log Out
                                     </Button>
                                 </div>
                             </>
@@ -183,12 +183,12 @@ export function Navbar() {
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="text-gray-300 hover:text-primary hover:bg-gray-700 text-white"
-                                    >
-                                        Sign In
+                                        className="w-full justify-center bg-primary hover:bg-primary text-white
+                                    cursor-pointer">
+                                        Log In
                                     </Button>
                                 </Link>
-                                <Link href="/register" className="hidden md:block">
+                                {/* <Link href="/register" className="hidden md:block">
                                     <Button
                                         variant="default"
                                         size="sm"
@@ -196,7 +196,7 @@ export function Navbar() {
                                     >
                                         Sign Up
                                     </Button>
-                                </Link>
+                                </Link> */}
                             </>
                         )}
 
@@ -292,10 +292,10 @@ export function Navbar() {
                                 <div className="px-3 py-2">
                                     <Button onClick={signOut}
                                         variant="outline"
-                                        className="w-full justify-start border-gray-600 text-gray-300 hover:bg-gray-700 text-white"
-                                    >
+                                        className="w-full justify-center bg-primary hover:bg-primary- text-white
+                                     cursor-pointer">
                                         <LogOut className="h-5 w-5 mr-2" />
-                                        Sign Out
+                                        log Out
                                     </Button>
                                 </div>
                             </>
@@ -304,19 +304,19 @@ export function Navbar() {
                                 <Link href="/login" onClick={closeMobileMenu}>
                                     <Button
                                         variant="outline"
-                                        className="w-full justify-center border-gray-600 text-gray-300 hover:bg-gray-700 text-white"
+                                        className="w-full justify-center bg-primary hover:bg-primary-dark text-white"
                                     >
-                                        Sign In
+                                        Login In
                                     </Button>
                                 </Link>
-                                <Link href="/register" onClick={closeMobileMenu}>
+                                {/* <Link href="/register" onClick={closeMobileMenu}>
                                     <Button
                                         variant="default"
                                         className="w-full justify-center bg-primary hover:bg-primary-dark text-white"
                                     >
                                         Sign Up
                                     </Button>
-                                </Link>
+                                </Link> */}
                             </div>
                         )}
                     </div>

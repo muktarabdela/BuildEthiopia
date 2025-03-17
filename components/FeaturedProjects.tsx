@@ -3,7 +3,8 @@ import Image from 'next/image';
 import { ThumbsUp, MessageSquare, ExternalLink, Github, Calendar } from 'lucide-react';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
-import { ProjectCard } from './ProjectCard';
+import { ProjectCard, SkeletonProjectCard } from './ProjectCard';
+import index from 'swr';
 
 interface FeaturedProjectsProps {
     projects: Array<{
@@ -16,13 +17,15 @@ interface FeaturedProjectsProps {
     title?: string;
     showViewAll?: boolean;
     showHeader?: boolean;
+    isLoading?: boolean;
 }
 
 export default function FeaturedProjects({
     projects,
     title = "Featured Projects",
     showViewAll = true,
-    showHeader = true
+    showHeader = true,
+    isLoading 
 }: FeaturedProjectsProps) {
     // Filter projects to only show featured ones
     const featuredProjects = projects.filter(project => project.featured);
@@ -67,7 +70,12 @@ export default function FeaturedProjects({
             )}
 
             <div className="grid grid-cols-1 gap-6">
-                {featuredProjects.length > 0 ? (
+                {isLoading ? (
+                    // Show 3 skeleton cards while loading
+                    Array.from({ length: 3 }).map((_, index) => (
+                        <SkeletonProjectCard key={`skeleton-${index}`} />
+                    ))
+                ) : featuredProjects.length > 0 ? (
                     featuredProjects.map((project, index) => (
                         <ProjectCard
                             key={project.id}

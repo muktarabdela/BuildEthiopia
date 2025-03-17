@@ -11,8 +11,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-async function getProjects() {
+async function getProjects(setIsFeatureProjectsLoading: (loading: boolean) => void) {
   try {
+    setIsFeatureProjectsLoading(true); // Set loading state before fetching
     const { data: projects, error } = await supabase
       .from('projects')
       .select(`
@@ -31,10 +32,13 @@ async function getProjects() {
   } catch (error) {
     console.error('Error:', error);
     return [];
+  } finally {
+    setIsFeatureProjectsLoading(false); // Clear loading state after fetching
   }
 }
 
-async function getFeaturedDevelopers() {
+async function getFeaturedDevelopers(setIsFeatureDeveloperLoading: (loading: boolean) => void) {
+  setIsFeatureDeveloperLoading(true); // Set loading state before fetching
   try {
     const { data: developers, error } = await supabase
       .from('profiles')
@@ -61,6 +65,8 @@ async function getFeaturedDevelopers() {
   } catch (error) {
     console.error('Error:', error);
     return [];
+  } finally {
+    setIsFeatureDeveloperLoading(false); // Clear loading state after fetching
   }
 }
 
@@ -69,6 +75,8 @@ export default function Home() {
   // console.log("User from page:", user);
   const [trendingProjects, setTrendingProjects] = useState([]);
   const [featuredDevelopers, setFeaturedDevelopers] = useState([]);
+  const [isFeatureProjectsLoading, setIsFeatureProjectsLoading] = useState(true);
+  const [isFeatureDeveloperLoading, setIsFeatureDeveloperLoading] = useState(true);
 
   // Redirect immediately if no user
   useEffect(() => {
@@ -80,15 +88,19 @@ export default function Home() {
   useEffect(() => {
     async function fetchData() {
       try {
-        // Fetch projects and developers in parallel
+        setIsFeatureProjectsLoading(true); // Set loading state before fetching
+        setIsFeatureDeveloperLoading(true); // Set loading state before fetching
         const [projects, developers] = await Promise.all([
-          getProjects(),
-          getFeaturedDevelopers()
+          getProjects(setIsFeatureProjectsLoading),
+          getFeaturedDevelopers(setIsFeatureDeveloperLoading)
         ]);
         setTrendingProjects(projects);
         setFeaturedDevelopers(developers);
       } catch (error) {
         console.error('Error fetching data:', error);
+      } finally {
+        setIsFeatureProjectsLoading(false); // Clear loading state after fetching
+        setIsFeatureDeveloperLoading(false); // Clear loading state after fetching
       }
     }
 
@@ -184,7 +196,7 @@ export default function Home() {
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Projects Column */}
             <div className="w-full lg:w-[70%] space-y-16">
-              {/* week Featured Projects */}
+              {/* Week Featured Projects */}
               <div>
                 <div className="flex items-center mb-8">
                   <TrendingUp className="h-6 w-6 text-primary mr-2" />
@@ -194,6 +206,7 @@ export default function Home() {
                   projects={trendingProjects}
                   title=""
                   showHeader={false}
+                  isLoading={isFeatureProjectsLoading}
                 />
               </div>
 
@@ -209,7 +222,7 @@ export default function Home() {
             {/* Sidebar */}
             <div className="w-full lg:w-[30%] space-y-8">
               {/* Featured Developers */}
-              <FeaturedDevelopers developers={featuredDevelopers} />
+              <FeaturedDevelopers isLoading={isFeatureDeveloperLoading} developers={featuredDevelopers} />
 
               {/* Join Community Card */}
               <div className="bg-gradient-to-br from-primary/80 to-primary rounded-xl p-6 text-white shadow-lg">

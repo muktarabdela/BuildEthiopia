@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { MessageCircle, ArrowUp, Sparkles } from "lucide-react"
 import Image from 'next/image';
 import UpvoteButton from '@/app/projects/[id]/UpvoteButton';
+import { Skeleton } from "@/components/ui/skeleton"
 
 export function ProjectCard({ project, index }) {
     return (
@@ -114,6 +115,48 @@ export function ProjectCard({ project, index }) {
                                 className="hover:bg-primary/20"
                             />
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export function SkeletonProjectCard() {
+    return (
+        <div className="bg-gray-800 p-4 md:p-6 rounded-xl border border-gray-700">
+            <div className="flex flex-col md:flex-row justify-between gap-6">
+                {/* Left section */}
+                <div className="flex items-start gap-4 flex-1">
+                    {/* Project Icon */}
+                    <Skeleton className="w-10 h-10 rounded-lg bg-gray-700" />
+
+                    {/* Project Details */}
+                    <div className="flex-1 space-y-3">
+                        <Skeleton className="h-6 w-3/4 bg-gray-700" />
+                        <Skeleton className="h-4 w-1/4 bg-gray-700" />
+                        <Skeleton className="h-4 w-full bg-gray-700" />
+                        <Skeleton className="h-4 w-2/3 bg-gray-700" />
+
+                        {/* Tech stack */}
+                        <div className="flex gap-2">
+                            <Skeleton className="h-6 w-16 bg-gray-700 rounded-full" />
+                            <Skeleton className="h-6 w-16 bg-gray-700 rounded-full" />
+                        </div>
+
+                        {/* Developer Info */}
+                        <div className="flex items-center gap-2 mt-4">
+                            <Skeleton className="w-8 h-8 rounded-full bg-gray-700" />
+                            <Skeleton className="h-4 w-24 bg-gray-700" />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Right section */}
+                <div className="flex flex-row md:flex-col items-start md:items-end gap-4">
+                    <div className="flex items-center gap-4">
+                        <Skeleton className="h-8 w-8 bg-gray-700 rounded-full" />
+                        <Skeleton className="h-8 w-8 bg-gray-700 rounded-full" />
                     </div>
                 </div>
             </div>

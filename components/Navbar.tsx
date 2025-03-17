@@ -306,7 +306,7 @@ export function Navbar() {
                                         variant="outline"
                                         className="w-full justify-center bg-primary hover:bg-primary-dark text-white"
                                     >
-                                        Login In
+                                        Login
                                     </Button>
                                 </Link>
                                 {/* <Link href="/register" onClick={closeMobileMenu}>

@@ -72,7 +72,80 @@ const userData = {
     ],
 }
 
-const transformProfileData = (profile) => {
+type SocialLinks = {
+    github: string;
+    linkedin: string;
+    twitter: string;
+};
+
+type Featured = {
+    isTopDeveloper: boolean;
+    featuredProduct: boolean;
+};
+
+type Stats = {
+    totalUpvotes: number;
+    totalComments: number;
+};
+
+type Badge = {
+    id: number;
+    name: string;
+    icon: string;
+};
+
+type Project = {
+    id: number;
+    title: string;
+    description?: string;
+    thumbnail: string;
+    upvotes: number;
+    featured: boolean;
+    createdAt?: string;
+};
+
+type Profile = {
+    id: string;
+    username: string;
+    displayName: string;
+    bio: string;
+    profilePicture: string;
+    status?: string;
+    skill?: string[];
+    location?: string;
+    website_url?: string;
+    socialLinks: SocialLinks;
+    featured: Featured;
+    stats: Stats;
+    badges: Badge[];
+    projects: Project[];
+};
+
+type ApiProfile = {
+    id: string;
+    username: string;
+    name: string;
+    bio?: string;
+    profile_picture: string;
+    status?: string;
+    skill?: string[];
+    location?: string;
+    website_url?: string;
+    github_url?: string;
+    linkedin_url?: string;
+    telegram_url?: string;
+    projects?: {
+        id: number;
+        title: string;
+        description: string;
+        images: string[];
+        upvotes_count: number;
+        comments_count: number;
+        created_at: string;
+    }[];
+};
+
+const transformProfileData = (profile: ApiProfile): Profile => {
     return {
         id: profile.id,
         username: profile.username,
@@ -84,9 +157,9 @@ const transformProfileData = (profile) => {
         location: profile.location || "Location not specified",
         website_url: profile.website_url || "https://example.com",
         socialLinks: {
-            github: profile.github_url,
-            linkedin: profile.linkedin_url,
-            twitter: profile.telegram_url,
+            github: profile.github_url || '',
+            linkedin: profile.linkedin_url || '',
+            twitter: profile.telegram_url || '',
         },
         featured: {
             isTopDeveloper: false,
@@ -113,12 +186,12 @@ const transformProfileData = (profile) => {
 
 export default function ProfilePage() {
     const { user, session } = useAuth();
-    const params = useParams();
+    const params = useParams<{ id: string }>();
     const router = useRouter();
-    const [profile, setProfile] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [showDialog, setShowDialog] = useState(false);
-    const [isOwner, setIsOwner] = useState(false);
+    const [profile, setProfile] = useState<Profile | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [showDialog, setShowDialog] = useState<boolean>(false);
+    const [isOwner, setIsOwner] = useState<boolean>(false);
 
     useEffect(() => {
         async function getProfile() {
@@ -154,10 +227,10 @@ export default function ProfilePage() {
 
     const { projects } = profile;
 
-    const totalUpvotes = projects?.reduce((sum, project) => sum + project.upvotes_count, 0) || 0;
-    const totalComments = projects?.reduce((sum, project) => sum + project.comments_count, 0) || 0;
-    const generateColor = (name) => {
-        if (!name) return "bg-gray-300"; // Default fallback
+    // const totalUpvotes = projects?.reduce((sum, project) => sum + project.upvotes_count, 0) || 0;
+    // const totalComments = projects?.reduce((sum, project) => sum + project.comments_count, 0) || 0;
+    const generateColor = (name: string | undefined): string => {
+        if (!name) return "bg-gray-300";
         const colors = [
             "bg-blue-500", "bg-red-500", "bg-green-500", "bg-yellow-500", "bg-purple-500", "bg-pink-500", "bg-indigo-500"
         ];
@@ -175,7 +248,7 @@ export default function ProfilePage() {
                         </div>
                         <div className="space-y-8">
                             {profile && <AchievementsSection user={profile} />}
-                            {profile && isOwner && <SettingsSection user={profile} />}
+                            {profile && isOwner && <SettingsSection user={profile} isOpen={false} onClose={() => {}} />}
                         </div>
                     </div>
                 </div>

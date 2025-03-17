@@ -2,12 +2,36 @@ import { supabase } from "@/lib/supabase";
 import { requireAuth } from "@/lib/supabase";
 import { NextResponse } from "next/server";
 
+type Profile = {
+  id: string;
+  username: string;
+  // Add other profile fields as needed
+};
+
+type Project = {
+  id: string;
+  title: string;
+  description: string;
+  images: string[];
+  upvotes_count: number;
+  comments_count: number;
+  created_at: string;
+};
+
+type UpdateProfileRequest = {
+  bio?: string;
+  github_url?: string;
+  linkedin_url?: string;
+  telegram_url?: string;
+  profile_picture?: string;
+};
+
 export async function GET(
   req: Request,
   { params }: { params: { id: string } }
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
 
     // Fetch profile
     const { data: profile, error: profileError } = await supabase
@@ -40,7 +64,10 @@ export async function GET(
 
     // Return combined data
     return NextResponse.json({ ...profile, projects }, { status: 200 });
-  } catch (error) {
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -53,26 +80,20 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    // Await params to ensure they're resolved
-    const { id } = await params;
+    const { id } = params;
     const session = await requireAuth(req);
 
     // Verify if the requesting user is the profile owner
-    if (session.user.id !== id) {
+    if ((session as any).user.id !== id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
-    const { bio, github_url, linkedin_url, telegram_url, profile_picture } =
-      await req.json();
+    const updateData: UpdateProfileRequest = await req.json();
 
     const { error } = await supabase
       .from("profiles")
       .update({
-        bio,
-        github_url,
-        linkedin_url,
-        telegram_url,
-        profile_picture,
+        ...updateData,
         updated_at: new Date().toISOString(),
       })
       .eq("id", id);
@@ -85,7 +106,10 @@ export async function POST(
       { message: "Profile updated successfully" },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 401 });
+    }
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 }

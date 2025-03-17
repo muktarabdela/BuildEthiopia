@@ -10,42 +10,49 @@ import Image from "next/image"
 import { supabase } from '@/lib/supabase'
 import { Github } from 'lucide-react';
 
+type FormData = {
+    email: string;
+    password: string;
+    name: string;
+    username: string;
+};
+
+type AuthError = {
+    message: string;
+};
+
 export default function RegisterPage() {
 
     const router = useRouter();
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [isModalOpen, setModalOpen] = useState(false);
+    const [error, setError] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
+    const [isModalOpen, setModalOpen] = useState<boolean>(false);
 
-    async function handleSubmit(e) {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError('');
         setLoading(true);
 
-        const formData = new FormData(e.target);
-        const data = {
-            email: formData.get('email'),
-            password: formData.get('password'),
-            name: formData.get('name'),
-            username: formData.get('username'),
-            // Add any other fields you need to send
+        const formData = new FormData(e.currentTarget);
+        const data: FormData = {
+            email: formData.get('email') as string,
+            password: formData.get('password') as string,
+            name: formData.get('name') as string,
+            username: formData.get('username') as string,
         };
 
         try {
             const response = await axios.post('/api/auth/register', data);
-            console.log(response)
             if (response.data) {
-                // Login successful
                 setModalOpen(true);
             } else {
                 throw new Error('Failed to register');
             }
-        } catch (err) {
-            console.log('Error:', err);
+        } catch (err: unknown) {
             if (axios.isAxiosError(err) && err.response) {
                 setError(err.response.data?.error || 'Registration failed. Please try again.');
-            } else if (err.request) {
-                setError('Network error - please check your connection');
+            } else if (err instanceof Error) {
+                setError(err.message);
             } else {
                 setError('An unexpected error occurred. Please try again later.');
             }
@@ -56,49 +63,47 @@ export default function RegisterPage() {
 
     const handleGoogleLogin = async () => {
         try {
-            setLoading(true)
-            setError("")
-
-            const { data, error } = await supabase.auth.signInWithOAuth({
+            setLoading(true);
+            setError('');
+            const { error } = await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: {
                     redirectTo: `${window.location.origin}/auth/callback`,
                 },
-            })
+            });
 
-            if (error) {
-                console.error("Google login error:", error)
-                throw error
+            if (error) throw error;
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError('An error occurred during Google login');
             }
-        } catch (error: any) {
-            console.error("Google login error:", error)
-            setError(error.message || "An error occurred during Google login")
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     }
+
     const handleGitHubLogin = async () => {
         try {
-            setLoading(true)
-            setError("")
-
-            const { data, error } = await supabase.auth.signInWithOAuth({
+            setLoading(true);
+            setError('');
+            const { error } = await supabase.auth.signInWithOAuth({
                 provider: "github",
                 options: {
                     redirectTo: `${window.location.origin}/auth/callback`,
                 },
-            })
-            console.log("GitHub login response:", data)
+            });
 
-            if (error) {
-                console.error("GitHub login error:", error)
-                throw error
+            if (error) throw error;
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError('An error occurred during GitHub login');
             }
-        } catch (error: any) {
-            console.error("GitHub login error:", error)
-            setError(error.message || "An error occurred during GitHub login")
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     }
 

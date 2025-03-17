@@ -45,24 +45,24 @@ export default function ProjectSidebar({ developer }) {
 
                     <div className="flex justify-center space-x-3 mb-4">
                         {developer.github_url && (
-                            <a
+                            <Link
                                 href={developer.github_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-gray-400 hover:text-gray-100 transition-colors"
                             >
                                 <Github className="h-5 w-5" />
-                            </a>
+                            </Link>
                         )}
                         {developer.linkedin_url && (
-                            <a
+                            <Link
                                 href={developer.linkedin_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-gray-400 hover:text-gray-100 transition-colors"
                             >
                                 <Linkedin className="h-5 w-5" />
-                            </a>
+                            </Link>
                         )}
                     </div>
 

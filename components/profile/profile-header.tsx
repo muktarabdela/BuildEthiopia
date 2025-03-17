@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { useState } from "react"
 import SettingsModal from "./settings"
 import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
 
 export default function ProfileHeader({ user }) {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false)
@@ -56,7 +57,7 @@ export default function ProfileHeader({ user }) {
                             </div>
                         )}
                         {user.website_url && (
-                            <a
+                            <Link
                                 href={user.website_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -64,7 +65,7 @@ export default function ProfileHeader({ user }) {
                             >
                                 <Globe className="h-5 w-5 mr-2" />
                                 <span>Website</span>
-                            </a>
+                            </Link>
                         )}
                     </div>
 
@@ -109,34 +110,34 @@ export default function ProfileHeader({ user }) {
                     {/* Social Links */}
                     <div className="flex gap-4 justify-center">
                         {user.socialLinks.github && (
-                            <a
+                            <Link
                                 href={user.socialLinks.github}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-gray-400 hover:text-white transition-all transform hover:scale-110"
                             >
                                 <Github className="h-7 w-7" />
-                            </a>
+                            </Link>
                         )}
                         {user.socialLinks.linkedin && (
-                            <a
+                            <Link
                                 href={user.socialLinks.linkedin}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-gray-400 hover:text-white transition-all transform hover:scale-110"
                             >
                                 <Linkedin className="h-7 w-7" />
-                            </a>
+                            </Link>
                         )}
                         {user.socialLinks.twitter && (
-                            <a
+                            <Link
                                 href={user.socialLinks.twitter}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-gray-400 hover:text-white transition-all transform hover:scale-110"
                             >
                                 <Twitter className="h-7 w-7" />
-                            </a>
+                            </Link>
                         )}
                     </div>
                 </div>

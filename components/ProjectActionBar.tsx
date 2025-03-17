@@ -1,6 +1,7 @@
 import { Github, Globe, MessageSquare, Code, Share2, Bookmark } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import UpvoteButton from "@/app/projects/[id]/UpvoteButton"
+import Link from "next/link"
 
 export default function ProjectActionBar({ project }) {
     return (
@@ -27,7 +28,7 @@ export default function ProjectActionBar({ project }) {
             {/* Right Section */}
             <div className="flex flex-wrap gap-3 w-full sm:w-auto justify-center sm:justify-end">
                 {project.github_url && (
-                    <a
+                    <Link
                         href={project.github_url}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -35,11 +36,11 @@ export default function ProjectActionBar({ project }) {
                     >
                         <Github className="h-5 w-5" />
                         <span className="hidden sm:inline">GitHub</span>
-                    </a>
+                    </Link>
                 )}
 
                 {project.live_url && (
-                    <a
+                    <Link
                         href={project.live_url}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -47,7 +48,7 @@ export default function ProjectActionBar({ project }) {
                     >
                         <Globe className="h-5 w-5" />
                         <span className="hidden sm:inline">Live Demo</span>
-                    </a>
+                    </Link>
                 )}
 
                 <Button

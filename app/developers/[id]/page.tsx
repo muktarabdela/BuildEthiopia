@@ -123,7 +123,7 @@ export default async function DeveloperPage({ params }: { params: PageParams }) 
 
                 <div className="flex flex-wrap justify-center md:justify-start gap-4 mb-6">
                   {developer.github_url && (
-                    <a
+                    <Link
                       href={developer.github_url}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -131,10 +131,10 @@ export default async function DeveloperPage({ params }: { params: PageParams }) 
                     >
                       <Github className="h-5 w-5" />
                       <span>GitHub</span>
-                    </a>
+                    </Link>
                   )}
                   {developer.linkedin_url && (
-                    <a
+                    <Link
                       href={developer.linkedin_url}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -142,7 +142,7 @@ export default async function DeveloperPage({ params }: { params: PageParams }) 
                     >
                       <Linkedin className="h-5 w-5" />
                       <span>LinkedIn</span>
-                    </a>
+                    </Link>
                   )}
                   <div className="flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full">
                     <Calendar className="h-5 w-5" />
@@ -356,7 +356,7 @@ export default async function DeveloperPage({ params }: { params: PageParams }) 
 
                               <div className="flex items-center space-x-2">
                                 {project.github_url && (
-                                  <a
+                                  <Link
                                     href={project.github_url}
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -364,10 +364,10 @@ export default async function DeveloperPage({ params }: { params: PageParams }) 
                                     onClick={(e) => e.stopPropagation()}
                                   >
                                     <Github className="h-5 w-5" />
-                                  </a>
+                                  </Link>
                                 )}
                                 {project.live_url && (
-                                  <a
+                                  <Link
                                     href={project.live_url}
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -375,7 +375,7 @@ export default async function DeveloperPage({ params }: { params: PageParams }) 
                                     onClick={(e) => e.stopPropagation()}
                                   >
                                     <Globe className="h-5 w-5" />
-                                  </a>
+                                  </Link>
                                 )}
                               </div>
                             </div>

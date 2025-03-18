@@ -16,6 +16,7 @@ import AchievementsSection from '@/components/profile/achievements';
 import SettingsSection from '@/components/profile/settings';
 import { getUserSavedProjects, getUserUpvotedProjects } from '@/lib/services/projectInteractions';
 import { ProjectCard } from '@/components/ProjectCard';
+import index from 'swr';
 
 // API or database
 const userData = {
@@ -273,8 +274,8 @@ export default function ProfilePage() {
                                     <div className="mt-8">
                                         <h2 className="text-2xl font-bold text-white mb-4">Upvoted Projects</h2>
                                         {upvotedProjects.length > 0 ? (
-                                            upvotedProjects.map(projectId => (
-                                                <ProjectCard key={projectId} projectId={projectId} />
+                                            upvotedProjects.map((project, index) => (
+                                                <ProjectCard key={project.id} project={project} index={index} />
                                             ))
                                         ) : (
                                             <p className="text-gray-400">No upvoted projects yet.</p>

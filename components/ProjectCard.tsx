@@ -10,7 +10,7 @@ import { saveProject, upvoteProject, getUserSavedProjects, getUserUpvotedProject
 import { supabase } from '@/lib/supabase';
 
 export function ProjectCard({ project, index }) {
-    console.log("Project card data", project);
+    // console.log("Project card data", project);
     // Ensure project is defined
     if (!project) return null;
 

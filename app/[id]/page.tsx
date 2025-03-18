@@ -258,31 +258,7 @@ export default function ProfilePage() {
                     {profile && <ProfileHeader user={profile} />}
                     <div className="grid gap-8 md:grid-cols-3">
                         <div className="md:col-span-2">
-                            {profile && <PortfolioSection user={profile} />}
-                            {isOwner && (
-                                <>
-                                    <div className="mt-8">
-                                        <h2 className="text-2xl font-bold text-white mb-4">Saved Projects</h2>
-                                        {savedProjects.length > 0 ? (
-                                            savedProjects.map((project, index) => (
-                                                <ProjectCard key={project.id} project={project} index={index} />
-                                            ))
-                                        ) : (
-                                            <p className="text-gray-400">No saved projects yet.</p>
-                                        )}
-                                    </div>
-                                    <div className="mt-8">
-                                        <h2 className="text-2xl font-bold text-white mb-4">Upvoted Projects</h2>
-                                        {upvotedProjects.length > 0 ? (
-                                            upvotedProjects.map((project, index) => (
-                                                <ProjectCard key={project.id} project={project} index={index} />
-                                            ))
-                                        ) : (
-                                            <p className="text-gray-400">No upvoted projects yet.</p>
-                                        )}
-                                    </div>
-                                </>
-                            )}
+                            {profile && <PortfolioSection user={profile} savedProjects={savedProjects} upvotedProjects={upvotedProjects} />}
                         </div>
                         <div className="space-y-8">
                             {profile && <AchievementsSection user={profile} />}

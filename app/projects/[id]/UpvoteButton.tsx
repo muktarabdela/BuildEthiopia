@@ -105,7 +105,7 @@ export default function UpvoteButton({ projectId, initialUpvotes, className }: P
             disabled={isLoading}
             variant={hasUpvoted ? "default" : "outline"}
             className={cn(
-                "flex items-center space-x-2 transition-all duration-300 cursor-pointer",
+                "flex items-center space-x-2 transition-all duration-300 cursor-pointer border-none",
                 hasUpvoted ? "bg-primary text-white" : "text-white",
                 isLoading && "opacity-70",
                 className

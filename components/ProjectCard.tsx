@@ -1,11 +1,37 @@
 import Link from 'next/link';
 
-import { MessageCircle, ArrowUp, Sparkles } from "lucide-react"
+import { MessageCircle, ArrowUp, Sparkles, Bookmark } from "lucide-react"
 import Image from 'next/image';
 import UpvoteButton from '@/app/projects/[id]/UpvoteButton';
 import { Skeleton } from "@/components/ui/skeleton"
+import { useAuth } from './AuthProvider';
+import { useState } from 'react';
+import { saveProject, upvoteProject } from '@/lib/services/projectInteractions';
 
 export function ProjectCard({ project, index }) {
+    const { user } = useAuth();
+    const [isSaved, setIsSaved] = useState(false);
+    const [isUpvoted, setIsUpvoted] = useState(false);
+
+    const handleSave = async () => {
+        if (!user) return;
+        try {
+            await saveProject(user.id, project.id);
+            setIsSaved(true);
+        } catch (error) {
+            console.error('Error saving project:', error);
+        }
+    };
+
+    const handleUpvote = async () => {
+        if (!user) return;
+        try {
+            await upvoteProject(user.id, project.id);
+            setIsUpvoted(true);
+        } catch (error) {
+            console.error('Error upvoting project:', error);
+        }
+    };
     return (
         <div className="group bg-gray-800 p-4 md:p-6 rounded-xl border border-gray-700 hover:border-primary/50 transition-all duration-300 relative overflow-hidden">
             {/* Subtle background pattern */}
@@ -65,7 +91,7 @@ export function ProjectCard({ project, index }) {
                                 {project.tags.map((tag) => (
                                     <span
                                         key={tag}
-                                        className="px-2 py-1 bg-gray-700 text-white/50 text-gray-300 rounded-full text-xs font-medium hover:bg-gray-700 text-white transition-colors duration-200"
+                                        className="px-2 py-1 bg-gray-700 text-white rounded-full text-xs font-medium hover:bg-gray-700  transition-colors duration-200"
                                     >
                                         {tag}
                                     </span>
@@ -103,18 +129,28 @@ export function ProjectCard({ project, index }) {
                 <div className="flex flex-row md:flex-col items-start md:items-end gap-4">
                     {/* Stats */}
                     <div className="flex items-center gap-4 text-gray-400">
-                        <div className="flex items-center gap-2 bg-gray-700 text-white/50 px-3 py-1.5 rounded-full hover:bg-gray-700 text-white transition-colors duration-200">
+                        <div className="flex items-center gap-2 bg-gray-700  px-3 py-1.5 rounded-full hover:bg-gray-700 text-white transition-colors duration-200">
                             <MessageCircle className="w-4 h-4" />
                             <span className="text-sm">{project.comments_count}</span>
                         </div>
 
-                        <div className="flex items-center gap-2 bg-gray-700 text-white/50 px-3 py-1.5 rounded-full hover:bg-gray-700 text-white transition-colors duration-200">
+                        <div className="flex items-center gap-2 bg-gray-700  rounded-full hover:bg-gray-700 text-white transition-colors duration-200">
                             <UpvoteButton
                                 projectId={project?.id}
                                 initialUpvotes={project.upvotes_count}
-                                className="hover:bg-primary/20"
+                                className=""
                             />
                         </div>
+                        <button
+                            onClick={handleSave}
+                            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${isSaved ? 'bg-primary text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600 flex items-center justify-center'
+                                }`}
+                            disabled={!user}
+                            aria-label={isSaved ? 'Remove from saved' : 'Save this project'}
+                        >
+                            <Bookmark className="w-4 h-4 mr-1" />
+                            {isSaved ? 'Saved' : 'Save'}
+                        </button>
                     </div>
                 </div>
             </div>

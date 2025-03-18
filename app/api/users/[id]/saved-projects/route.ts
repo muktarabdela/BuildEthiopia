@@ -21,10 +21,20 @@ export async function GET(
       return NextResponse.json({ projects: [] });
     }
 
-    // Get the project details for each saved project
+    // Get the project details with developer information
     const { data: projects, error: projectsError } = await supabase
       .from("projects")
-      .select("*")
+      .select(
+        `
+        *,
+        developer:profiles!projects_developer_id_fkey(
+          id,
+          name,
+          username,
+          profile_picture
+        )
+      `
+      )
       .in(
         "id",
         savedProjects.map((sp) => sp.project_id)

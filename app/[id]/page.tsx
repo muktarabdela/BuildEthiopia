@@ -224,7 +224,8 @@ export default function ProfilePage() {
                         getUserSavedProjects(user.id, session?.access_token),
                         getUserUpvotedProjects(user.id, session?.access_token)
                     ]);
-                    setSavedProjects(saved.projects);
+                    console.log("Saved Projects from profile page:", saved);
+                    setSavedProjects(saved);
                     setUpvotedProjects(upvoted);
                 }
             }
@@ -262,8 +263,8 @@ export default function ProfilePage() {
                                     <div className="mt-8">
                                         <h2 className="text-2xl font-bold text-white mb-4">Saved Projects</h2>
                                         {savedProjects.length > 0 ? (
-                                            savedProjects.map(projectId => (
-                                                <ProjectCard key={projectId} projectId={projectId} />
+                                            savedProjects.map((project, index) => (
+                                                <ProjectCard key={project.id} project={project} index={index} />
                                             ))
                                         ) : (
                                             <p className="text-gray-400">No saved projects yet.</p>

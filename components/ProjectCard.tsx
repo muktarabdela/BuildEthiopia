@@ -123,7 +123,7 @@ export function ProjectCard({ project, index }) {
                                 {project.tech_stack.map((tech) => (
                                     <span
                                         key={tech}
-                                        className="px-2 py-1 bg-gray-700 text-white/50 text-gray-300 rounded-full text-xs font-medium hover:bg-gray-700 text-white transition-colors duration-200"
+                                        className="px-2 py-1 bg-gray-700 rounded-full text-xs font-medium hover:bg-gray-700 text-white transition-colors duration-200"
                                     >
                                         {tech}
                                     </span>

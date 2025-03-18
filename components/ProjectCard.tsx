@@ -31,7 +31,6 @@ export function ProjectCard({ project, index }) {
             }
         }
     }, [user, project.id]);
-    console.log("isSaved", isSaved);
     const handleSave = async () => {
         if (!user) return;
         if (!session) return;

@@ -56,7 +56,7 @@ export const getUserUpvotedProjects = async (userId: string, token: string) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("Upvoted projects data:", data);
+    // console.log("Upvoted projects data:", data);
     return data.projects;
   } catch (error) {
     console.error("Error fetching upvoted projects:", error);
@@ -71,7 +71,7 @@ export const getUserSavedProjects = async (userId: string, token: string) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    // console.log("Saved projects data:", data);
+    console.log("Saved projects data:", data);
     return data.projects;
   } catch (error) {
     console.error("Error fetching saved projects:", error);

@@ -20,20 +20,18 @@ export function ProjectCard({ project, index }) {
     // console.log("session data from project card", session);
     useEffect(() => {
         if (user) {
-
             if (session) {
                 Promise.all([
                     getUserSavedProjects(user.id, session.access_token),
                     getUserUpvotedProjects(user.id, session.access_token),
                 ]).then(([saved, upvoted]) => {
-                    setIsSaved(saved.includes(project.id));
+                    setIsSaved(saved.some(savedProject => savedProject.id === project.id));
                     setIsUpvoted(upvoted.includes(project.id));
                 });
             }
-
         }
     }, [user, project.id]);
-
+    console.log("isSaved", isSaved);
     const handleSave = async () => {
         if (!user) return;
         if (!session) return;

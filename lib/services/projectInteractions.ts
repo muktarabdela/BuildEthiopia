@@ -1,41 +1,79 @@
+import axios from "axios";
 import { supabase } from "../supabase";
 
-export const upvoteProject = async (userId: string, projectId: string) => {
-  const { data, error } = await supabase
-    .from("upvotes")
-    .upsert({ user_id: userId, project_id: projectId })
-    .select();
-
-  if (error) throw error;
-  return data;
+export const upvoteProject = async (
+  userId: string,
+  projectId: string,
+  token: string
+) => {
+  try {
+    // Set the Authorization header with the token
+    const { data } = await axios.post(
+      `/api/projects/${projectId}/upvote`,
+      { user_id: userId, project_id: projectId },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return data;
+  } catch (error) {
+    console.error("Error upvoting project:", error);
+    throw new Error("Failed to upvote project");
+  }
 };
 
-export const saveProject = async (userId: string, projectId: string) => {
-  const { data, error } = await supabase
-    .from("saved_projects")
-    .upsert({ user_id: userId, project_id: projectId })
-    .select();
-
-  if (error) throw error;
-  return data;
+export const saveProject = async (
+  userId: string,
+  projectId: string,
+  token: string
+) => {
+  try {
+    const { data } = await axios.post(
+      `/api/projects/${projectId}/save`,
+      {
+        user_id: userId,
+        project_id: projectId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return data;
+  } catch (error) {
+    console.error("Error saving project:", error);
+    throw new Error("Failed to save project");
+  }
 };
 
-export const getUserUpvotedProjects = async (userId: string) => {
-  const { data, error } = await supabase
-    .from("upvotes")
-    .select("project_id")
-    .eq("user_id", userId);
-
-  if (error) throw error;
-  return data.map((item) => item.project_id);
+export const getUserUpvotedProjects = async (userId: string, token: string) => {
+  try {
+    const { data } = await axios.get(`/api/users/${userId}/upvoted-projects`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return data.projects;
+  } catch (error) {
+    console.error("Error fetching upvoted projects:", error);
+    throw new Error("Failed to fetch upvoted projects");
+  }
 };
 
-export const getUserSavedProjects = async (userId: string) => {
-  const { data, error } = await supabase
-    .from("saved_projects")
-    .select("project_id")
-    .eq("user_id", userId);
-
-  if (error) throw error;
-  return data.map((item) => item.project_id);
+export const getUserSavedProjects = async (userId: string, token: string) => {
+  try {
+    const { data } = await axios.get(`/api/users/${userId}/saved-projects`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    // console.log("Saved projects data:", data);
+    return data.projects;
+  } catch (error) {
+    console.error("Error fetching saved projects:", error);
+    throw new Error("Failed to fetch saved projects");
+  }
 };

@@ -6,15 +6,25 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 export async function requireAuth(req: Request) {
-  // get the session from the request headers
-  const session = req.headers.get("Authorization")?.split("Bearer ")[1];
-
-  // console.log("Session check:", session);
-  if (!session) {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     throw new Error("Unauthorized");
   }
 
-  return session;
+  const token = authHeader.split(" ")[1];
+
+  // Verify the token with Supabase
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser(token);
+  // console.log("User data:", user);
+  if (error || !user) {
+    console.error("Error verifying token:", error);
+    throw new Error("Unauthorized");
+  }
+
+  return { user };
 }
 
 export async function requireRole(allowedRoles: string[]) {

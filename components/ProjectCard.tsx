@@ -5,19 +5,53 @@ import Image from 'next/image';
 import UpvoteButton from '@/app/projects/[id]/UpvoteButton';
 import { Skeleton } from "@/components/ui/skeleton"
 import { useAuth } from './AuthProvider';
-import { useState } from 'react';
-import { saveProject, upvoteProject } from '@/lib/services/projectInteractions';
+import { useState, useEffect } from 'react';
+import { saveProject, upvoteProject, getUserSavedProjects, getUserUpvotedProjects } from '@/lib/services/projectInteractions';
+import { supabase } from '@/lib/supabase';
 
 export function ProjectCard({ project, index }) {
-    const { user } = useAuth();
+    console.log("Project card data", project);
+    // Ensure project is defined
+    if (!project) return null;
+
+    const { user, session } = useAuth();
     const [isSaved, setIsSaved] = useState(false);
     const [isUpvoted, setIsUpvoted] = useState(false);
+    // console.log("session data from project card", session);
+    useEffect(() => {
+        if (user) {
+
+            if (session) {
+                Promise.all([
+                    getUserSavedProjects(user.id, session.access_token),
+                    getUserUpvotedProjects(user.id, session.access_token),
+                ]).then(([saved, upvoted]) => {
+                    setIsSaved(saved.includes(project.id));
+                    setIsUpvoted(upvoted.includes(project.id));
+                });
+            }
+
+        }
+    }, [user, project.id]);
 
     const handleSave = async () => {
         if (!user) return;
+        if (!session) return;
+
         try {
-            await saveProject(user.id, project.id);
-            setIsSaved(true);
+            if (isSaved) {
+                await fetch(`/api/projects/${project.id}/save`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session?.access_token}`,
+                    },
+                    body: JSON.stringify({ user_id: user.id }),
+                });
+            } else {
+                await saveProject(user.id, project.id, session.access_token);
+            }
+            setIsSaved(!isSaved);
         } catch (error) {
             console.error('Error saving project:', error);
         }
@@ -25,9 +59,21 @@ export function ProjectCard({ project, index }) {
 
     const handleUpvote = async () => {
         if (!user) return;
+        if (!session) return;
+
         try {
-            await upvoteProject(user.id, project.id);
-            setIsUpvoted(true);
+            if (isUpvoted) {
+                await fetch(`/api/projects/${project.id}/upvote`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session?.access_token}`,
+                    },
+                });
+            } else {
+                await upvoteProject(user.id, project.id, session.access_token);
+            }
+            setIsUpvoted(!isUpvoted);
         } catch (error) {
             console.error('Error upvoting project:', error);
         }
@@ -143,7 +189,7 @@ export function ProjectCard({ project, index }) {
                         </div>
                         <button
                             onClick={handleSave}
-                            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${isSaved ? 'bg-primary text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600 flex items-center justify-center'
+                            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors flex items-center ${isSaved ? 'bg-primary text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600 flex items-center justify-center'
                                 }`}
                             disabled={!user}
                             aria-label={isSaved ? 'Remove from saved' : 'Save this project'}

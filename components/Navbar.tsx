@@ -21,7 +21,7 @@ import { useAuth } from './AuthProvider';
 
 export function Navbar() {
     const { user, session } = useAuth();
-    console.log("user", user)
+    // console.log("user", user)
     const pathname = usePathname();
     const [profile, setProfile] = useState(null);
     const [unreadCount, setUnreadCount] = useState(0);
@@ -75,7 +75,7 @@ export function Navbar() {
         setUnreadCount(0);
         window.location.href = '/';
     }
-    console.log(profile)
+    // console.log(profile)
     return (
         <header className="sticky top-0 z-50 bg-gradient-to-br from-gray-900 to-gray-800 border-b border-gray-700 shadow-sm">
             <div className="container mx-auto px-4">

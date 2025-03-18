@@ -41,7 +41,7 @@ export default function PortfolioSection({ user, savedProjects = [], upvotedProj
                                     </div>
                                     <h3 className="text-lg font-semibold text-white">{project.title}</h3>
                                     <p className="text-gray-300 mt-2">{project.description}</p>
-                                    <div className="flex items-center mt-4 text-gray-400">
+                                    <div className="flex items-center mt-4 text-white">
                                         <ThumbsUp className="h-4 w-4 mr-1" />
                                         <span>{project.upvotes} upvotes</span>
                                     </div>

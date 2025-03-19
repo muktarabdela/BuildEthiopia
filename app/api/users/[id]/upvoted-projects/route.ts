@@ -3,15 +3,23 @@ import { requireAuth, supabase } from "@/lib/supabase";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await requireAuth(request);
-    // First get the saved project IDs
+
+    // Await params before accessing its properties
+    const resolvedParams = await context.params;
+
+    if (!resolvedParams?.id) {
+      throw new Error("User ID is required");
+    }
+
+    // First get the upvote project IDs
     const { data, error } = await supabase
       .from("upvotes")
       .select("project_id")
-      .eq("user_id", params.id);
+      .eq("user_id", resolvedParams.id);
 
     if (error) throw error;
     // If no upvote projects, return empty array

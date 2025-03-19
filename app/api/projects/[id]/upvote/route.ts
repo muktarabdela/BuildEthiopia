@@ -11,7 +11,6 @@ export async function GET(
 
     // Await params before accessing its properties
     const resolvedParams = await context.params;
-    console.log("Resolved params:", resolvedParams);
     if (!resolvedParams?.id) {
       throw new Error("Project ID is required");
     }
@@ -38,9 +37,12 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string | string[] }> }
 ) {
   try {
+    // Await params to ensure it's resolved
+    const resolvedParams = await context.params;
+
     const { user_id, project_id } = await request.json();
 
     if (!user_id || !project_id) {
@@ -80,7 +82,7 @@ export async function POST(
     // Update the project's upvotes_count using the stored procedure
     const { data: projectData, error: projectError } = await supabase.rpc(
       "increment_project_upvotes_count",
-      { p_project_id: project_id }
+      { p_project_id: resolvedParams.id }
     );
 
     if (projectError) throw projectError;
@@ -99,9 +101,12 @@ export async function POST(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string | string[] }> }
 ) {
   try {
+    // Await params to ensure it's resolved
+    const resolvedParams = await context.params;
+
     // Ensure the request is authenticated
     await requireAuth(request);
 
@@ -111,14 +116,14 @@ export async function DELETE(
     const { data, error: deleteError } = await supabase
       .from("upvotes")
       .delete()
-      .eq("project_id", params.id);
+      .eq("project_id", resolvedParams.id);
 
     if (deleteError) throw deleteError;
 
     // Decrement the project's upvotes_count using the stored procedure.
     const { data: projectData, error: projectError } = await supabase.rpc(
       "decrement_project_upvotes_count",
-      { p_project_id: params.id }
+      { p_project_id: resolvedParams.id }
     );
 
     if (projectError) throw projectError;

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import { useState, useEffect } from "react";
 import { Slider } from "@/components/ui/slider";
+import { useLoading } from '@/components/LoadingProvider';
 // import { MultiSelect } from "@/components/ui/multi-select";
 
 type Project = {
@@ -46,6 +47,7 @@ const techStackOptions = [
 ];
 
 export default function ProjectsPage() {
+    const { setIsLoading } = useLoading();
     const [projects, setProjects] = useState<Project[]>([]);
     const [filters, setFilters] = useState<Filters>({
         minProjects: 0,
@@ -57,11 +59,18 @@ export default function ProjectsPage() {
 
     useEffect(() => {
         const fetchProjects = async () => {
-            const projects = await getProjects();
-            setProjects(projects);
+            try {
+                setIsLoading(true); // Start loading
+                const projects = await getProjects();
+                setProjects(projects);
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                setIsLoading(false); // Stop loading
+            }
         };
         fetchProjects();
-    }, []);
+    }, [setIsLoading]);
 
     const handleFilterChange = async (newFilters: Filters) => {
         const filteredProjects = await getProjects(newFilters);

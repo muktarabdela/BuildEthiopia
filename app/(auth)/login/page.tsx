@@ -9,16 +9,28 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { supabase } from "@/lib/supabase"
 import { Eye, EyeOff, Github } from "lucide-react"
+import { useLoading } from '@/components/LoadingProvider'
 
 
 
 export default function LoginPage() {
     const router = useRouter()
+    const { setIsLoading } = useLoading()
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(false)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [showPassword, setShowPassword] = useState(false)
+
+    // Simulate loading during filtering
+    useEffect(() => {
+        setIsLoading(true); // Start loading when filters change
+        const timeout = setTimeout(() => {
+            setIsLoading(false); // Stop loading after a short delay (simulate filtering)
+        }, 400); // Adjust the delay as needed
+
+        return () => clearTimeout(timeout);
+    }, [setIsLoading]);
 
     useEffect(() => {
         const {
@@ -99,7 +111,7 @@ export default function LoginPage() {
 
     const handleGoogleLogin = async () => {
         try {
-            setLoading(true)
+            setIsLoading(true)
             setError("")
 
             const { data, error } = await supabase.auth.signInWithOAuth({
@@ -117,11 +129,11 @@ export default function LoginPage() {
             console.error("Google login error:", error)
             setError(error.message || "An error occurred during Google login")
         } finally {
-            setLoading(false)
+            setIsLoading(false)
         }
     }
 
-    
+
     return (
         <div className="min-h-screen flex items-center justify-center px-4">
             <Card className="w-full max-w-md bg-gray-900 border-gray-800 shadow-lg">

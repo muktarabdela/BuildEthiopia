@@ -3,9 +3,9 @@ import { DevelopersList } from '@/components/DevelopersList';
 import { supabase } from '@/lib/supabase';
 
 async function getDevelopers() {
-    const { data: developers } = await supabase
-        .from('profiles')
-        .select(`
+  const { data: developers, error } = await supabase
+    .from('profiles')
+    .select(`
       id,
       name,
       username,
@@ -14,20 +14,30 @@ async function getDevelopers() {
       github_url,
       linkedin_url,
       contact_visible,
-      projects:projects(
+      projects:projects!projects_developer_id_fkey(
         id,
         title,
         upvotes_count,
         comments_count
       )
     `)
-        .eq('role', 'developer')
-        .order('name');
+    .eq('role', 'developer')
+    .order('name');
 
-    return developers || [];
+  if (error) {
+    console.error("Supabase error:", error);
+    return [];
+  }
+
+  if (!developers) {
+    console.warn("No developers found, but no error occurred");
+    return [];
+  }
+
+  return developers;
 }
 
 export default async function DevelopersPage() {
-    const developers = await getDevelopers();
-    return <DevelopersList developers={developers} />;
+  const developers = await getDevelopers();
+  return <DevelopersList developers={developers} />;
 }

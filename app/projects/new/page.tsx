@@ -17,6 +17,7 @@ import { useAuth } from "@/components/AuthProvider"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { useLoading } from '@/components/LoadingProvider'
 
 export default function NewProjectPage() {
     const { user } = useAuth()
@@ -54,6 +55,7 @@ export default function NewProjectPage() {
     const [techInput, setTechInput] = useState("")
 
     const supabase = createClientComponentClient()
+    const { setIsLoading } = useLoading()
 
     useEffect(() => {
         async function checkAccess() {
@@ -229,6 +231,7 @@ export default function NewProjectPage() {
         setError("")
 
         try {
+            setIsLoading(true) // Start loading
             // Upload images
             const imageUrls = await handleImageUpload(imageFiles)
             console.log("Uploaded image URLs:", imageUrls)
@@ -272,6 +275,7 @@ export default function NewProjectPage() {
             })
         } finally {
             setSubmitting(false)
+            setIsLoading(false) // Stop loading
         }
     }
 

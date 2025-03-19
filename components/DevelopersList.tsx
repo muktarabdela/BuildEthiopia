@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Github, Linkedin, Filter } from 'lucide-react';
+import { useLoading } from '@/components/LoadingProvider';
 
 interface Developer {
     id: string;
@@ -32,11 +33,22 @@ interface DevelopersListProps {
 }
 
 export function DevelopersList({ developers }: DevelopersListProps) {
+    const { setIsLoading } = useLoading();
     const [minProjects, setMinProjects] = useState(0);
     const [maxProjects, setMaxProjects] = useState(10);
     const [minUpvotes, setMinUpvotes] = useState(0);
     const [maxUpvotes, setMaxUpvotes] = useState(100);
     const [techStack, setTechStack] = useState<string[]>([]);
+
+    // Simulate loading during filtering
+    useEffect(() => {
+        setIsLoading(true); // Start loading when filters change
+        const timeout = setTimeout(() => {
+            setIsLoading(false); // Stop loading after a short delay (simulate filtering)
+        }, ); // Adjust the delay as needed
+
+        return () => clearTimeout(timeout);
+    }, [minProjects, maxProjects, minUpvotes, maxUpvotes, techStack, setIsLoading]);
 
     const filteredDevelopers = developers.filter(developer => {
         const projectCount = developer.projects.length;

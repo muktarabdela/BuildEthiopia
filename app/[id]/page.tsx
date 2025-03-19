@@ -14,9 +14,10 @@ import ProfileHeader from '@/components/profile/profile-header';
 import PortfolioSection from '@/components/profile/portfolio';
 import AchievementsSection from '@/components/profile/achievements';
 import SettingsSection from '@/components/profile/settings';
-import {  getUserUpvotedProjects } from '@/lib/services/projectInteractions';
+import { getUserUpvotedProjects } from '@/lib/services/projectInteractions';
 import { ProjectCard } from '@/components/ProjectCard';
 import index from 'swr';
+import { useLoading } from '@/components/LoadingProvider';
 
 // API or database
 const userData = {
@@ -192,49 +193,52 @@ export default function ProfilePage() {
     const params = useParams<{ id: string }>();
     const router = useRouter();
     const [profile, setProfile] = useState<Profile | null>(null);
-    const [loading, setLoading] = useState<boolean>(true);
     const [showDialog, setShowDialog] = useState<boolean>(false);
     const [isOwner, setIsOwner] = useState<boolean>(false);
     const [upvotedProjects, setUpvotedProjects] = useState<string[]>([]);
+    const { setIsLoading } = useLoading();
 
     useEffect(() => {
         async function getProfile() {
-            if (!params) return;
+            try {
+                setIsLoading(true);
+                if (!params) return;
 
-            const username = params?.id;
-            const response = await fetch(`/api/profile/${username}`);
+                const username = params?.id;
+                const response = await fetch(`/api/profile/${username}`);
 
-            if (!response.ok) {
-                router.push('/login');
-                return;
-            }
-
-            const profile = await response.json();
-            const transformedProfile = transformProfileData(profile);
-            setProfile(transformedProfile);
-
-            if (user?.id === profile?.id) {
-                setIsOwner(true);
-                if (!profile?.bio || !profile?.github_url) {
-                    setShowDialog(true);
+                if (!response.ok) {
+                    router.push('/login');
+                    return;
                 }
 
-                if (session) {
-                    const [upvoted] = await Promise.all([
-                        // getUserSavedProjects(user.id, session?.access_token),
-                        getUserUpvotedProjects(user.id, session?.access_token)
-                    ]);
-                    // setSavedProjects(saved);
-                    setUpvotedProjects(upvoted);
+                const profile = await response.json();
+                const transformedProfile = transformProfileData(profile);
+                setProfile(transformedProfile);
+
+                if (user?.id === profile?.id) {
+                    setIsOwner(true);
+                    if (!profile?.bio || !profile?.github_url) {
+                        setShowDialog(true);
+                    }
+
+                    if (session) {
+                        const [upvoted] = await Promise.all([
+                            getUserUpvotedProjects(user.id, session?.access_token)
+                        ]);
+                        setUpvotedProjects(upvoted);
+                    }
                 }
+            } catch (error) {
+                console.error('Error:', error);
+            } finally {
+                setIsLoading(false);
             }
-            setLoading(false);
         }
 
         getProfile();
-    }, [params, user, session]);
+    }, [params, user, session, setIsLoading]);
 
-    if (loading) return <div>Loading...</div>;
     if (!profile) return <div>Profile not found.</div>;
 
     const { projects } = profile;

@@ -5,25 +5,24 @@ import { useParams, useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import { useEffect } from "react"
 import { useAuth } from "@/components/AuthProvider"
+import { useLoading } from "@/components/LoadingProvider"
 import ProjectHero from "@/components/ProjectHero"
 import ProjectActionBar from "@/components/ProjectActionBar"
 import ProjectContent from "@/components/ProjectContent"
 import ProjectSidebar from "@/components/ProjectSidebar"
 
-
-
 // Custom hook to fetch project data
 function useProject(projectId: string | undefined) {
     const { user } = useAuth()
+    const { setIsLoading } = useLoading()
     const [project, setProject] = React.useState<any>(null)
-    const [loading, setLoading] = React.useState<boolean>(true)
     const [error, setError] = React.useState<string | null>(null)
 
     useEffect(() => {
         if (!projectId) return
 
         const fetchProject = async () => {
-            setLoading(true)
+            setIsLoading(true) // Start loading
             try {
                 const { data, error } = await supabase
                     .from("projects")
@@ -59,52 +58,49 @@ function useProject(projectId: string | undefined) {
                 console.error("Error fetching project:", err)
                 setError(err.message)
             } finally {
-                setLoading(false)
+                setIsLoading(false) // Stop loading
             }
         }
 
         fetchProject()
-    }, [projectId])
+    }, [projectId, setIsLoading])
 
-    return { project, loading, error }
+    return { project, error }
 }
 
 export default function ProjectPage() {
     const { id } = useParams()
     const router = useRouter()
-        
+    const { setIsLoading } = useLoading()
+
     // @ts-ignore
-    const { project, loading, error } = useProject(id)
+    const { project, error } = useProject(id)
 
     // Redirect to a 404 page if there is an error
     useEffect(() => {
         if (error) {
+            setIsLoading(true) // Start loading before redirect
             router.push("/404")
         }
-    }, [error, router])
-
-    // Optionally render a loading state
-    if (loading || !project) {
-        return <div className="min-h-screen flex justify-center items-center">Loading...</div>
-    }
+    }, [error, router, setIsLoading])
 
     return (
         <main className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
             {/* Hero Section */}
-            <ProjectHero project={project} />
+            {project && <ProjectHero project={project} />}
 
             {/* Main Content */}
             <div className="container mx-auto px-4 py-8">
                 <div className="max-w-4xl mx-auto">
                     {/* Action Bar */}
-                    <ProjectActionBar project={project} />
+                    {project && <ProjectActionBar project={project} />}
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {/* Main Content Column */}
-                        <ProjectContent project={project} />
+                        {project && <ProjectContent project={project} />}
 
                         {/* Sidebar */}
-                        <ProjectSidebar developer={project.developer} />
+                        {project && <ProjectSidebar developer={project.developer} />}
                     </div>
                 </div>
             </div>

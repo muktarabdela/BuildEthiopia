@@ -60,14 +60,6 @@ export default function ProjectActionBar({ project }) {
                     <Share2 className="h-5 w-5" />
                 </Button>
 
-                <Button
-                    variant="outline"
-                    size="icon"
-                    className="text-gray-300 hover:text-gray-100 border-gray-600"
-                    aria-label="Bookmark project"
-                >
-                    <Bookmark className="h-5 w-5" />
-                </Button>
             </div>
         </div>
     )

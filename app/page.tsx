@@ -162,15 +162,15 @@ export default function Home() {
                     </Button>
                   </Link>
                   <Link href="/projects">
-                    <Button variant="outline" size="lg" className="border-primary text-primary hover:bg-gray-700 text-white w-full md:w-auto">
+                    <Button variant="outline" size="lg" className="border-primary  hover:bg-gray-700 text-white w-full md:w-auto">
                       <Search className="mr-2 h-5 w-5" />
                       Explore Projects
                     </Button>
                   </Link>
-                </div>
+                </div>-
 
                 {/* Search Bar */}
-                <div className="relative max-w-2xl mx-auto">
+                {/* <div className="relative max-w-2xl mx-auto">
                   <div className="flex items-center bg-gray-800 rounded-full shadow-md p-1 pl-6 border border-gray-700">
                     <Search className="h-5 w-5 text-gray-400 mr-2" />
                     <input
@@ -182,7 +182,7 @@ export default function Home() {
                       Search
                     </Button>
                   </div>
-                </div>
+                </div> */}
               </div>
             </div>
           </section>

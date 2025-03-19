@@ -53,6 +53,23 @@ export async function POST(
     // Ensure the request is authenticated
     await requireAuth(request);
 
+    // Check if the upvote already exists
+    const { data: existingUpvote, error: checkError } = await supabase
+      .from("upvotes")
+      .select("*")
+      .eq("user_id", user_id)
+      .eq("project_id", project_id)
+      .maybeSingle();
+
+    if (checkError) throw checkError;
+
+    if (existingUpvote) {
+      return NextResponse.json(
+        { error: "Project already upvoted" },
+        { status: 409 }
+      );
+    }
+
     // Insert the upvote record
     const { data: upvoteData, error: upvoteError } = await supabase
       .from("upvotes")

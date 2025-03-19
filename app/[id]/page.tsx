@@ -14,7 +14,7 @@ import ProfileHeader from '@/components/profile/profile-header';
 import PortfolioSection from '@/components/profile/portfolio';
 import AchievementsSection from '@/components/profile/achievements';
 import SettingsSection from '@/components/profile/settings';
-import { getUserSavedProjects, getUserUpvotedProjects } from '@/lib/services/projectInteractions';
+// import { getUserSavedProjects, getUserUpvotedProjects } from '@/lib/services/projectInteractions';
 import { ProjectCard } from '@/components/ProjectCard';
 import index from 'swr';
 
@@ -195,7 +195,6 @@ export default function ProfilePage() {
     const [loading, setLoading] = useState<boolean>(true);
     const [showDialog, setShowDialog] = useState<boolean>(false);
     const [isOwner, setIsOwner] = useState<boolean>(false);
-    const [savedProjects, setSavedProjects] = useState<string[]>([]);
     const [upvotedProjects, setUpvotedProjects] = useState<string[]>([]);
 
     useEffect(() => {
@@ -221,12 +220,11 @@ export default function ProfilePage() {
                 }
 
                 if (session) {
-                    const [saved, upvoted] = await Promise.all([
-                        getUserSavedProjects(user.id, session?.access_token),
+                    const [upvoted] = await Promise.all([
+                        // getUserSavedProjects(user.id, session?.access_token),
                         getUserUpvotedProjects(user.id, session?.access_token)
                     ]);
-                    console.log("Saved Projects from profile page:", saved);
-                    setSavedProjects(saved);
+                    // setSavedProjects(saved);
                     setUpvotedProjects(upvoted);
                 }
             }
@@ -257,9 +255,9 @@ export default function ProfilePage() {
                 <div className="grid gap-8">
                     {profile && <ProfileHeader user={profile} />}
                     <div className="grid gap-8 md:grid-cols-3">
-                        <div className="md:col-span-2">
+                        {/* <div className="md:col-span-2">
                             {profile && <PortfolioSection user={profile} savedProjects={savedProjects} upvotedProjects={upvotedProjects} />}
-                        </div>
+                        </div> */}
                         <div className="space-y-8">
                             {profile && <AchievementsSection user={profile} />}
                             {profile && isOwner && <SettingsSection user={profile} isOpen={false} onClose={() => { }} />}

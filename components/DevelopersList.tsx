@@ -45,7 +45,7 @@ export function DevelopersList({ developers }: DevelopersListProps) {
         setIsLoading(true); // Start loading when filters change
         const timeout = setTimeout(() => {
             setIsLoading(false); // Stop loading after a short delay (simulate filtering)
-        }, ); // Adjust the delay as needed
+        }, 200); // Adjust the delay as needed
 
         return () => clearTimeout(timeout);
     }, [minProjects, maxProjects, minUpvotes, maxUpvotes, techStack, setIsLoading]);
@@ -64,9 +64,16 @@ export function DevelopersList({ developers }: DevelopersListProps) {
 
     return (
         <main className="container mx-auto px-4 py-8">
+            {/* Header */}
+            <div className="mb-12 text-center">
+                <h1 className="text-4xl font-bold mb-4 text-white">Ethiopian Developers</h1>
+                <p className="text-lg text-white">
+                    Connect with talented developers from Ethiopia
+                </p>
+            </div>
             <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8">
                 {/* Sidebar Filters */}
-                <aside className="bg-gray-800 rounded-lg p-6 h-fit  mt-20 text-white">
+                <aside className="bg-gray-800 rounded-lg p-6 h-fit text-white">
                     <div className="flex items-center gap-2 mb-6">
                         <Filter className="w-5 h-5 text-primary" />
                         <h2 className="text-xl font-semibold">Filters</h2>
@@ -143,14 +150,6 @@ export function DevelopersList({ developers }: DevelopersListProps) {
 
                 {/* Main Content */}
                 <div>
-                    {/* Header */}
-                    <div className="mb-12 text-center">
-                        <h1 className="text-4xl font-bold mb-4 text-white">Ethiopian Developers</h1>
-                        <p className="text-lg text-white">
-                            Connect with talented developers from Ethiopia
-                        </p>
-                    </div>
-
                     {/* Developers Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {filteredDevelopers.map((developer) => {

@@ -111,7 +111,6 @@ export function ProjectCard({ project, index }) {
                             ))}
                         </div>
                     )}
-
                     {/* Developer Info */}
                     <div
                         className="flex items-center gap-3 mt-4 hover:underline cursor-pointer"

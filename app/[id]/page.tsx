@@ -14,7 +14,7 @@ import ProfileHeader from '@/components/profile/profile-header';
 import PortfolioSection from '@/components/profile/portfolio';
 import AchievementsSection from '@/components/profile/achievements';
 import SettingsSection from '@/components/profile/settings';
-// import { getUserSavedProjects, getUserUpvotedProjects } from '@/lib/services/projectInteractions';
+import {  getUserUpvotedProjects } from '@/lib/services/projectInteractions';
 import { ProjectCard } from '@/components/ProjectCard';
 import index from 'swr';
 

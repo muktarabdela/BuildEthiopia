@@ -24,9 +24,9 @@ export function ProjectCard({ project, index }) {
                 Promise.all([
                     // getUserSavedProjects(user.id, session.access_token),
                     getUserUpvotedProjects(user.id, session.access_token),
-                ]).then(([saved, upvoted]) => {
+                ]).then(([upvoted]) => {
                     // setIsSaved(saved.some(savedProject => savedProject.id === project.id));
-                    setIsUpvoted(upvoted.includes(project.id));
+                    setIsUpvoted(upvoted?.includes(project.id));
                 });
             }
         }
@@ -113,10 +113,20 @@ export function ProjectCard({ project, index }) {
                     )}
 
                     {/* Developer Info */}
-                    <Link
-                        href={`/${project.developer.username}`}
-                        className="flex items-center gap-3 mt-4 hover:underline"
-                        onClick={(e) => e.stopPropagation()}
+                    <div
+                        className="flex items-center gap-3 mt-4 hover:underline cursor-pointer"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            window.location.href = `/${project.developer.username}`;
+                        }}
+                        role="link"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                window.location.href = `/${project.developer.username}`;
+                            }
+                        }}
+                        aria-label={`View ${project.developer?.name || 'Anonymous Developer'}'s profile`}
                     >
                         <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-700 text-white group-hover:ring-2 group-hover:ring-primary transition-all duration-300">
                             {project.developer?.profile_picture ? (
@@ -135,7 +145,7 @@ export function ProjectCard({ project, index }) {
                         <span className="text-base font-medium text-gray-300 group-hover:text-primary transition-colors duration-300">
                             {project.developer?.name || 'Anonymous Developer'}
                         </span>
-                    </Link>
+                    </div>
                 </div>
             </Link>
 
@@ -155,19 +165,27 @@ export function ProjectCard({ project, index }) {
                     </button>
 
                     {/* Upvote */}
-                    <button
+                    <div
                         className="flex items-center gap-2 bg-gray-700 rounded-full hover:bg-gray-700 text-white transition-colors duration-200"
                         onClick={(e) => {
                             e.stopPropagation();
                             handleUpvote();
                         }}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                handleUpvote();
+                            }
+                        }}
+                        aria-label={`Upvote ${project.title}`}
                     >
                         <UpvoteButton
                             projectId={project?.id}
                             initialUpvotes={project.upvotes_count}
                             className=""
                         />
-                    </button>
+                    </div>
 
 
                 </div>

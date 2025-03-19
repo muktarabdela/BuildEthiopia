@@ -27,12 +27,24 @@ type UpdateProfileRequest = {
 };
 
 export async function GET(
-  req: Request,
-  { params }: { params: { [key: string]: string | string[] } }
+  request: Request,
+  context: { params: Promise<{ id: string | string[] }> }
 ) {
   try {
+    // Await params before accessing its properties
+    const resolvedParams = await context.params;
+
     // Convert id to string if it's an array
-    const id = Array.isArray(params.id) ? params.id[0] : params.id;
+    const id = Array.isArray(resolvedParams.id)
+      ? resolvedParams.id[0]
+      : resolvedParams.id;
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Profile ID is required" },
+        { status: 400 }
+      );
+    }
 
     // Fetch profile
     const { data: profile, error: profileError } = await supabase

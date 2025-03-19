@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { requireAuth } from "@/lib/supabase";
 import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 type Profile = {
   id: string;
@@ -89,8 +90,8 @@ export async function GET(
 }
 
 export async function POST(
-  req: Request,
-  { params }: { params: { [key: string]: string | string[] } }
+  req: NextRequest,
+  { params }: { params: { id: string | string[] } }
 ) {
   try {
     // Convert id to string if it's an array

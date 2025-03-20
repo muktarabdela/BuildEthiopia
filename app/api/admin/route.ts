@@ -44,8 +44,20 @@ export const PATCH = async (request: Request) => {
       );
     }
 
-    const updatedProject = await updateFeaturedStatus(projectId, featured);
-    return NextResponse.json(updatedProject);
+    const { data, error } = await supabase
+      .from("featured_projects")
+      .upsert({
+        project_id: projectId,
+        featured_at: new Date().toISOString(),
+        expires_at: new Date(
+          Date.now() + 7 * 24 * 60 * 60 * 1000
+        ).toISOString(),
+      })
+      .select("*");
+
+    if (error) throw error;
+
+    return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json(
       { error: "Failed to update featured status" },

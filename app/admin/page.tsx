@@ -1,12 +1,32 @@
+'use client'
 import { RecentActivity } from '@/components/admin/RecentActivity';
 import { StatsCard } from '@/components/admin/StatsCard';
+import { useLoading } from '@/components/LoadingProvider';
 import { getProjects, getDevelopers } from '@/lib/api/admin';
+import { useEffect, useState } from 'react';
 
-export default async function AdminDashboardPage() {
-    const [projects, developers] = await Promise.all([
-        getProjects(),
-        getDevelopers()
-    ]);
+export default function AdminDashboardPage() {
+    const { setIsLoading } = useLoading();
+    const [projects, setProjects] = useState([]);
+    const [developers, setDevelopers] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            try {
+                const [projectsData, developersData] = await Promise.all([
+                    getProjects(),
+                    getDevelopers()
+                ]);
+                setProjects(projectsData);
+                setDevelopers(developersData);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [setIsLoading]);
 
     return (
         <div className="space-y-8">

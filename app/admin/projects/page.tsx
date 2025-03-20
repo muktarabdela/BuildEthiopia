@@ -1,8 +1,26 @@
+'use client'
 import { ProjectTable } from '@/components/admin/ProjectTable';
 import { getProjects } from '@/lib/api/admin';
+import { useEffect, useState } from 'react';
+import { useLoading } from '@/components/LoadingProvider';
 
-export default async function AdminProjectsPage() {
-    const projects = await getProjects();
+export default function AdminProjectsPage() {
+    const { setIsLoading } = useLoading();
+    const [projects, setProjects] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            try {
+                const data = await getProjects();
+                setProjects(data);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [setIsLoading]);
 
     return (
         <div className="space-y-6">

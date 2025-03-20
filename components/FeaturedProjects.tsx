@@ -25,10 +25,9 @@ export default function FeaturedProjects({
     title = "Featured Projects",
     showViewAll = true,
     showHeader = true,
-    isLoading 
+    isLoading
 }: FeaturedProjectsProps) {
-    // Filter projects to only show featured ones
-    const featuredProjects = projects.filter(project => project.featured);
+    console.log('Featured Projects from FeaturedProjects componet:', projects);
 
     // Generate a random color for project cards without images
     const getRandomColor = () => {
@@ -75,8 +74,8 @@ export default function FeaturedProjects({
                     Array.from({ length: 3 }).map((_, index) => (
                         <SkeletonProjectCard key={`skeleton-${index}`} />
                     ))
-                ) : featuredProjects.length > 0 ? (
-                    featuredProjects.map((project, index) => (
+                ) : projects.length > 0 ? (
+                    projects.map((project, index) => (
                         <ProjectCard
                             key={project.id}
                             project={project}

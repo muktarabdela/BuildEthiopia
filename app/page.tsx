@@ -15,12 +15,13 @@ import { useLoading } from '@/components/LoadingProvider';
 
 async function getProjects(setIsFeatureProjectsLoading: (loading: boolean) => void) {
   try {
-    setIsFeatureProjectsLoading(true); // Set loading state before fetching
+    setIsFeatureProjectsLoading(true);
     const { data: projects, error } = await supabase
       .from('projects')
       .select(`
         *,
-        developer:profiles!projects_developer_id_fkey(id, name, profile_picture, username)
+        developer:profiles!projects_developer_id_fkey(id, name, profile_picture, username),
+        featured_projects!inner(featured_at, expires_at)
       `)
       .order('upvotes_count', { ascending: false })
       .limit(6);
@@ -30,12 +31,18 @@ async function getProjects(setIsFeatureProjectsLoading: (loading: boolean) => vo
       return [];
     }
 
-    return projects || [];
+    // Filter projects that are still featured (not expired)
+    console.log("projects befor fiterd", projects);
+    const currentDate = new Date();
+    return projects.filter(project =>
+      project.featured_projects &&
+      new Date(project.featured_projects.expires_at) > currentDate
+    ) || [];
   } catch (error) {
     console.error('Error:', error);
     return [];
   } finally {
-    setIsFeatureProjectsLoading(false); // Clear loading state after fetching
+    setIsFeatureProjectsLoading(false);
   }
 }
 

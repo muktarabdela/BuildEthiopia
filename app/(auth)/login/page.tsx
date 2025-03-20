@@ -62,7 +62,7 @@ export default function LoginPage() {
                 password: password.trim(),
             })
 
-            console.log("Login response:", data)
+            // console.log("Login response:", data)
             if (error) {
                 console.error("Login error:", error)
                 // Handle specific error cases
@@ -95,7 +95,7 @@ export default function LoginPage() {
                     redirectTo: `${window.location.origin}/auth/callback`,
                 },
             })
-            console.log("GitHub login response:", data)
+            // console.log("GitHub login response:", data)
 
             if (error) {
                 console.error("GitHub login error:", error)

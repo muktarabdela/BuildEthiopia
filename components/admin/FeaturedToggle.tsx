@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { updateFeaturedStatus } from '@/lib/api/admin';
+import axios from 'axios';
 
 interface FeaturedToggleProps {
     projectId: string;
@@ -15,7 +15,10 @@ export const FeaturedToggle = ({ projectId, isFeatured }: FeaturedToggleProps) =
     const handleToggle = async () => {
         setIsLoading(true);
         try {
-            await updateFeaturedStatus(projectId, !featured);
+            await axios.patch('/api/admin', {
+                projectId,
+                featured: !featured
+            });
             setFeatured(!featured);
         } catch (error) {
             console.error('Failed to update featured status:', error);

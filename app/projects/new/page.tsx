@@ -71,7 +71,7 @@ export default function NewProjectPage() {
                 .eq("id", user?.id)
                 .single()
 
-            console.log("Profile data:", profile)
+            // console.log("Profile data:", profile)
             console.log("Profile error:", profileError)
 
             if (!profile) {
@@ -234,7 +234,7 @@ export default function NewProjectPage() {
             setIsLoading(true) // Start loading
             // Upload images
             const imageUrls = await handleImageUpload(imageFiles)
-            console.log("Uploaded image URLs:", imageUrls)
+            // console.log("Uploaded image URLs:", imageUrls)
             const data = {
                 title: formData.title,
                 description: formData.description,

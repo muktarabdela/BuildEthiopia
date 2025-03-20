@@ -35,7 +35,6 @@ create table public.projects (
   developer_id uuid not null,
   upvotes_count integer null default 0,
   comments_count integer null default 0,
-  featured boolean null default false,
   is_open_source boolean null default true,
   created_at timestamp with time zone not null default timezone ('utc'::text, now()),
   updated_at timestamp with time zone not null default timezone ('utc'::text, now()),
@@ -97,3 +96,19 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER trigger_project_votes
 AFTER INSERT OR DELETE OR UPDATE ON votes
 FOR EACH ROW EXECUTE FUNCTION update_project_votes();
+
+-- Featured Projects Table
+CREATE TABLE featured_projects (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
+    featured_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    expires_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() + INTERVAL '7 days',
+    UNIQUE (project_id)
+);
+
+-- Add index for efficient querying
+CREATE INDEX idx_featured_projects_expires ON featured_projects(expires_at);
+CREATE INDEX idx_featured_projects_project ON featured_projects(project_id);
+
+-- Remove featured column from projects table
+ALTER TABLE projects DROP COLUMN IF EXISTS featured;

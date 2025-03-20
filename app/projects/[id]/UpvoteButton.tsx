@@ -65,7 +65,7 @@ export default function UpvoteButton({ projectId, initialUpvotes, className }: P
                         Authorization: `Bearer ${session?.access_token}`,
                     },
                 })
-                console.log("Remove upvote response:", response.data)
+                // console.log("Remove upvote response:", response.data)
                 setUpvotes((prev) => prev - 1)
                 setHasUpvoted(false)
             } else {

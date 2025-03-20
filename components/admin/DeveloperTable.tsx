@@ -6,7 +6,7 @@ interface DeveloperTableProps {
 }
 
 export const DeveloperTable = ({ developers }: DeveloperTableProps) => {
-    console.log(developers);
+    // console.log(developers);
     return (
         <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">

@@ -10,7 +10,7 @@ export default function AuthCallback() {
     const { user } = useAuth()
     const { setIsLoading } = useLoading()
     const [error, setError] = useState("")
-    console.log("AuthCallback user:", user)
+    // console.log("AuthCallback user:", user)
     useEffect(() => {
         const handleProfileInsertion = async () => {
             try {

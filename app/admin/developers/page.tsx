@@ -1,8 +1,26 @@
+'use client'
 import { DeveloperTable } from '@/components/admin/DeveloperTable';
 import { getDevelopers } from '@/lib/api/admin';
+import { useEffect, useState } from 'react';
+import { useLoading } from '@/components/LoadingProvider';
 
-export default async function AdminDevelopersPage() {
-    const developers = await getDevelopers();
+export default function AdminDevelopersPage() {
+    const { setIsLoading } = useLoading();
+    const [developers, setDevelopers] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            try {
+                const data = await getDevelopers();
+                setDevelopers(data);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [setIsLoading]);
 
     return (
         <div className="space-y-6">

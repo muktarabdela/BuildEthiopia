@@ -75,7 +75,7 @@ export function Navbar() {
         setUnreadCount(0);
         window.location.href = '/';
     }
-    console.log(profile)
+    // console.log(profile)
     return (
         <header className="sticky top-0 z-50 bg-gradient-to-br from-gray-900 to-gray-800 border-b border-gray-700 shadow-sm">
             <div className="container mx-auto px-4">

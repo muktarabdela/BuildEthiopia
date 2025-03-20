@@ -106,6 +106,17 @@ CREATE TABLE featured_projects (
     UNIQUE (project_id)
 );
 
+-- History Table for Featured Projects
+CREATE TABLE featured_projects_history (
+    id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
+    project_id UUID NOT NULL,
+    featured_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT timezone('utc', now()),
+    unfeatured_at TIMESTAMP WITH TIME ZONE NULL,
+    admin_id UUID NOT NULL, -- Stores the admin who featured it
+    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+    FOREIGN KEY (admin_id) REFERENCES profiles(id) ON DELETE SET NULL
+);
+
 -- Add index for efficient querying
 CREATE INDEX idx_featured_projects_expires ON featured_projects(expires_at);
 CREATE INDEX idx_featured_projects_project ON featured_projects(project_id);

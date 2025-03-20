@@ -45,26 +45,35 @@ export const PATCH = async (request: Request) => {
     }
 
     if (featured) {
-      const { data, error } = await supabase
-        .from("featured_projects")
-        .upsert({
+      // Insert into featured_projects and log history
+      const [{ data, error }, { error: historyError }] = await Promise.all([
+        supabase.from("featured_projects").upsert({
           project_id: projectId,
           featured_at: new Date().toISOString(),
           expires_at: new Date(
             Date.now() + 7 * 24 * 60 * 60 * 1000
           ).toISOString(),
-        })
-        .select("*");
+        }),
+        supabase.from("featured_projects_history").insert({
+          project_id: projectId,
+          // admin_id: adminId,
+        }),
+      ]);
 
-      if (error) throw error;
+      if (error || historyError) throw error || historyError;
       return NextResponse.json(data);
     } else {
-      const { error } = await supabase
-        .from("featured_projects")
-        .delete()
-        .eq("project_id", projectId);
+      // Remove from featured_projects and update history
+      const [{ error }, { error: historyError }] = await Promise.all([
+        supabase.from("featured_projects").delete().eq("project_id", projectId),
+        supabase
+          .from("featured_projects_history")
+          .update({ unfeatured_at: new Date().toISOString() })
+          .eq("project_id", projectId)
+          .is("unfeatured_at", null),
+      ]);
 
-      if (error) throw error;
+      if (error || historyError) throw error || historyError;
       return NextResponse.json({ success: true });
     }
   } catch (error) {

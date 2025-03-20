@@ -3,7 +3,13 @@ import { supabase } from "@/lib/supabase";
 export const getProjects = async () => {
   const { data, error } = await supabase
     .from("projects")
-    .select("*, developer:profiles!projects_developer_id_fkey(id, name)")
+    .select(
+      `
+      *,
+      developer:profiles!projects_developer_id_fkey(id, name, profile_picture, username),
+      featured_projects(featured_at, expires_at)
+    `
+    )
     .order("created_at", { ascending: false });
 
   if (error) throw error;

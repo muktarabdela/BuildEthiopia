@@ -44,21 +44,31 @@ export const PATCH = async (request: Request) => {
       );
     }
 
-    const { data, error } = await supabase
-      .from("featured_projects")
-      .upsert({
-        project_id: projectId,
-        featured_at: new Date().toISOString(),
-        expires_at: new Date(
-          Date.now() + 7 * 24 * 60 * 60 * 1000
-        ).toISOString(),
-      })
-      .select("*");
+    if (featured) {
+      const { data, error } = await supabase
+        .from("featured_projects")
+        .upsert({
+          project_id: projectId,
+          featured_at: new Date().toISOString(),
+          expires_at: new Date(
+            Date.now() + 7 * 24 * 60 * 60 * 1000
+          ).toISOString(),
+        })
+        .select("*");
 
-    if (error) throw error;
+      if (error) throw error;
+      return NextResponse.json(data);
+    } else {
+      const { error } = await supabase
+        .from("featured_projects")
+        .delete()
+        .eq("project_id", projectId);
 
-    return NextResponse.json(data);
+      if (error) throw error;
+      return NextResponse.json({ success: true });
+    }
   } catch (error) {
+    console.error("Error updating featured status:", error);
     return NextResponse.json(
       { error: "Failed to update featured status" },
       { status: 500 }

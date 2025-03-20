@@ -13,6 +13,7 @@ export default function AdminProjectsPage() {
             setIsLoading(true);
             try {
                 const data = await getProjects();
+                console.log('Projects from AdminProjectsPage:', data);
                 setProjects(data);
             } finally {
                 setIsLoading(false);

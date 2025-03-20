@@ -16,7 +16,20 @@ export const ProjectRow = ({ project }: ProjectRowProps) => {
                 {project.developer?.name}
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                <FeaturedToggle projectId={project.id} isFeatured={project.featured} />
+                <div className="flex items-center space-x-2">
+                    <FeaturedToggle projectId={project.id} isFeatured={!!project.featured_projects} />
+                    {project.featured_projects && (
+                        <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                            Featured
+                        </span>
+                    )}
+                </div>
+            </td>
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {project.featured_projects?.expires_at ?
+                    new Date(project.featured_projects.expires_at).toLocaleDateString() :
+                    'Not featured'
+                }
             </td>
             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                 <Link

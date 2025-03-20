@@ -47,14 +47,21 @@ export default function FeaturedProjectsHistory() {
         weekStart.setHours(0, 0, 0, 0);
         weekStart.setDate(weekStart.getDate() - weekStart.getDay());
 
-        const weekKey = weekStart.toISOString().split('T')[0];
-        if (!acc[weekKey]) {
-            acc[weekKey] = [];
+        // Get current week start for comparison
+        const currentWeekStart = new Date();
+        currentWeekStart.setHours(0, 0, 0, 0);
+        currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay());
+
+        // Only include projects from past weeks
+        if (weekStart < currentWeekStart) {
+            const weekKey = weekStart.toISOString().split('T')[0];
+            if (!acc[weekKey]) {
+                acc[weekKey] = [];
+            }
+            acc[weekKey].push(project);
         }
-        acc[weekKey].push(project);
         return acc;
     }, {} as Record<string, FeaturedProject[]>);
-
     return (
         <div className="w-full">
             {isLoading ? (
@@ -67,8 +74,11 @@ export default function FeaturedProjectsHistory() {
             ) : (
                 Object.entries(groupedProjects).map(([weekStart, weekProjects]) => (
                     <div key={weekStart}>
-                        <h3 className="text-xl font-bold mb-4 text-white">
-                            Week of {new Date(weekStart).toLocaleDateString()}
+                        <h3 className="text-xl font-bold mb-4 text-white mt-2">
+                            Week of {new Date(weekStart).toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric'
+                            })}
                         </h3>
                         <div className="grid grid-cols-1 gap-6">
                             {weekProjects.map(({ project }, index) => (

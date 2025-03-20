@@ -30,7 +30,6 @@ export async function GET(request: Request) {
       .order("featured_at", { ascending: false })
       .range((page - 1) * limit, page * limit - 1);
 
-
     if (error) throw error;
 
     return NextResponse.json(data);

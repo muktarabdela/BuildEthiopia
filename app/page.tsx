@@ -33,7 +33,6 @@ async function getProjects(setIsFeatureProjectsLoading: (loading: boolean) => vo
     }
 
     // Filter projects that are still featured (not expired)
-    // console.log("projects befor fiterd", projects);
     const currentDate = new Date();
     return projects.filter(project =>
       project.featured_projects &&
@@ -230,7 +229,7 @@ export default function Home() {
               {/* Week Featured Projects */}
               <div>
                 <div className="flex items-center mb-8">
-                  <TrendingUp className="h-6 w-6 text-primary mr-2" />
+                  {/* <TrendingUp className="h-6 w-6 text-primary mr-2" /> */}
                   <h2 className="text-2xl md:text-3xl font-bold text-gray-100">This Week Featured Projects</h2>
                 </div>
                 <FeaturedProjects
@@ -244,7 +243,7 @@ export default function Home() {
               {/* Recent Projects */}
               <div>
                 <div className="flex items-center mb-8">
-                  <TrendingUp className="h-6 w-6 text-primary mr-2" />
+                  {/* <TrendingUp className="h-6 w-6 text-primary mr-2" /> */}
                   <h2 className="text-2xl md:text-3xl font-bold text-gray-100">Past Featured Projects</h2>
                 </div>
                 <FeaturedProjectsHistory />

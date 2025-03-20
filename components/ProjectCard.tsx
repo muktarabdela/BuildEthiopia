@@ -54,7 +54,7 @@ export function ProjectCard({ project, index }) {
         }
     };
     return (
-        <div className="group bg-gray-800 p-4 md:p-6 rounded-xl border border-gray-700 hover:border-primary/50 transition-all duration-300 relative overflow-hidden">
+        <div className="group bg-gray-800 p-4 md:p-4 rounded-xl border border-gray-700 hover:border-primary/50 transition-all duration-300 relative overflow-hidden">
             {/* Background pattern */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
 
@@ -149,7 +149,7 @@ export function ProjectCard({ project, index }) {
             </Link>
 
             {/* Right section with actions - outside the main Link */}
-            <div className="flex justify-end mt-4">
+            <div className="flex justify-end">
                 <div className="flex gap-3 text-gray-400">
                     {/* Comments */}
                     <button

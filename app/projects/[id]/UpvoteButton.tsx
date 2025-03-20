@@ -60,14 +60,20 @@ export default function UpvoteButton({ projectId, initialUpvotes, className }: P
 
             if (hasUpvoted) {
                 // Remove upvote if user has already upvoted
-                const response = await axios.delete(`/api/projects/${projectId}/upvote`, {
-                    headers: {
-                        Authorization: `Bearer ${session?.access_token}`,
-                    },
-                })
-                // console.log("Remove upvote response:", response.data)
-                setUpvotes((prev) => prev - 1)
-                setHasUpvoted(false)
+                const response = await axios.delete(
+                    `/api/projects/${projectId}/upvote`,
+                    {
+                        data: { user_id: user.id },
+                        headers: {
+                            Authorization: `Bearer ${session?.access_token}`,
+                        },
+                    }
+                )
+                console.log("response from deleting upvote", response)
+                if (response.data.message === "Upvote removed successfully") {
+                    setUpvotes((prev) => prev - 1)
+                    setHasUpvoted(false)
+                }
             } else {
                 // Add upvote
                 const response = await axios.post(
@@ -83,9 +89,11 @@ export default function UpvoteButton({ projectId, initialUpvotes, className }: P
                         },
                     },
                 )
-                console.log("Upvote response:", response.data)
-                setUpvotes((prev) => prev + 1)
-                setHasUpvoted(true)
+                console.log("response from adding upvote", response)
+                if (response.data.message === "Project upvoted successfully") {
+                    setUpvotes((prev) => prev + 1)
+                    setHasUpvoted(true)
+                }
             }
         } catch (error) {
             console.error("Error toggling upvote:", error)
@@ -100,58 +108,32 @@ export default function UpvoteButton({ projectId, initialUpvotes, className }: P
     }
 
     return (
-        <div className="flex items-center gap-2 bg-gray-700 rounded-full hover:bg-gray-700 text-white transition-colors duration-200">
+        <div className="flex items-center gap-2 ">
+
             <Button
                 onClick={handleUpvote}
                 disabled={isLoading}
                 variant={hasUpvoted ? "default" : "outline"}
                 className={cn(
-                    "flex items-center space-x-2 transition-all duration-300 cursor-pointer border-none",
-                    hasUpvoted ? "bg-primary text-white" : "text-white",
+                    "flex items-center gap-2 cursor-pointer border-none",
+                    hasUpvoted && "bg-primary hover:bg-primary/90",
                     isLoading && "opacity-70",
                     className
                 )}
             >
-                <span
+                <Heart
                     className={cn(
-                        "inline-block transition-transform duration-300",
-                        isAnimating && (hasUpvoted ? "animate-upvote-in" : "animate-upvote-out"),
+                        "h-4 w-4 transition-all",
+                        isAnimating && "scale-125",
+                        hasUpvoted ? "fill-current" : "fill-none"
                     )}
-                >
-                    {/* Before upvoting */}
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        className={cn(
-                            "transition-all duration-300",
-                            hasUpvoted ? "hidden" : "block",
-                            "fill-current text-gray-400 hover:text-primary"
-                        )}
-                    >
-                        <path d="M12 2L2 22h20L12 2zm0 4.5l7.2 13.5H4.8L12 6.5z" />
-                    </svg>
-
-                    {/* After upvoting */}
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        className={cn(
-                            "transition-all duration-300",
-                            hasUpvoted ? "block" : "hidden",
-                            "fill-current text-"
-                        )}
-                    >
-                        <path d="M12 2l10 20H2L12 2zm0 4.5L4.8 20h14.4L12 6.5z" />
-                        <path d="M12 6.5l7.2 13.5H4.8L12 6.5z" fill="currentColor" />
-                    </svg>
+                />
+                <span>
+                    {upvotes} Upvote{upvotes !== 1 ? "s" : ""}
                 </span>
-                <span>{upvotes} Upvote</span>
             </Button>
         </div>
+
     )
 }
 

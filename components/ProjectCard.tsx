@@ -152,16 +152,14 @@ export function ProjectCard({ project, index }) {
             <div className="flex justify-end">
                 <div className="flex gap-3 text-gray-400">
                     {/* Comments */}
-                    <button
+                    <Link
+                        href={`/projects/${project.id}`}
                         className="flex items-center gap-2 bg-gray-700 px-3 py-1.5 rounded-full hover:bg-gray-700 text-white transition-colors duration-200"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            // Add your comment click handler here
-                        }}
+                        onClick={(e) => e.stopPropagation()}
                     >
                         <MessageCircle className="w-4 h-4" />
                         <span className="text-sm">{project.comments_count}</span>
-                    </button>
+                    </Link>
 
                     {/* Upvote */}
                     <div

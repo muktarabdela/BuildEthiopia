@@ -40,9 +40,7 @@ export async function POST(
   context: { params: Promise<{ id: string | string[] }> }
 ) {
   try {
-    // Await params to ensure it's resolved
     const resolvedParams = await context.params;
-
     const { user_id, project_id } = await request.json();
 
     if (!user_id || !project_id) {
@@ -52,7 +50,6 @@ export async function POST(
       );
     }
 
-    // Ensure the request is authenticated
     await requireAuth(request);
 
     // Check if the upvote already exists
@@ -65,11 +62,9 @@ export async function POST(
 
     if (checkError) throw checkError;
 
+    // If upvote already exists, return success
     if (existingUpvote) {
-      return NextResponse.json(
-        { error: "Project already upvoted" },
-        { status: 409 }
-      );
+      return NextResponse.json({ message: "Project already upvoted" });
     }
 
     // Insert the upvote record
@@ -79,7 +74,7 @@ export async function POST(
 
     if (upvoteError) throw upvoteError;
 
-    // Update the project's upvotes_count using the stored procedure
+    // Update the project's upvotes_count
     const { data: projectData, error: projectError } = await supabase.rpc(
       "increment_project_upvotes_count",
       { p_project_id: resolvedParams.id }
@@ -104,23 +99,42 @@ export async function DELETE(
   context: { params: Promise<{ id: string | string[] }> }
 ) {
   try {
-    // Await params to ensure it's resolved
     const resolvedParams = await context.params;
+    const { user_id } = await request.json();
 
-    // Ensure the request is authenticated
+    if (!user_id) {
+      return NextResponse.json(
+        { error: "user_id is required" },
+        { status: 400 }
+      );
+    }
+
     await requireAuth(request);
 
-    // Delete the upvote record for the specified project and current user.
-    // You might need to also check for the specific user if your logic requires it.
-    // For this example, we're deleting based solely on project_id.
+    // First, check if the upvote exists
+    const { data: existingUpvote, error: checkError } = await supabase
+      .from("upvotes")
+      .select("*")
+      .eq("project_id", resolvedParams.id)
+      .eq("user_id", user_id)
+      .maybeSingle();
+
+    if (checkError) throw checkError;
+
+    if (!existingUpvote) {
+      return NextResponse.json({ error: "Upvote not found" }, { status: 404 });
+    }
+
+    // Delete specific user's upvote for this project
     const { data, error: deleteError } = await supabase
       .from("upvotes")
       .delete()
-      .eq("project_id", resolvedParams.id);
+      .eq("project_id", resolvedParams.id)
+      .eq("user_id", user_id);
 
     if (deleteError) throw deleteError;
 
-    // Decrement the project's upvotes_count using the stored procedure.
+    // Decrement the project's upvotes_count
     const { data: projectData, error: projectError } = await supabase.rpc(
       "decrement_project_upvotes_count",
       { p_project_id: resolvedParams.id }

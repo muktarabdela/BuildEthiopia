@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { LoadingOverlay } from '@/components/LoadingOverlay';
 import { useLoading } from '@/components/LoadingProvider';
+import FeaturedProjectsHistory from "@/components/FeaturedProjectsHistory";
 
 async function getProjects(setIsFeatureProjectsLoading: (loading: boolean) => void) {
   try {
@@ -32,7 +33,7 @@ async function getProjects(setIsFeatureProjectsLoading: (loading: boolean) => vo
     }
 
     // Filter projects that are still featured (not expired)
-    console.log("projects befor fiterd", projects);
+    // console.log("projects befor fiterd", projects);
     const currentDate = new Date();
     return projects.filter(project =>
       project.featured_projects &&
@@ -243,12 +244,12 @@ export default function Home() {
               {/* Recent Projects */}
               <div>
                 <div className="flex items-center mb-8">
-                  <Clock className="h-6 w-6 text-primary mr-2" />
-                  <h2 className="text-2xl md:text-3xl font-bold text-gray-100">Last Week Top Projects</h2>
+                  <TrendingUp className="h-6 w-6 text-primary mr-2" />
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-100">Past Featured Projects</h2>
                 </div>
+                <FeaturedProjectsHistory />
               </div>
             </div>
-
             {/* Sidebar */}
             <div className="w-full lg:w-[30%] space-y-8">
               {/* Featured Developers */}

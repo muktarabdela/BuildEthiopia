@@ -43,6 +43,7 @@ export default function NewProjectPage() {
     const [imageFiles, setImageFiles] = useState<File[]>([])
     const [imagePreviewUrls, setImagePreviewUrls] = useState<string[]>([])
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
+    const [showSuccessDialog, setShowSuccessDialog] = useState(false)
 
     const steps = [
         { id: "basics", label: "Basic Info" },
@@ -231,10 +232,8 @@ export default function NewProjectPage() {
         setError("")
 
         try {
-            setIsLoading(true) // Start loading
-            // Upload images
+            setIsLoading(true)
             const imageUrls = await handleImageUpload(imageFiles)
-            // console.log("Uploaded image URLs:", imageUrls)
             const data = {
                 title: formData.title,
                 description: formData.description,
@@ -256,14 +255,15 @@ export default function NewProjectPage() {
                 },
             })
 
-            console.log("Project created successfully:", response.data)
+            // Show success dialog instead of redirecting immediately
             toast({
-                // @ts-ignore
                 title: "Success!",
                 description: "Your project has been submitted successfully.",
                 variant: "default",
             })
-            router.push("/")
+
+            // Open success dialog
+            setShowSuccessDialog(true)
         } catch (err) {
             console.error("Error:", err)
             setError("Failed to upload images. Please try again.")
@@ -275,7 +275,7 @@ export default function NewProjectPage() {
             })
         } finally {
             setSubmitting(false)
-            setIsLoading(false) // Stop loading
+            setIsLoading(false)
         }
     }
 
@@ -291,15 +291,15 @@ export default function NewProjectPage() {
     }
 
     return (
-        <main className="container mx-auto px-4 py-8">
+        <main className="bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen">
             <div className="max-w-3xl mx-auto">
-                <div className="mb-8">
+                <div className="mb-8 pt-8">
                     <h1 className="text-4xl font-bold mb-4 text-white">Submit a New Project</h1>
-                    <p className=" text-gray-200">Share your project with the Ethiopian developer community.</p>
+                    <p className="text-gray-300">Share your project with the Ethiopian developer community.</p>
                 </div>
 
                 <div className="mb-8">
-                    <Progress value={progress} className="h-2" />
+                    <Progress value={progress} className="h-2 bg-gray-700" />
 
                     <div className="flex justify-between mt-2">
                         {steps.map((step, index) => (
@@ -328,17 +328,17 @@ export default function NewProjectPage() {
                     </div>
                 </div>
 
-                <Card>
+                <Card className="bg-gray-800 border-gray-700">
                     <CardHeader>
-                        <CardTitle>{steps[currentStep].label}</CardTitle>
-                        <CardDescription>
+                        <CardTitle className="text-white">{steps[currentStep].label}</CardTitle>
+                        <CardDescription className="text-gray-300">
                             {currentStep === 0 && "Enter the basic information about your project"}
                             {currentStep === 1 && "Upload images and logo for your project"}
                             {currentStep === 2 && "Add links to your project repository and live demo"}
                             {currentStep === 3 && "Review your project information before submission"}
                         </CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="text-gray-100">
                         <div className="space-y-6">
                             {/* Step 1: Basic Information */}
                             {currentStep === 0 && (
@@ -725,7 +725,7 @@ export default function NewProjectPage() {
                         </div>
                     </CardContent>
 
-                    <div className="p-6 pt-0 flex justify-between">
+                    <div className="p-6 pt-0 flex justify-between border-t border-gray-700">
                         <Button
                             variant="outline"
                             onClick={currentStep === 0 ? () => router.push("/profile") : prevStep}
@@ -761,6 +761,49 @@ export default function NewProjectPage() {
                     </div>
                 </Card>
             </div>
+
+            {showSuccessDialog && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                    <Card className="w-full max-w-md bg-gray-800 border-gray-700">
+                        <CardHeader>
+                            <CardTitle className="text-center text-white">🎉 Submission Successful!</CardTitle>
+                            <CardDescription className="text-center text-gray-300">
+                                Your project has been successfully submitted! We will review it and notify you once it's ready to be featured.
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="flex flex-col gap-4">
+                            <Button
+                                onClick={() => router.push("/")}
+                                variant="outline"
+                            >
+                                View My Submissions
+                            </Button>
+                            {/* <Button
+                                onClick={() => {
+                                    setShowSuccessDialog(false)
+                                    setCurrentStep(0)
+                                    setFormData({
+                                        title: "",
+                                        description: "",
+                                        logo_url: "",
+                                        github_url: "",
+                                        live_url: "",
+                                        category: "",
+                                        post_content: "",
+                                        youtube_video_url: "",
+                                        tech_stack: [],
+                                        is_open_source: true,
+                                    })
+                                    setImageFiles([])
+                                    setImagePreviewUrls([])
+                                }}
+                            >
+                                Submit Another Project
+                            </Button> */}
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
         </main>
     )
 }

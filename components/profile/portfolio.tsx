@@ -8,6 +8,7 @@ import { ProjectCard } from "@/components/ProjectCard"
 import { EditProjectModal } from '@/components/projects/EditProjectModal'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 
 const aboutDeveloper = {
     fullName: "Jane Developer",
@@ -17,6 +18,12 @@ const aboutDeveloper = {
     education: "B.Sc. in Computer Science, XYZ University",
     interests: "Open-source, DevOps, UI/UX design"
 };
+
+const socialLinks = [
+    { name: "GitHub", icon: Code, url: "https://github.com" },
+    { name: "LinkedIn", icon: Briefcase, url: "https://linkedin.com" },
+    { name: "Twitter", icon: MessageSquare, url: "https://twitter.com" }
+];
 
 export default function PortfolioSection({ user, upvotedProjects = [], isOwner }) {
     console.log("is owner from portfolio", isOwner)
@@ -37,51 +44,45 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner }
             </CardHeader>
             <CardContent>
                 <Tabs defaultValue="portfolio" className="w-full">
-                    <TabsList className="grid w-full grid-cols-4 bg-gray-700">
-                        <TabsTrigger value="portfolio" className="text-white data-[state=active]:bg-gray-600">
-                            Portfolio
-                        </TabsTrigger>
-                        <TabsTrigger value="upvoted" className="text-white data-[state=active]:bg-gray-600">
-                            Upvoted
-                        </TabsTrigger>
-                        <TabsTrigger value="about" className="text-white data-[state=active]:bg-gray-600">
-                            About
-                        </TabsTrigger>
+                    <TabsList className="grid w-full grid-cols-4 bg-gray-700 relative">
+                        {["portfolio", "upvoted", "about"].map((tab) => (
+                            <TabsTrigger
+                                key={tab}
+                                value={tab}
+                                className="text-white data-[state=active]:text-blue-400 relative pb-2"
+                            >
+                                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-400 scale-x-0 data-[state=active]:scale-x-100 transition-transform duration-300" />
+                            </TabsTrigger>
+                        ))}
                     </TabsList>
 
                     {/* Portfolio Tab */}
                     <TabsContent value="portfolio">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div className="columns-1 md:columns-2 lg:columns-3 gap-4 mt-4">
                             {user.projects.map(project => (
-                                <div key={project.id} className="bg-gray-700 text-white rounded-lg p-4 hover:bg-gray-600 transition-colors">
-                                    <div className="flex justify-between items-start">
-                                        <Link href={`/projects/${project.id}`} className="flex-1">
-                                            <div className="relative h-40 w-full mb-4">
-                                                <Image
-                                                    src={project.thumbnail}
-                                                    alt={project.title}
-                                                    fill
-                                                    className="rounded-lg object-cover"
-                                                />
-                                            </div>
-                                            <h3 className="text-lg font-semibold text-white">{project.title}</h3>
-                                            <p className="text-gray-300 mt-2">{project.description}</p>
-                                            <div className="flex items-center mt-4 text-white">
-                                                <ThumbsUp className="h-4 w-4 mr-1" />
-                                                <span>{project.upvotes} upvotes</span>
-                                            </div>
-                                        </Link>
-                                        {isOwner && (
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => setEditingProject(project)}
-                                                className="text-gray-400 hover:text-white"
-                                                aria-label="Edit project"
-                                            >
-                                                <Edit className="h-4 w-4" />
-                                            </Button>
-                                        )}
+                                <div key={project.id} className="break-inside-avoid mb-4">
+                                    <div className="bg-gray-700 text-white rounded-lg p-4 hover:scale-[1.02] transition-transform duration-300">
+                                        <div className="relative aspect-video w-full mb-4">
+                                            <Image
+                                                src={project.thumbnail}
+                                                alt={project.title}
+                                                fill
+                                                className="rounded-lg object-cover"
+                                            />
+                                        </div>
+                                        <h3 className="text-lg font-semibold text-white">{project.title}</h3>
+                                        <div className="flex flex-wrap gap-2 mt-2">
+                                            {project.tags?.map((tag, index) => (
+                                                <Badge key={index} className="bg-blue-500 hover:bg-blue-600 text-white">
+                                                    {tag}
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                        <div className="flex items-center mt-4 text-white">
+                                            <ThumbsUp className="h-4 w-4 mr-1" />
+                                            <span>{project.upvotes} upvotes</span>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -107,6 +108,29 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner }
                     {/* About Tab */}
                     <TabsContent value="about" className="mt-6">
                         <div className="space-y-8">
+                            {/* Profile Header */}
+                            <div className="bg-gray-700 p-6 rounded-lg flex flex-col items-center text-center">
+                                <Avatar className="h-24 w-24 mb-4">
+                                    <AvatarImage src="/avatar.jpg" />
+                                    <AvatarFallback>JD</AvatarFallback>
+                                </Avatar>
+                                <h2 className="text-2xl font-bold text-white">{aboutDeveloper.fullName}</h2>
+                                <div className="flex gap-4 mt-4">
+                                    {socialLinks.map((link) => (
+                                        <a
+                                            key={link.name}
+                                            href={link.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-gray-400 hover:text-white transition-colors"
+                                            aria-label={link.name}
+                                        >
+                                            <link.icon className="h-6 w-6" />
+                                        </a>
+                                    ))}
+                                </div>
+                            </div>
+
                             {/* Bio Section */}
                             <div className="bg-gray-700 p-6 rounded-lg">
                                 <h3 className="text-xl font-semibold text-white mb-4">About Me</h3>

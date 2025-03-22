@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
+import axios from 'axios'
 
 type FormData = z.infer<typeof projectSchema>
 
@@ -39,30 +40,27 @@ export function EditProjectModal({ project, isOpen, onClose, onUpdate }: EditPro
     const [isLoading, setIsLoading] = useState(false)
     const images = watch('images')
     const logoUrl = watch('logo_url')
-
     const handleUpdateProject = async (data: FormData) => {
-        setIsLoading(true)
+        setIsLoading(true);
         try {
-            const response = await fetch(`/api/projects/${project.id}`, {
-                method: 'PUT',
+            const { data: updatedProject } = await axios.put(`/api/projects/${project.id}`, data, {
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
+                }
+            });
 
-            if (!response.ok) {
-                throw new Error('Failed to update project')
+            onUpdate(updatedProject);
+            toast.success('Project updated successfully!');
+            onClose();
+        } catch (error: unknown) {
+            console.error('Error updating project:', error);
+            if (error instanceof Error) {
+                toast.error(error.message || 'Failed to update project');
+            } else {
+                toast.error('Failed to update project');
             }
-
-            const updatedProject = await response.json()
-            onUpdate(updatedProject)
-            toast.success('Project updated successfully!')
-            onClose()
-        } catch (error) {
-            toast.error(error.message || 'Failed to update project')
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
     }
 

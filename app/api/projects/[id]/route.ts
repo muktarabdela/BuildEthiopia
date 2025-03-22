@@ -1,5 +1,20 @@
 import { NextResponse } from "next/server";
 import { requireAuth, supabase } from "@/lib/supabase";
+import { z } from "zod";
+
+const projectSchema = z.object({
+  title: z.string().min(3).max(100),
+  description: z.string().min(10).max(500),
+  category: z.string().min(3).max(50),
+  post_content: z.string().min(10),
+  images: z.array(z.string().url()).max(5),
+  logo_url: z.string().url().optional(),
+  youtube_video_url: z.string().url().optional(),
+  tech_stack: z.array(z.string().min(1)).max(10),
+  github_url: z.string().url().optional(),
+  live_url: z.string().url().optional(),
+  is_open_source: z.boolean(),
+});
 
 // GET /api/projects/[id] - Get a single project
 export async function GET(request, { params }) {
@@ -37,44 +52,61 @@ export async function GET(request, { params }) {
 }
 
 // PUT /api/projects/[id] - Update a project
-export async function PUT(request, { params }) {
+export async function PUT(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
   try {
-    const session = await requireAuth();
-    const { title, description, github_url, live_url } = await request.json();
+    const session = await requireAuth(req);
+    const projectId = params.id;
 
-
-    // Check if user owns the project
-    const { data: project } = await supabase
+    // Verify project ownership
+    const { data: project, error: projectError } = await supabase
       .from("projects")
       .select("developer_id")
-      .eq("id", params.id)
+      .eq("id", projectId)
       .single();
 
-    if (!project || project.developer_id !== session.user.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+    if (projectError || !project) {
+      return NextResponse.json({ error: "Project not found" }, { status: 404 });
     }
 
-    const { data: updatedProject, error } = await supabase
+    if (project.developer_id !== session.user.id) {
+      return NextResponse.json(
+        { error: "Unauthorized to edit this project" },
+        { status: 403 }
+      );
+    }
+
+    // Validate input
+    const updateData = await req.json();
+    const validatedData = projectSchema.parse(updateData);
+
+    // Update project
+    const { data: updatedProject, error: updateError } = await supabase
       .from("projects")
       .update({
-        title,
-        description,
-        github_url,
-        live_url,
+        ...validatedData,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", params.id)
-      .select()
-      .single();
+      .eq("id", projectId)
+      .select();
 
-    if (error) throw error;
+    if (updateError) {
+      return NextResponse.json({ error: updateError.message }, { status: 400 });
+    }
 
-    return NextResponse.json(updatedProject);
+    return NextResponse.json(updatedProject, { status: 200 });
   } catch (error) {
-    console.error("Error:", error);
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { error: "Validation failed", details: error.errors },
+        { status: 400 }
+      );
+    }
     return NextResponse.json(
-      { error: error.message || "Failed to update project" },
-      { status: error.message === "Unauthorized" ? 403 : 500 }
+      { error: "Internal server error" },
+      { status: 500 }
     );
   }
 }

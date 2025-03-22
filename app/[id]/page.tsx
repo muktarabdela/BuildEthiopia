@@ -18,6 +18,7 @@ import { getUserUpvotedProjects } from '@/lib/services/projectInteractions';
 import { ProjectCard } from '@/components/ProjectCard';
 import index from 'swr';
 import { useLoading } from '@/components/LoadingProvider';
+import axios from 'axios';
 
 // API or database
 const userData = {
@@ -205,14 +206,15 @@ export default function ProfilePage() {
                 if (!params) return;
 
                 const username = params?.id;
-                const response = await fetch(`/api/profile/${username}`);
-
-                if (!response.ok) {
+                const response = await axios.get(`/api/profile/${username}`);
+                if (response.status !== 200) {
                     router.push('/login');
                     return;
                 }
-
-                const profile = await response.json();
+                
+                console.log("user data from auth", user)
+                console.log("profile data from ", response.data)
+                const profile = response.data;
                 const transformedProfile = transformProfileData(profile);
                 setProfile(transformedProfile);
 
@@ -257,11 +259,11 @@ export default function ProfilePage() {
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
             <main className="container mx-auto py-8 px-4 md:px-6">
                 <div className="grid gap-8">
-                    {profile && <ProfileHeader user={profile} />}
+                    {profile && <ProfileHeader user={profile} isOwner={isOwner} />}
                     <div className="grid gap-8 md:grid-cols-3">
-                        {/* <div className="md:col-span-2">
-                            {profile && <PortfolioSection user={profile} savedProjects={savedProjects} upvotedProjects={upvotedProjects} />}
-                        </div> */}
+                        <div className="md:col-span-2">
+                            {profile && <PortfolioSection user={profile} upvotedProjects={upvotedProjects} isOwner={isOwner} />}
+                        </div>
                         <div className="space-y-8">
                             {profile && <AchievementsSection user={profile} />}
                             {profile && isOwner && <SettingsSection user={profile} isOpen={false} onClose={() => { }} />}

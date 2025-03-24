@@ -45,6 +45,10 @@ export default function NewProjectPage() {
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({})
     const [showSuccessDialog, setShowSuccessDialog] = useState(false)
 
+    // Add a new state for logo file and preview
+    const [logoFile, setLogoFile] = useState<File | null>(null)
+    const [logoPreviewUrl, setLogoPreviewUrl] = useState<string>("")
+
     const steps = [
         { id: "basics", label: "Basic Info" },
         { id: "media", label: "Media" },
@@ -196,26 +200,20 @@ export default function NewProjectPage() {
         setFormData((prev) => ({ ...prev, [name]: checked }))
     }
 
-    const handleImageUpload = async (files: File[]) => {
+    const handleImageUpload = async (files: File[], logo?: File) => {
         try {
             const uploadedUrls: string[] = []
 
+            // Upload logo first if exists
+            if (logo) {
+                const logoUrl = await uploadSingleFile(logo)
+                uploadedUrls.push(logoUrl)
+            }
+
+            // Upload other images
             for (const file of files) {
-                const fileExt = file.name.split('.').pop()
-                const fileName = `${Math.random()}.${fileExt}`
-                const filePath = `${user?.id}/${fileName}`
-
-                const { data, error } = await supabase.storage
-                    .from('project')
-                    .upload(filePath, file)
-
-                if (error) throw error
-
-                const { data: urlData } = supabase.storage
-                    .from('project')
-                    .getPublicUrl(data.path)
-
-                uploadedUrls.push(urlData.publicUrl)
+                const fileUrl = await uploadSingleFile(file)
+                uploadedUrls.push(fileUrl)
             }
 
             return uploadedUrls
@@ -223,6 +221,25 @@ export default function NewProjectPage() {
             console.error('Error uploading images:', error)
             throw error
         }
+    }
+
+    // Helper function for single file upload
+    const uploadSingleFile = async (file: File) => {
+        const fileExt = file.name.split('.').pop()
+        const fileName = `${Math.random()}.${fileExt}`
+        const filePath = `${user?.id}/${fileName}`
+
+        const { data, error } = await supabase.storage
+            .from('project')
+            .upload(filePath, file)
+
+        if (error) throw error
+
+        const { data: urlData } = supabase.storage
+            .from('project')
+            .getPublicUrl(data.path)
+
+        return urlData.publicUrl
     }
 
     const handleSubmit = async () => {
@@ -233,12 +250,17 @@ export default function NewProjectPage() {
 
         try {
             setIsLoading(true)
-            const imageUrls = await handleImageUpload(imageFiles)
+
+            // If no logo is uploaded, use first image as logo
+            const logoToUpload = logoFile || (imageFiles.length > 0 ? imageFiles[0] : null)
+
+            const imageUrls = await handleImageUpload(imageFiles, logoToUpload)
+
             const data = {
                 title: formData.title,
                 description: formData.description,
-                images: imageUrls,
-                logo_url: formData.logo_url || null,
+                images: logoToUpload ? imageUrls.slice(1) : imageUrls,
+                logo_url: logoToUpload ? imageUrls[0] : null,
                 developer_id: uuid,
                 github_url: formData.github_url || null,
                 live_url: formData.live_url || null,
@@ -276,6 +298,15 @@ export default function NewProjectPage() {
         } finally {
             setSubmitting(false)
             setIsLoading(false)
+        }
+    }
+
+    // Add logo file handler
+    const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0]
+            setLogoFile(file)
+            setLogoPreviewUrl(URL.createObjectURL(file))
         }
     }
 
@@ -417,6 +448,39 @@ export default function NewProjectPage() {
                             {currentStep === 1 && (
                                 <>
                                     <div className="space-y-2">
+                                        <Label htmlFor="logo">Project Logo</Label>
+                                        <div className="border-2 border-dashed rounded-lg p-6 text-center hover:bg-muted/50 transition-colors cursor-pointer">
+                                            <Input
+                                                type="file"
+                                                id="logo"
+                                                accept="image/png, image/jpeg, image/svg+xml"
+                                                onChange={handleLogoChange}
+                                                className="hidden"
+                                            />
+                                            <Label htmlFor="logo" className="cursor-pointer flex flex-col items-center">
+                                                <Upload className="h-10 w-10 text-muted-foreground mb-2" />
+                                                <span className="font-medium">Click to upload logo</span>
+                                                <span className="text-xs text-muted-foreground mt-1">PNG, JPG or SVG (max. 1MB)</span>
+                                            </Label>
+                                        </div>
+                                        {logoPreviewUrl && (
+                                            <div className="mt-4">
+                                                <p className="text-sm font-medium mb-2">Logo Preview:</p>
+                                                <div className="w-32 h-32 rounded-md overflow-hidden border">
+                                                    <img
+                                                        src={logoPreviewUrl}
+                                                        alt="Logo Preview"
+                                                        className="w-full h-full object-cover"
+                                                    />
+                                                </div>
+                                            </div>
+                                        )}
+                                        <p className="text-xs text-muted-foreground">
+                                            Optional: Add a YouTube video showcasing your project
+                                        </p>
+                                    </div>
+
+                                    <div className="space-y-2">
                                         <Label htmlFor="post_content" className={validationErrors.post_content ? "text-destructive" : ""}>
                                             Project Content <span className="text-destructive">*</span>
                                         </Label>
@@ -435,18 +499,6 @@ export default function NewProjectPage() {
                                         <p className="text-xs text-muted-foreground">
                                             Minimum 100 characters. This is the main content of your project post.
                                         </p>
-                                    </div>
-
-                                    <div className="space-y-2">
-                                        <Label htmlFor="logo_url">Project Logo URL</Label>
-                                        <Input
-                                            id="logo_url"
-                                            name="logo_url"
-                                            value={formData.logo_url}
-                                            onChange={handleInputChange}
-                                            placeholder="https://example.com/logo.png"
-                                        />
-                                        <p className="text-xs text-muted-foreground">Provide a URL to your project logo (optional)</p>
                                     </div>
 
                                     <div className="space-y-2">
@@ -749,9 +801,9 @@ export default function NewProjectPage() {
                         ) : (
                             <Button onClick={handleSubmit} disabled={submitting} className="min-w-[100px]">
                                 {submitting ? (
-                                    <div className="flex items-center">
-                                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                        Submitting...
+                                    <div className="flex items-center gap-2">
+                                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                                        <span>Submitting...</span>
                                     </div>
                                 ) : (
                                     "Submit Project"

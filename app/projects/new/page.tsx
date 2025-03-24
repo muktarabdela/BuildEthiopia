@@ -138,9 +138,16 @@ export default function NewProjectPage() {
             if (!formData.post_content.trim()) errors.post_content = "Project content is required"
             if (formData.post_content.trim().length < 100)
                 errors.post_content = "Project content should be at least 100 characters"
+            if (imageFiles.length === 0) errors.images = "At least one project screenshot is required"
         }
 
         if (currentStep === 2) {
+            if (!formData.github_url.trim()) errors.github_url = "GitHub URL is required"
+            else if (!isValidUrl(formData.github_url)) errors.github_url = "Please enter a valid GitHub URL"
+
+            if (!formData.live_url.trim()) errors.live_url = "Live Demo URL is required"
+            else if (!isValidUrl(formData.live_url)) errors.live_url = "Please enter a valid Live Demo URL"
+
             if (formData.youtube_video_url && !isValidUrl(formData.youtube_video_url))
                 errors.youtube_video_url = "Please enter a valid YouTube URL"
             if (formData.tech_stack.length === 0) errors.tech_stack = "Please add at least one technology"
@@ -502,8 +509,13 @@ export default function NewProjectPage() {
                                     </div>
 
                                     <div className="space-y-2">
-                                        <Label htmlFor="images">Project Screenshots</Label>
-                                        <div className="border-2 border-dashed rounded-lg p-6 text-center hover:bg-muted/50 transition-colors cursor-pointer">
+                                        <Label htmlFor="images" className={validationErrors.images ? "text-destructive" : ""}>
+                                            Project Screenshots <span className="text-destructive">*</span>
+                                        </Label>
+                                        <div className={cn(
+                                            "border-2 border-dashed rounded-lg p-6 text-center hover:bg-muted/50 transition-colors cursor-pointer",
+                                            validationErrors.images ? "border-destructive" : ""
+                                        )}>
                                             <Input
                                                 type="file"
                                                 id="images"
@@ -518,6 +530,9 @@ export default function NewProjectPage() {
                                                 <span className="text-xs text-muted-foreground mt-1">PNG, JPG or GIF (max. 5 images)</span>
                                             </Label>
                                         </div>
+                                        {validationErrors.images && (
+                                            <p className="text-sm text-destructive">{validationErrors.images}</p>
+                                        )}
 
                                         {imagePreviewUrls.length > 0 && (
                                             <div className="mt-4">
@@ -544,7 +559,7 @@ export default function NewProjectPage() {
                                 <>
                                     <div className="space-y-2">
                                         <Label htmlFor="github_url" className={validationErrors.github_url ? "text-destructive" : ""}>
-                                            GitHub Repository URL
+                                            GitHub Repository URL <span className="text-destructive">*</span>
                                         </Label>
                                         <div className="flex">
                                             <div className="bg-muted flex items-center px-3 rounded-l-md border border-r-0">
@@ -566,7 +581,7 @@ export default function NewProjectPage() {
 
                                     <div className="space-y-2">
                                         <Label htmlFor="live_url" className={validationErrors.live_url ? "text-destructive" : ""}>
-                                            Live Demo URL
+                                            Live Demo URL <span className="text-destructive">*</span>
                                         </Label>
                                         <div className="flex">
                                             <div className="bg-muted flex items-center px-3 rounded-l-md border border-r-0">

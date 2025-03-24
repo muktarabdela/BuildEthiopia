@@ -405,7 +405,6 @@ export default function NewProjectPage() {
                                             name="category"
                                             value={formData.category}
                                             // @ts-ignore
-
                                             onChange={handleInputChange}
                                             className={cn(
                                                 "w-full px-3 py-2 border rounded-md",
@@ -413,15 +412,30 @@ export default function NewProjectPage() {
                                             )}
                                         >
                                             <option value="">Select a category</option>
-                                            <option value="Web App">Web App</option>
-                                            <option value="Mobile App">Mobile App</option>
-                                            <option value="Desktop App">Desktop App</option>
-                                            <option value="AI/ML">AI/ML</option>
-                                            // @ts-ignore
-                                            <option value="Game">Game</option>
-                                            <option value="IoT">IoT</option>
+                                            <option value="4DBV">4DBV</option>
+                                            <option value="AI">AI</option>
+                                            <option value="API">API</option>
+                                            <option value="Automation">Automation</option>
                                             <option value="Blockchain">Blockchain</option>
-                                            <option value="Other">Other</option>
+                                            <option value="Bot">Bot</option>
+                                            <option value="Cloud">Cloud</option>
+                                            <option value="Data Science">Data Science</option>
+                                            <option value="Desktop">Desktop</option>
+                                            <option value="E-commerce">E-commerce</option>
+                                            <option value="Entertainment">Entertainment</option>
+                                            <option value="Gaming">Gaming</option>
+                                            <option value="Libraries">Libraries</option>
+                                            <option value="ML">ML</option>
+                                            <option value="Mobile">Mobile</option>
+                                            <option value="Open Source">Open Source</option>
+                                            <option value="Packages">Packages</option>
+                                            <option value="Portfolio">Portfolio</option>
+                                            <option value="Resource">Resource</option>
+                                            <option value="Security">Security</option>
+                                            <option value="Tools">Tools</option>
+                                            <option value="UI/UX">UI/UX</option>
+                                            <option value="VR/AR">VR/AR</option>
+                                            <option value="Web">Web</option>
                                         </select>
                                         {validationErrors.category && (
                                             <p className="text-sm text-destructive">{validationErrors.category}</p>

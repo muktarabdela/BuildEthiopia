@@ -19,12 +19,25 @@ import { toast } from "sonner"
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 import { useLoading } from '@/components/LoadingProvider'
 
+
+
+// Add this array of categories
+const categoryList = [
+    "4DBV", "AI", "API", "Automation", "Blockchain", "Bot", "Cloud",
+    "Data Science", "Desktop", "E-commerce", "Entertainment", "Gaming",
+    "Libraries", "ML", "Mobile", "Open Source", "Packages", "Portfolio",
+    "Resource", "Security", "Tools", "UI/UX", "VR/AR", "Web"
+]
+
+
 export default function NewProjectPage() {
     const { user } = useAuth()
     const router = useRouter()
     const [loading, setLoading] = useState(true)
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState("")
+    const [searchTerm, setSearchTerm] = useState("");
+
     const [uuid, setUuid] = useState<string | null>(null)
     const [currentStep, setCurrentStep] = useState(0)
     const [progress, setProgress] = useState(0)
@@ -34,7 +47,7 @@ export default function NewProjectPage() {
         logo_url: "",
         github_url: "",
         live_url: "",
-        category: "",
+        category: searchTerm,
         post_content: "",
         youtube_video_url: "",
         tech_stack: [] as string[],
@@ -62,8 +75,20 @@ export default function NewProjectPage() {
     const supabase = createClientComponentClient()
     const { setIsLoading } = useLoading()
 
+    // Simulate loading during filtering
+    useEffect(() => {
+        setIsLoading(true); // Start loading when filters change
+        const timeout = setTimeout(() => {
+            setIsLoading(false); // Stop loading after a short delay (simulate filtering)
+        }, 200); // Adjust the delay as needed
+
+        return () => clearTimeout(timeout);
+    }, [user, searchTerm, formData.tech_stack, formData.is_open_source, setIsLoading]); // Add dependencies here
+
+
     useEffect(() => {
         async function checkAccess() {
+
             if (!user) {
                 console.log("No valid session found, redirecting to login")
                 router.push("/login")
@@ -130,7 +155,7 @@ export default function NewProjectPage() {
         if (currentStep === 0) {
             if (!formData.title.trim()) errors.title = "Project title is required"
             if (!formData.description.trim()) errors.description = "Project description is required"
-            if (formData.description.trim().length < 50) errors.description = "Description should be at least 50 characters"
+            if (formData.description.trim().length > 50) errors.description = "Tagline must be 50 characters or less"
             if (!formData.category.trim()) errors.category = "Project category is required"
         }
 
@@ -252,11 +277,11 @@ export default function NewProjectPage() {
     const handleSubmit = async () => {
         if (!validateStep()) return
 
-        setSubmitting(true)
         setError("")
 
         try {
-            setIsLoading(true)
+            setSubmitting(true)
+            // setIsLoading(true)
 
             // If no logo is uploaded, use first image as logo
             const logoToUpload = logoFile || (imageFiles.length > 0 ? imageFiles[0] : null)
@@ -304,7 +329,7 @@ export default function NewProjectPage() {
             })
         } finally {
             setSubmitting(false)
-            setIsLoading(false)
+            // setIsLoading(false)
         }
     }
 
@@ -328,12 +353,16 @@ export default function NewProjectPage() {
         )
     }
 
+
+    const filteredCategory = categoryList.filter((category) =>
+        category.toLowerCase().includes(searchTerm.toLowerCase())
+    ).sort();
     return (
         <main className="bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen">
             <div className="max-w-3xl mx-auto">
                 <div className="mb-8 pt-8">
                     <h1 className="text-4xl font-bold mb-4 text-white">Submit a New Project</h1>
-                    <p className="text-gray-300">Share your project with the Ethiopian developer community.</p>
+                    <p className="text-gray-50">Share your project with the Ethiopian developer community.</p>
                 </div>
 
                 <div className="mb-8">
@@ -358,9 +387,9 @@ export default function NewProjectPage() {
                                                 : "border-2 border-muted",
                                     )}
                                 >
-                                    {index < currentStep ? <Check className="h-4 w-4" /> : <span>{index + 1}</span>}
+                                    {index < currentStep ? <Check className="h-4 w-4 " /> : <span className="text-gray-100">{index + 1}</span>}
                                 </div>
-                                <span className="hidden sm:block">{step.label}</span>
+                                <span className="hidden sm:block text-gray-100">{step.label}</span>
                             </div>
                         ))}
                     </div>
@@ -369,7 +398,7 @@ export default function NewProjectPage() {
                 <Card className="bg-gray-800 border-gray-700">
                     <CardHeader>
                         <CardTitle className="text-white">{steps[currentStep].label}</CardTitle>
-                        <CardDescription className="text-gray-300">
+                        <CardDescription className="text-gray-200">
                             {currentStep === 0 && "Enter the basic information about your project"}
                             {currentStep === 1 && "Upload images and logo for your project"}
                             {currentStep === 2 && "Add links to your project repository and live demo"}
@@ -391,7 +420,7 @@ export default function NewProjectPage() {
                                             value={formData.title}
                                             onChange={handleInputChange}
                                             placeholder="Enter your project title"
-                                            className={validationErrors.title ? "border-destructive" : ""}
+                                            className={validationErrors.title ? "border-destructive" : "placeholder:text-gray-300"}
                                         />
                                         {validationErrors.title && <p className="text-sm text-destructive">{validationErrors.title}</p>}
                                     </div>
@@ -400,43 +429,31 @@ export default function NewProjectPage() {
                                         <Label htmlFor="category" className={validationErrors.category ? "text-destructive" : ""}>
                                             Project Category <span className="text-destructive">*</span>
                                         </Label>
-                                        <select
-                                            id="category"
-                                            name="category"
-                                            value={formData.category}
-                                            // @ts-ignore
-                                            onChange={handleInputChange}
-                                            className={cn(
-                                                "w-full px-3 py-2 border rounded-md",
-                                                validationErrors.category ? "border-destructive" : "",
-                                            )}
-                                        >
-                                            <option value="">Select a category</option>
-                                            <option value="4DBV">4DBV</option>
-                                            <option value="AI">AI</option>
-                                            <option value="API">API</option>
-                                            <option value="Automation">Automation</option>
-                                            <option value="Blockchain">Blockchain</option>
-                                            <option value="Bot">Bot</option>
-                                            <option value="Cloud">Cloud</option>
-                                            <option value="Data Science">Data Science</option>
-                                            <option value="Desktop">Desktop</option>
-                                            <option value="E-commerce">E-commerce</option>
-                                            <option value="Entertainment">Entertainment</option>
-                                            <option value="Gaming">Gaming</option>
-                                            <option value="Libraries">Libraries</option>
-                                            <option value="ML">ML</option>
-                                            <option value="Mobile">Mobile</option>
-                                            <option value="Open Source">Open Source</option>
-                                            <option value="Packages">Packages</option>
-                                            <option value="Portfolio">Portfolio</option>
-                                            <option value="Resource">Resource</option>
-                                            <option value="Security">Security</option>
-                                            <option value="Tools">Tools</option>
-                                            <option value="UI/UX">UI/UX</option>
-                                            <option value="VR/AR">VR/AR</option>
-                                            <option value="Web">Web</option>
-                                        </select>
+                                        <Input
+                                            className="placeholder:text-gray-300"
+                                            id="category-search"
+                                            placeholder="Search for a category"
+                                            value={searchTerm}
+                                            onChange={(e) => setSearchTerm(e.target.value)}
+                                        />
+                                        <div className={cn(
+                                            "max-h-48 overflow-y-auto border border-gray-300 rounded-md ",
+                                            validationErrors.category ? "border-destructive" : "",
+                                        )}>
+                                            {filteredCategory.map((category) => (
+                                                <div
+                                                    key={category}
+                                                    className={`p-2 cursor-pointer hover:bg-primary/20 dark:hover:bg-gray-700 ${formData.category === category ? 'bg-primary text-white' : ''
+                                                        }`}
+                                                    onClick={() => {
+                                                        setFormData((prev) => ({ ...prev, category }));
+                                                        setSearchTerm(category);
+                                                    }}
+                                                >
+                                                    {category}
+                                                </div>
+                                            ))}
+                                        </div>
                                         {validationErrors.category && (
                                             <p className="text-sm text-destructive">{validationErrors.category}</p>
                                         )}
@@ -444,22 +461,21 @@ export default function NewProjectPage() {
 
                                     <div className="space-y-2">
                                         <Label htmlFor="description" className={validationErrors.description ? "text-destructive" : ""}>
-                                            Project Description <span className="text-destructive">*</span>
+                                            Project Tagline <span className="text-destructive">*</span>
                                         </Label>
-                                        <Textarea
+                                        <Input
                                             id="description"
                                             name="description"
                                             value={formData.description}
                                             onChange={handleInputChange}
-                                            rows={6}
-                                            placeholder="Describe your project, its features, and the problem it solves..."
-                                            className={validationErrors.description ? "border-destructive" : ""}
+                                            placeholder="A catchy one-liner that summarizes your project"
+                                            className={validationErrors.description ? "border-destructive" : "placeholder:text-gray-300"}
                                         />
                                         {validationErrors.description && (
                                             <p className="text-sm text-destructive">{validationErrors.description}</p>
                                         )}
                                         <p className="text-xs text-muted-foreground">
-                                            Minimum 50 characters. Be descriptive about what your project does and the technologies used.
+                                            Maximum 50 characters. Make it engaging and descriptive! Example: "AI-powered code completion for faster development"
                                         </p>
                                     </div>
                                 </>
@@ -497,7 +513,7 @@ export default function NewProjectPage() {
                                             </div>
                                         )}
                                         <p className="text-xs text-muted-foreground">
-                                            Optional: Add a YouTube video showcasing your project
+                                            Optional: A logo helps your project stand out and builds brand recognition
                                         </p>
                                     </div>
 
@@ -808,8 +824,9 @@ export default function NewProjectPage() {
 
                     <div className="p-6 pt-0 flex justify-between border-t border-gray-700">
                         <Button
+                            className="text-white mt-4"
                             variant="outline"
-                            onClick={currentStep === 0 ? () => router.push("/profile") : prevStep}
+                            onClick={currentStep === 0 ? () => router.push("/") : prevStep}
                             disabled={submitting}
                         >
                             {currentStep === 0 ? (
@@ -823,12 +840,12 @@ export default function NewProjectPage() {
                         </Button>
 
                         {currentStep < steps.length - 1 ? (
-                            <Button onClick={nextStep}>
+                            <Button className="mt-4" onClick={nextStep}>
                                 Next
                                 <ChevronRight className="h-4 w-4 ml-2" />
                             </Button>
                         ) : (
-                            <Button onClick={handleSubmit} disabled={submitting} className="min-w-[100px]">
+                            <Button onClick={handleSubmit} disabled={submitting} className="min-w-[100px] mt-4">
                                 {submitting ? (
                                     <div className="flex items-center gap-2">
                                         <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
@@ -853,7 +870,7 @@ export default function NewProjectPage() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="flex flex-col gap-4">
-                            <Button
+                            <Button className="text-white"
                                 onClick={() => router.push("/")}
                                 variant="outline"
                             >

@@ -250,7 +250,7 @@ export default function Home() {
               </div>
             </div>
             {/* Sidebar */}
-            <div className="w-full lg:w-[30%] space-y-8">
+            <div className="w-full lg:w-[30%] space-y-8 sticky top-20 h-fit transition-all duration-300 ease-in-out">
               {/* Featured Developers */}
               <FeaturedDevelopers isLoading={isFeatureDeveloperLoading} developers={featuredDevelopers} />
 
@@ -268,7 +268,7 @@ export default function Home() {
               </div>
 
               {/* How It Works */}
-              <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-sm">
+              {/* <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-sm">
                 <h3 className="text-xl font-bold mb-4 text-gray-100">How It Works</h3>
                 <div className="space-y-4">
                   <div className="flex items-start">
@@ -293,7 +293,7 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

@@ -23,14 +23,15 @@ export default function ProfileHeader({ user, isOwner }) {
         <div className="bg-gradient-to-br from-gray-900 to-gray-800 relative p-8">
             {/* Edit Profile Button */}
             {isOwner && (
-                <Button
-                    onClick={() => setIsSettingsOpen(true)}
-                    className="absolute top-4 right-4 bg-indigo-600 hover:bg-indigo-700 rounded-full px-6 py-3 shadow-lg flex items-center gap-2"
-                    aria-label="Edit profile"
-                >
-                    <Edit className="h-4 w-4" />
-                    <span>Edit Profile</span>
-                </Button>
+                <Link href={`/${user.username}/setting`}>
+                    <Button
+                        className="absolute top-4 right-4 bg-indigo-600 hover:bg-indigo-700 rounded-full px-6 py-3 shadow-lg flex items-center gap-2"
+                        aria-label="Edit profile"
+                    >
+                        <Edit className="h-4 w-4" />
+                        <span>Edit Profile</span>
+                    </Button>
+                </Link>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-8">

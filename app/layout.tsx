@@ -5,6 +5,8 @@ import Link from "next/link";
 import AuthProvider from "@/components/AuthProvider";
 import { LoadingProvider } from '@/components/LoadingProvider';
 import { LoadingOverlay } from '@/components/LoadingOverlay';
+import { Toaster } from "@/components/ui/sonner"
+
 
 // Configure Inter font
 const inter = Inter({
@@ -93,6 +95,8 @@ export default function RootLayout({ children, }: { children: React.ReactNode; }
                 </div>
               </div>
             </footer>
+            <Toaster />
+
           </AuthProvider>
         </LoadingProvider>
       </body>

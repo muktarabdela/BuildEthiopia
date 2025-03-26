@@ -13,6 +13,7 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
+  fallback: ['system-ui', 'arial']
 });
 
 // Configure Roboto Mono for monospace text
@@ -20,6 +21,7 @@ const robotoMono = Roboto_Mono({
   subsets: ["latin"],
   variable: "--font-roboto-mono",
   display: "swap",
+  fallback: ['monospace']
 });
 
 export const metadata = {

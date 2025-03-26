@@ -8,9 +8,8 @@ import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 
 export default function ProfileHeader({ user, isOwner }) {
-    const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 
-    console.log("user data from profile_header", user.skill)
+    // console.log("user data from profile_header", user.skill)
 
     // Status display configuration
     const statusOptions = [
@@ -119,11 +118,7 @@ export default function ProfileHeader({ user, isOwner }) {
                 </div>
             </div>
 
-            <SettingsModal
-                isOpen={isSettingsOpen}
-                onClose={() => setIsSettingsOpen(false)}
-                user={user}
-            />
+
         </div>
     )
 }

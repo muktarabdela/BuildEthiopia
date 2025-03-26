@@ -21,61 +21,7 @@ import { useLoading } from '@/components/LoadingProvider';
 import axios from 'axios';
 
 // API or database
-const userData = {
-    id: "1",
-    username: "janedoe",
-    displayName: "Jane Doe",
-    bio: "Full-stack developer passionate about creating beautiful, functional web applications",
-    profilePicture: "/placeholder.svg?height=150&width=150",
-    socialLinks: {
-        github: "https://github.com/janedoe",
-        linkedin: "https://linkedin.com/in/janedoe",
-        twitter: "https://twitter.com/janedoe",
-    },
-    featured: {
-        isTopDeveloper: true,
-        featuredProduct: true,
-    },
-    stats: {
-        totalUpvotes: 1243,
-        totalComments: 85,
-    },
-    badges: [
-        { id: 1, name: "Top Developer", icon: "trophy" },
-        { id: 2, name: "Most Upvoted Project", icon: "award" },
-        { id: 3, name: "Community Contributor", icon: "heart" },
-    ],
-    projects: [
-        {
-            id: 1,
-            title: "E-commerce Dashboard",
-            thumbnail: "/placeholder.svg?height=200&width=300",
-            upvotes: 423,
-            featured: true,
-        },
-        {
-            id: 2,
-            title: "Task Management App",
-            thumbnail: "/placeholder.svg?height=200&width=300",
-            upvotes: 287,
-            featured: false,
-        },
-        {
-            id: 3,
-            title: "Portfolio Template",
-            thumbnail: "/placeholder.svg?height=200&width=300",
-            upvotes: 189,
-            featured: false,
-        },
-        {
-            id: 4,
-            title: "Weather Forecast App",
-            thumbnail: "/placeholder.svg?height=200&width=300",
-            upvotes: 156,
-            featured: false,
-        },
-    ],
-}
+
 
 type SocialLinks = {
     github: string;
@@ -211,10 +157,10 @@ export default function ProfilePage() {
                     router.push('/login');
                     return;
                 }
-                
-                console.log("user data from auth", user)
+
+                // console.log("user data from auth", user)
                 console.log("profile data from ", response.data)
-                const profile = response.data;
+                const profile = response.data.profile;
                 const transformedProfile = transformProfileData(profile);
                 setProfile(transformedProfile);
 

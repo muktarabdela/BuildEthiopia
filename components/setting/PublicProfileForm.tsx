@@ -21,6 +21,8 @@ import { publicProfileSchema, PublicProfileInput } from "@/lib/validations/setti
 import { useState } from "react";
 import { ProfileData } from "@/lib/definitions/setting";
 import { toast } from "sonner";
+import axios from "axios";
+import { useAuth } from "../AuthProvider";
 
 interface PublicProfileFormProps {
     profile: ProfileData;
@@ -28,6 +30,7 @@ interface PublicProfileFormProps {
 
 export function PublicProfileForm({ profile }: PublicProfileFormProps) {
     const [isSaving, setIsSaving] = useState(false);
+    const { user, session } = useAuth()
 
     const form = useForm<PublicProfileInput>({
         resolver: zodResolver(publicProfileSchema),
@@ -44,26 +47,22 @@ export function PublicProfileForm({ profile }: PublicProfileFormProps) {
         setIsSaving(true);
         console.log("Submitting Public Profile:", values);
         try {
-            const response = await fetch('/api/profile/public', {
-                method: 'POST', // or PUT/PATCH depending on your API design
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(values),
+            const response = await axios.post('/api/profile/public', values, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${session?.access_token}`
+                },
             });
-
-            if (!response.ok) {
+            console.log(response)
+            if (response.status !== 200) {
                 throw new Error('Failed to save profile');
             }
 
-            const result = await response.json();
-            console.log("Save successful:", result);
-            toast("Your public profile information has been saved")
-
-            // toast({ title: "Profile Updated", description: "Your public profile information has been saved." });
-            // Optionally refetch data or update state if needed
+            console.log("Save successful:", response.data);
+            toast("Your public profile information has been saved");
 
         } catch (error) {
             console.error("Save failed:", error);
-
             toast("Could not save profile. Please try again.");
         } finally {
             setIsSaving(false);

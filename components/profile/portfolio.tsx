@@ -120,7 +120,7 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner }
                     {/* About Tab */}
                     <TabsContent value="about" className="p-8">
                         <div className="space-y-8">
-                            {/* Profile Header */}
+                            {/* Profile Header
                             <div className="bg-gray-800 p-8 rounded-xl flex flex-col items-center text-center">
                                 <Avatar className="h-32 w-32 mb-6 border-4 border-blue-500/20">
                                     <AvatarImage src="/avatar.jpg" />
@@ -141,7 +141,7 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner }
                                         </a>
                                     ))}
                                 </div>
-                            </div>
+                            </div> */}
 
                             {/* Bio Section */}
                             <div className="bg-gray-800 p-8 rounded-xl">

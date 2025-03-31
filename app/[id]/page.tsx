@@ -19,6 +19,7 @@ import { ProjectCard } from '@/components/ProjectCard';
 import index from 'swr';
 import { useLoading } from '@/components/LoadingProvider';
 import axios from 'axios';
+import { Link, Star } from 'lucide-react';
 
 // API or database
 
@@ -152,6 +153,7 @@ export default function ProfilePage() {
     const [isOwner, setIsOwner] = useState<boolean>(false);
     const [upvotedProjects, setUpvotedProjects] = useState<string[]>([]);
     const { setIsLoading } = useLoading();
+    const [showProfileCompletionAlert, setShowProfileCompletionAlert] = useState<boolean>(false);
 
     useEffect(() => {
         async function getProfile() {
@@ -166,17 +168,20 @@ export default function ProfilePage() {
                     return;
                 }
 
-                // console.log("user data from auth", user)
-                console.log("profile data from ", response.data.projects)
+                console.log("profile data from ", response.data)
                 const profile = response.data.profile;
                 const about = response.data.about;
                 const projects = response.data.projects;
                 const transformedProfile = transformProfileData(profile, about, projects);
                 setProfile(transformedProfile);
 
+                // Check if profile is incomplete
+                const isProfileIncomplete = !profile?.bio || !profile?.github_url || !profile?.linkedin_url;
+                setShowProfileCompletionAlert(isProfileIncomplete && user?.id === profile?.id);
+
                 if (user?.id === profile?.id) {
                     setIsOwner(true);
-                    if (!profile?.bio || !profile?.github_url) {
+                    if (isProfileIncomplete) {
                         setShowDialog(true);
                     }
 
@@ -213,6 +218,21 @@ export default function ProfilePage() {
     };
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+            {showProfileCompletionAlert && (
+                <div className="bg-yellow-500/20 border-l-4 border-yellow-500 text-white p-4 mb-8">
+                    <div className="flex items-center justify-between max-w-7xl mx-auto">
+                        <div className="flex items-center space-x-4">
+                            <Star className="h-6 w-6 text-yellow-500" />
+                            <p className="text-sm md:text-base">
+                                Please complete your profile to submit projects and get discovered by recruiters!
+                            </p>
+                        </div>
+                            <Button className="bg-yellow-500 hover:bg-yellow-600 text-white">
+                                Complete Profile
+                            </Button>
+                    </div>
+                </div>
+            )}
             <main className="container mx-auto py-8 px-4 md:px-6">
                 <div className="grid gap-8">
                     {profile && <ProfileHeader user={profile} isOwner={isOwner} />}

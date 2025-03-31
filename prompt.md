@@ -5,7 +5,7 @@ You are an expert UI/UX designer tasked with creating a modern, visually stunnin
 ---
 
 ### **1. Context & Purpose**  
-- The interface you are designing is for @portfolio.tsx 
+- The interface you are designing is for @portfolio.tsx
 - Its primary goal is to **[define key user action, e.g., improve conversion, simplify data visualization, enhance engagement]**.  
 - The target audience consists of tech-savvy professionals.
 
@@ -58,4 +58,4 @@ You are an expert UI/UX designer tasked with creating a modern, visually stunnin
 ### **5. Additional Considerations (Optional)**  
 - Should the design be **dark mode/light mode adaptable**?  
 - Consider accessibility features like **high-contrast modes, screen reader support, or motion reduction settings**.  
-- Address potential **user pain points** and friction areas based on industry trends.  
+- Address potential **user pain points** and friction areas based on industry trends.

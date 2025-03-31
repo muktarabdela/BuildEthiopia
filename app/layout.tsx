@@ -40,7 +40,7 @@ export default function RootLayout({ children, }: { children: React.ReactNode; }
         className={`${inter.variable} ${robotoMono.variable} antialiased bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen flex flex-col`}
       >
         <LoadingProvider>
-          <LoadingOverlay />
+          {/* <LoadingOverlay /> */}
           <NextTopLoader
             color="#3b82f6"
             initialPosition={0.08}

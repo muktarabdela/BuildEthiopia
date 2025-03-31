@@ -10,7 +10,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { LoadingOverlay } from '@/components/LoadingOverlay';
 import { useLoading } from '@/components/LoadingProvider';
 import FeaturedProjectsHistory from "@/components/FeaturedProjectsHistory";
 

@@ -24,7 +24,7 @@ export default function ProfileHeader({ user, isOwner }) {
             {isOwner && (
                 <Link href={`/${user.username}/setting`}>
                     <Button
-                        className="absolute top-4 right-4 bg-indigo-600 hover:bg-indigo-700 rounded-full px-6 py-3 shadow-lg flex items-center gap-2"
+                        className="absolute top-4 right-4 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 rounded-full px-6 py-3 shadow-lg flex items-center gap-2 transition duration-200"
                         aria-label="Edit profile"
                     >
                         <Edit className="h-4 w-4" />
@@ -74,7 +74,7 @@ export default function ProfileHeader({ user, isOwner }) {
                                 href={user.socialLinks.github}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-gray-400 hover:text-gray-600 transition-colors"
+                                className="text-gray-400 hover:text-gray-600 transition-colors duration-200"
                                 aria-label="GitHub profile"
                             >
                                 <Github className="h-6 w-6" />
@@ -85,7 +85,7 @@ export default function ProfileHeader({ user, isOwner }) {
                                 href={user.socialLinks.linkedin}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-gray-400 hover:text-gray-600 transition-colors"
+                                className="text-gray-400 hover:text-gray-600 transition-colors duration-200"
                                 aria-label="LinkedIn profile"
                             >
                                 <Linkedin className="h-6 w-6" />
@@ -96,7 +96,7 @@ export default function ProfileHeader({ user, isOwner }) {
                                 href={user.socialLinks.twitter}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-gray-400 hover:text-gray-600 transition-colors"
+                                className="text-gray-400 hover:text-gray-600 transition-colors duration-200"
                                 aria-label="Twitter profile"
                             >
                                 <Twitter className="h-6 w-6" />

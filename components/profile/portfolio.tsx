@@ -27,7 +27,7 @@ const socialLinks = [
 
 export default function PortfolioSection({ user, upvotedProjects = [], isOwner }) {
     const [editingProject, setEditingProject] = useState(null)
-    const [activeTab, setActiveTab] = useState("portfolio")
+    const [activeTab, setActiveTab] = useState("Project")
 
     const handleUpdateProject = (updatedProject) => {
         // Update the project in the user's projects array
@@ -41,7 +41,7 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner }
         <Card className="bg-gray-900 border-gray-700 rounded-xl shadow-2xl">
             <CardHeader className="px-8 pt-8 pb-6">
                 <CardTitle className="text-3xl font-bold text-white">
-                    Portfolio
+                    Project
                     <span className="ml-4 text-sm font-normal text-gray-400">
                         {user.projects.length} projects
                     </span>
@@ -50,7 +50,7 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner }
             <CardContent className="p-0">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                     <TabsList className="flex justify-start space-x-4 px-8 bg-transparent border-b border-gray-700">
-                        {["portfolio", "upvoted", "about"].map((tab) => (
+                        {["Project", "upvoted", "about"].map((tab) => (
                             <TabsTrigger
                                 key={tab}
                                 value={tab}
@@ -63,7 +63,7 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner }
                     </TabsList>
 
                     {/* Portfolio Tab */}
-                    <TabsContent value="portfolio" className="p-8">
+                    <TabsContent value="Project" className="p-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {user.projects.map(project => (
                                 <div

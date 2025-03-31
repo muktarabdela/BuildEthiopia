@@ -6,6 +6,7 @@ import AuthProvider from "@/components/AuthProvider";
 import { LoadingProvider } from '@/components/LoadingProvider';
 import { LoadingOverlay } from '@/components/LoadingOverlay';
 import { Toaster } from "@/components/ui/sonner"
+import NextTopLoader from 'nextjs-toploader'
 
 
 // Configure Inter font
@@ -40,6 +41,17 @@ export default function RootLayout({ children, }: { children: React.ReactNode; }
       >
         <LoadingProvider>
           <LoadingOverlay />
+          <NextTopLoader
+            color="#3b82f6"
+            initialPosition={0.08}
+            crawlSpeed={200}
+            height={3}
+            crawl={true}
+            showSpinner={false}
+            easing="ease"
+            speed={200}
+            shadow="0 0 10px #3b82f6,0 0 5px #3b82f6"
+          />
           <AuthProvider>
             <Navbar />
             <main className="flex-1">

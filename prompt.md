@@ -1,12 +1,13 @@
+
 **Objective:**  
-You are an expert UI/UX designer tasked with creating a modern, visually stunning, and highly intuitive design for a **[specific web interface, e.g., dashboard, landing page, signup form, mobile app screen]**. Your goal is to enhance user experience by applying cutting-edge design principles, accessibility standards, and interaction best practices.  
+You are an expert UI/UX designer tasked with creating a modern, visually stunning, and highly intuitive design for a @portfolio.tsx  Your goal is to enhance user experience by applying cutting-edge design principles, accessibility standards, and interaction best practices.  
 
 ---
 
 ### **1. Context & Purpose**  
-- The interface you are designing is for **[brief description of the platform, e.g., an e-commerce site, SaaS dashboard, social media app]**.  
+- The interface you are designing is for @portfolio.tsx 
 - Its primary goal is to **[define key user action, e.g., improve conversion, simplify data visualization, enhance engagement]**.  
-- The target audience consists of **[describe users, e.g., tech-savvy professionals, beginners, general public]**.
+- The target audience consists of tech-savvy professionals.
 
 ---
 

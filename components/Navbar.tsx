@@ -80,19 +80,19 @@ export function Navbar() {
         <header className="sticky top-0 z-50 bg-gradient-to-br from-gray-900 to-gray-800 border-b border-gray-700 shadow-sm">
             <div className="container mx-auto px-4">
                 <div className="flex items-center justify-between h-16">
-                    {/* Logo */}
-                    <Link href="/" className="flex items-center space-x-2" onClick={closeMobileMenu}>
+                    {/* Logo - Add hover animation */}
+                    <Link href="/" className="flex items-center space-x-2 hover:scale-105 transition-transform duration-200" onClick={closeMobileMenu}>
                         <div className="w-8 h-8 rounded-md bg-primary flex items-center justify-center">
                             <Code className="h-5 w-5 text-white" />
                         </div>
                         <span className="text-xl font-bold text-gray-100">BuildEthiopia</span>
                     </Link>
 
-                    {/* Desktop Navigation */}
+                    {/* Desktop Navigation - Add smooth transitions */}
                     <nav className="hidden md:flex items-center space-x-1">
                         <Link
                             href="/"
-                            className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/')
+                            className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${isActive('/')
                                 ? 'text-primary bg-gray-800'
                                 : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                 }`}
@@ -104,7 +104,7 @@ export function Navbar() {
                         </Link>
                         <Link
                             href="/projects"
-                            className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/projects')
+                            className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${isActive('/projects')
                                 ? 'text-primary bg-gray-800'
                                 : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                 }`}
@@ -117,7 +117,7 @@ export function Navbar() {
                         {profile?.role === 'developer' && (
                             <Link
                                 href="/projects/new"
-                                className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/projects/new')
+                                className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${isActive('/projects/new')
                                     ? 'text-primary bg-gray-800'
                                     : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                     }`}
@@ -130,7 +130,7 @@ export function Navbar() {
                         )}
                         <Link
                             href="/developers"
-                            className={`px-3 py-2 rounded-md text-sm font-medium ${isActive('/developers')
+                            className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${isActive('/developers')
                                 ? 'text-primary bg-gray-800'
                                 : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                 }`}
@@ -142,14 +142,13 @@ export function Navbar() {
                         </Link>
                     </nav>
 
-                    {/* User Actions */}
+                    {/* User Actions - Add focus states for accessibility */}
                     <div className="flex items-center space-x-2">
                         {user ? (
                             <>
-
                                 <Link
                                     href="/profile/notifications"
-                                    className="relative p-2 text-gray-300 hover:text-primary rounded-full hover:bg-gray-700 text-white"
+                                    className="relative p-2 text-gray-300 hover:text-primary rounded-full hover:bg-gray-700 text-white focus:ring-2 focus:ring-primary focus:outline-none"
                                 >
                                     <Bell className="h-5 w-5" />
                                     {unreadCount > 0 && (
@@ -179,12 +178,12 @@ export function Navbar() {
                             </>
                         ) : (
                             <>
-                                <Link href="/login" className="hidden md:block">
+                                <Link href="/login" className="hidden md:block focus:ring-2 focus:ring-primary focus:outline-none">
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="w-full justify-center bg-primary hover:bg-primary text-white
-                                    cursor-pointer">
+                                        className="w-full justify-center bg-primary hover:bg-primary text-white cursor-pointer transition-colors duration-200"
+                                    >
                                         Log In
                                     </Button>
                                 </Link>
@@ -215,9 +214,9 @@ export function Navbar() {
                 </div>
             </div>
 
-            {/* Mobile Menu */}
+            {/* Mobile Menu - Add backdrop blur */}
             {mobileMenuOpen && (
-                <div className="md:hidden bg-gray-900 border-t border-gray-700">
+                <div className="md:hidden bg-gray-900/95 backdrop-blur-sm border-t border-gray-700">
                     <div className="container mx-auto px-4 py-3 space-y-1">
                         <Link
                             href="/"

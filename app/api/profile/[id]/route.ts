@@ -36,7 +36,7 @@ export async function GET(
         { status: 400 }
       );
     }
-    console.log(`Fetching profile for username: ${id}`);
+    // console.log(`Fetching profile for username: ${id}`);
     // 1. Fetch profile by username
     const { data: profile, error: profileError } = await supabase
       .from("profiles")

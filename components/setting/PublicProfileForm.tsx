@@ -23,6 +23,7 @@ import { ProfileData } from "@/lib/definitions/setting";
 import { toast } from "sonner";
 import axios from "axios";
 import { useAuth } from "../AuthProvider";
+import { useRouter } from "next/navigation";
 
 interface PublicProfileFormProps {
     profile: ProfileData;
@@ -31,7 +32,7 @@ interface PublicProfileFormProps {
 export function PublicProfileForm({ profile }: PublicProfileFormProps) {
     const [isSaving, setIsSaving] = useState(false);
     const { user, session } = useAuth()
-
+    const router = useRouter()
     const form = useForm<PublicProfileInput>({
         resolver: zodResolver(publicProfileSchema),
         defaultValues: {
@@ -59,7 +60,9 @@ export function PublicProfileForm({ profile }: PublicProfileFormProps) {
             }
 
             console.log("Save successful:", response.data);
+            console.log("Redirecting to:", `/${user?.username}`);
             toast("Your public profile information has been saved");
+            router.push(`/u/${user?.username}`);
 
         } catch (error) {
             console.error("Save failed:", error);

@@ -55,6 +55,14 @@ type Project = {
     createdAt?: string;
 };
 
+type About = {
+    about_me: string;
+    experience_summary: string;
+    expertise: string[];
+    education_summary: string;
+    interestsExpertise: string[];
+};
+
 type Profile = {
     id: string;
     username: string;
@@ -96,15 +104,15 @@ type ApiProfile = {
     }[];
 };
 
-const transformProfileData = (profile: ApiProfile): Profile => {
+const transformProfileData = (profile: ApiProfile, about: About, projects: Project[]): Profile => {
     return {
         id: profile.id,
         username: profile.username,
         displayName: profile.name,
-        bio: profile.bio || "No bio available",
-        profilePicture: profile.profile_picture,
-        status: profile.status || 'none',
-        skill: profile.skill || [],
+        bio: about?.about_me || "No bio available",
+        profilePicture: profile?.profile_picture,
+        status: profile?.status || 'none',
+        skill: about?.expertise || [],
         location: profile.location || "Location not specified",
         website_url: profile.website_url || "https://example.com",
         socialLinks: {
@@ -117,13 +125,13 @@ const transformProfileData = (profile: ApiProfile): Profile => {
             featuredProduct: false,
         },
         stats: {
-            totalUpvotes: profile.projects?.reduce((sum, project) => sum + (project.upvotes_count || 0), 0) || 0,
-            totalComments: profile.projects?.reduce((sum, project) => sum + (project.comments_count || 0), 0) || 0,
+            totalUpvotes: projects.reduce((sum, project) => sum + (project.upvotes_count || 0), 0) || 0,
+            totalComments: projects.reduce((sum, project) => sum + (project.comments_count || 0), 0) || 0,
         },
         badges: [
             { id: 1, name: "New Member", icon: "award" },
         ],
-        projects: profile.projects?.map(project => ({
+        projects: projects?.map(project => ({
             id: project.id,
             title: project.title,
             description: project.description,
@@ -159,9 +167,11 @@ export default function ProfilePage() {
                 }
 
                 // console.log("user data from auth", user)
-                console.log("profile data from ", response.data)
+                console.log("profile data from ", response.data.projects)
                 const profile = response.data.profile;
-                const transformedProfile = transformProfileData(profile);
+                const about = response.data.about;
+                const projects = response.data.projects;
+                const transformedProfile = transformProfileData(profile, about, projects);
                 setProfile(transformedProfile);
 
                 if (user?.id === profile?.id) {

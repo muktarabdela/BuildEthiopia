@@ -36,6 +36,7 @@ async function getUserProfileData(username: string): Promise<FullProfileData | n
         });
 
         console.log(`Response status: ${response.status}`);
+        console.log(`Response response: ${response}`);
 
         if (response.status === 404) {
             console.log(`Profile not found for username: ${username}`);

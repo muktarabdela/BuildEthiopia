@@ -26,7 +26,7 @@ const socialLinks = [
 ];
 
 export default function PortfolioSection({ user, upvotedProjects = [], isOwner }) {
-    console.log("is owner from portfolio", isOwner)
+    console.log("user from portfolio", user)
     const [editingProject, setEditingProject] = useState(null)
 
     const handleUpdateProject = (updatedProject) => {

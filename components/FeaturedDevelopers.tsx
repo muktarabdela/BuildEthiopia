@@ -1,8 +1,21 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { User, Code, Award } from 'lucide-react';
+import { User, Code, Award, Folder } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Skeleton } from "@/components/ui/skeleton";
+
+interface Developer {
+    id: string;
+    name: string;
+    username: string;
+    avatar_url?: string;
+    projects_count: number;
+}
+
+interface FeaturedDevelopersProps {
+    developers: Developer[];
+    isLoading: boolean;
+}
 
 export function SkeletonFeaturedDevelopers() {
     return (
@@ -31,7 +44,7 @@ export function SkeletonFeaturedDevelopers() {
     );
 }
 
-export default function FeaturedDevelopers({ developers, isLoading }) {
+export default function FeaturedDevelopers({ developers, isLoading }: FeaturedDevelopersProps) {
     return (
         <>
             {isLoading ? (
@@ -82,14 +95,13 @@ export default function FeaturedDevelopers({ developers, isLoading }) {
                                                 )}
                                             </div>
                                             <div className="flex items-center text-sm text-gray-300 mt-1">
-                                                <Code className="h-3.5 w-3.5 mr-1" />
+                                                <Folder className="h-3.5 w-3.5 mr-1" />
                                                 <span>{developer.projects_count} {developer.projects_count === 1 ? 'project' : 'projects'}</span>
                                             </div>
                                         </div>
                                     </Link>
                                 ))}
-                            </div>
-                        ) : (
+                            </div>) : (
                             <div className="text-center py-8 text-gray-400">
                                 <User className="h-10 w-10 mx-auto mb-2 text-gray-500" />
                                 <p>No featured developers yet</p>

@@ -35,10 +35,10 @@ export const aboutMeSchema = z.object({
   experience_summary: z.string().max(500).optional().or(z.literal("")),
   education_summary: z.string().max(500).optional().or(z.literal("")),
   // Comma-separated strings from textarea
-  expertise_str: z.string().optional(),
-  interests_str: z.string().optional(),
-  badges_str: z.string().optional(),
-  skill_str: z.string().optional(), // Legacy skill field
+  expertise: z.string().optional(),
+  interests: z.string().optional(),
+  badges: z.string().optional(),
+  skill: z.string().optional(), // Legacy skill field
 });
 export type AboutMeInput = z.infer<typeof aboutMeSchema>;
 

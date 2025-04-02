@@ -19,7 +19,8 @@ import { ProjectCard } from '@/components/ProjectCard';
 import index from 'swr';
 import { useLoading } from '@/components/LoadingProvider';
 import axios from 'axios';
-import { Link, Star } from 'lucide-react';
+import { Star } from 'lucide-react';
+import Link from 'next/link';
 
 // API or database
 
@@ -205,6 +206,7 @@ export default function ProfilePage() {
     if (!profile) return <div>Profile not found.</div>;
 
     const { projects } = profile;
+    const username = params?.id;
 
     // const totalUpvotes = projects?.reduce((sum, project) => sum + project.upvotes_count, 0) || 0;
     // const totalComments = projects?.reduce((sum, project) => sum + project.comments_count, 0) || 0;
@@ -227,9 +229,11 @@ export default function ProfilePage() {
                                 Please complete your profile to submit projects and get discovered by recruiters!
                             </p>
                         </div>
+                        <Link href={`/${username}/complete`}>
                             <Button className="bg-yellow-500 hover:bg-yellow-600 text-white">
                                 Complete Profile
                             </Button>
+                        </Link>
                     </div>
                 </div>
             )}

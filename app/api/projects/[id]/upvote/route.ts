@@ -41,7 +41,28 @@ export async function POST(
 ) {
   try {
     const resolvedParams = await context.params;
-    const { user_id, project_id } = await request.json();
+
+    // Check if the request body is empty
+    const body = await request.text();
+    if (!body) {
+      return NextResponse.json(
+        { error: "Request body is required" },
+        { status: 400 }
+      );
+    }
+
+    // Attempt to parse the JSON
+    let user_id: string, project_id: string;
+    try {
+      const jsonBody = JSON.parse(body);
+      user_id = jsonBody.user_id;
+      project_id = jsonBody.project_id;
+    } catch (parseError) {
+      return NextResponse.json(
+        { error: "Invalid JSON format" },
+        { status: 400 }
+      );
+    }
 
     if (!user_id || !project_id) {
       return NextResponse.json(

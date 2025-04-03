@@ -1,139 +1,174 @@
-"use client"
+// components/UpvoteButton.tsx (or wherever it lives)
+"use client";
 
-import { useState, useEffect } from "react"
-import { Heart } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import axios from "axios"
-import { useAuth } from "@/components/AuthProvider"
-import { supabase } from "@/lib/supabase"
-import { cn } from "@/lib/utils"
+import { useState, useEffect } from "react";
+import { Heart } from "lucide-react";
+import { Button } from "@/components/ui/button"; // Ensure path is correct
+import axios from "axios";
+import { useAuth } from "@/components/AuthProvider"; // Ensure path is correct
+import { cn } from "@/lib/utils"; // Ensure path is correct
+import { useRouter } from 'next/navigation'; // For redirect
 
 type Props = {
     projectId: string;
     initialUpvotes: number;
+    initialHasUpvoted: boolean | undefined; // Allow undefined for loading state
     className?: string;
+    size?: 'sm' | 'default' | 'lg'; // Optional size prop for flexibility
 };
 
-export default function UpvoteButton({ projectId, initialUpvotes, className }: Props) {
-    const { user, session } = useAuth()
-    const [upvotes, setUpvotes] = useState<number>(initialUpvotes)
-    const [hasUpvoted, setHasUpvoted] = useState<boolean>(false)
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [isAnimating, setIsAnimating] = useState<boolean>(false)
+export default function UpvoteButton({
+    projectId,
+    initialUpvotes,
+    initialHasUpvoted,
+    className,
+    size
+}: Props) {
+    const { user, session } = useAuth();
+    const router = useRouter();
 
-    // Fetch the upvote count on mount
+    // State derived from props, allowing internal updates
+    const [upvotes, setUpvotes] = useState<number>(initialUpvotes);
+    const [hasUpvoted, setHasUpvoted] = useState<boolean | undefined>(initialHasUpvoted);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isAnimating, setIsAnimating] = useState<boolean>(false);
+
+    // Sync state if props change (e.g., navigating between project pages)
     useEffect(() => {
-        const checkUserUpvote = async () => {
-            if (!user) return
+        setUpvotes(initialUpvotes);
+    }, [initialUpvotes]);
 
-            try {
-                const { data, error } = await supabase
-                    .from("upvotes")
-                    .select("id")
-                    .eq("project_id", projectId)
-                    .eq("user_id", user.id)
-                    .maybeSingle()
-
-                if (error) {
-                    console.error("Error checking upvote:", error)
-                } else {
-                    setHasUpvoted(!!data)
-                }
-            } catch (err) {
-                console.error("Unexpected error:", err)
-            }
-        }
-
-        checkUserUpvote()
-    }, [projectId, session, user])
+    useEffect(() => {
+        setHasUpvoted(initialHasUpvoted);
+    }, [initialHasUpvoted]);
 
     const handleUpvote = async () => {
-        if (!user) {
-            // Redirect to login if user is not authenticated
-            window.location.href = "/login?redirect=" + encodeURIComponent(window.location.pathname)
-            return
+        if (!user || !session) {
+            // Use router push for client-side navigation redirect
+            router.push("/login?redirect=" + encodeURIComponent(window.location.pathname + window.location.search));
+            return;
         }
+
+        // Prevent action if initial state is still loading
+        if (hasUpvoted === undefined) {
+            console.log("Initial upvote state not determined yet.");
+            return;
+        }
+
+        setIsLoading(true);
+        setIsAnimating(true); // Trigger animation
+
+        // --- Optimistic Update ---
+        const originalUpvotes = upvotes;
+        const originalHasUpvoted = hasUpvoted;
+
+        const newHasUpvoted = !originalHasUpvoted;
+        const newUpvotes = newHasUpvoted ? originalUpvotes + 1 : originalUpvotes - 1;
+
+        setHasUpvoted(newHasUpvoted);
+        setUpvotes(newUpvotes);
+        // --- End Optimistic Update ---
 
         try {
-            setIsLoading(true)
-            setIsAnimating(true)
+            const method = originalHasUpvoted ? 'DELETE' : 'POST';
+            const url = `/api/projects/${projectId}/upvote`;
+            const headers = { Authorization: `Bearer ${session.access_token}` };
 
-            if (hasUpvoted) {
-                // Remove upvote if user has already upvoted
-                const response = await axios.delete(
-                    `/api/projects/${projectId}/upvote`,
-                    {
-                        data: { user_id: user.id },
-                        headers: {
-                            Authorization: `Bearer ${session?.access_token}`,
-                        },
-                    }
-                )
-                console.log("response from deleting upvote", response)
-                if (response.data.message === "Upvote removed successfully") {
-                    setUpvotes((prev) => prev - 1)
-                    setHasUpvoted(false)
+            let response;
+            if (method === 'DELETE') {
+                response = await axios.delete(url, {
+                    data: { user_id: user.id, project_id: projectId }, // Include user_id and project_id
+                    headers: headers,
+                });
+                console.log("Response from deleting upvote", response);
+                if (response.status !== 200 && response.status !== 204) { // Check for success status
+                    throw new Error(`API Error: ${response.status}`);
                 }
-            } else {
-                // Add upvote
-                const response = await axios.post(
-                    `/api/projects/${projectId}/upvote`,
+            } else { // POST
+                response = await axios.post(url,
                     {
-                        user_id: user.id,
-                        project_id: projectId,
+                        user_id: user.id, // Include user_id
+                        project_id: projectId // Include project_id
                     },
                     {
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${session?.access_token}`,
-                        },
-                    },
-                )
-                console.log("response from adding upvote", response)
-                if (response.data.message === "Project upvoted successfully") {
-                    setUpvotes((prev) => prev + 1)
-                    setHasUpvoted(true)
+                        headers: { ...headers, 'Content-Type': 'application/json' },
+                    }
+                );
+                console.log("Response from adding upvote", response);
+                if (response.status !== 200 && response.status !== 201) { // Check for success status
+                    throw new Error(`API Error: ${response.status}`);
                 }
             }
-        } catch (error) {
-            console.error("Error toggling upvote:", error)
-        } finally {
-            setIsLoading(false)
 
-            // Reset animation state after animation completes
+            // Optional: If API returns the *actual* new count, update state here for consistency
+            // const data = response.data;
+            // if (data && typeof data.newCount === 'number') {
+            //     setUpvotes(data.newCount);
+            // }
+
+        } catch (error) {
+            console.error("Error toggling upvote:", error);
+            // --- Revert Optimistic Update on Error ---
+            setHasUpvoted(originalHasUpvoted);
+            setUpvotes(originalUpvotes);
+            // Optionally show an error toast/message to the user
+        } finally {
+            setIsLoading(false);
+            // Reset animation state after animation completes (CSS duration)
             setTimeout(() => {
-                setIsAnimating(false)
-            }, 600)
+                setIsAnimating(false);
+            }, 300); // Match animation duration
         }
-    }
+    };
+
+    // Handle case where initial state is still loading
+    const isDisabled = isLoading || hasUpvoted === undefined;
+    const buttonVariant = hasUpvoted === true ? "default" : "outline";
+    const buttonText = `Upvote${upvotes !== 1 ? 's' : ''}`;
 
     return (
-        <div className="flex items-center gap-2 ">
-
-            <Button
-                onClick={handleUpvote}
-                disabled={isLoading}
-                variant={hasUpvoted ? "default" : "outline"}
+        // Removed outer div, Button component is sufficient
+        <Button
+            onClick={handleUpvote}
+            disabled={isDisabled}
+            variant={buttonVariant}
+            size={size} // Use the size prop
+            aria-pressed={hasUpvoted === true} // Correct ARIA attribute for toggle buttons
+            aria-label={hasUpvoted === true ? `Remove upvote, currently ${upvotes} upvotes` : `Upvote project, currently ${upvotes} upvotes`}
+            className={cn(
+                "flex items-center gap-1.5 cursor-pointer transition-all duration-200 ease-in-out text-white", // Adjusted gap
+                // Custom styling for filled vs outline
+                hasUpvoted === true
+                    ? "bg-green-600 text-white hover:bg-green-700 border-green-600" // Green background for upvoted state
+                    : "border-border hover:bg-accent hover:text-accent-foreground", // Standard outline hover
+                isDisabled && "opacity-60 cursor-not-allowed",
+                // Removed border-none as variant handles it
+                className // Allow overriding classes
+            )}
+        >
+            <Heart
                 className={cn(
-                    "flex items-center gap-2 cursor-pointer border-none",
-                    hasUpvoted && "bg-primary hover:bg-primary/90",
-                    isLoading && "opacity-70",
-                    className
+                    "h-4 w-4 transition-all duration-300 ease-in-out text-white",
+                    // Animation effect
+                    isAnimating && hasUpvoted ? "scale-125 rotate-12" : "scale-100 rotate-0",
+                    // Fill based on state
+                    hasUpvoted === true ? "fill-current text-white" : "fill-none text-current", // Ensure correct color inheritance
+                    // Adjust stroke width for outline
+                    hasUpvoted !== true && "stroke-[1.5px]"
                 )}
-            >
-                <Heart
-                    className={cn(
-                        "h-4 w-4 transition-all",
-                        isAnimating && "scale-125",
-                        hasUpvoted ? "fill-current" : "fill-none"
-                    )}
-                />
-                <span>
-                    {upvotes} Upvote{upvotes !== 1 ? "s" : ""}
+            />
+            {/* Show count only if defined */}
+            {typeof upvotes === 'number' && (
+                <span className="text-sm font-medium">
+                    {upvotes} {/* Display count */}
                 </span>
-            </Button>
-        </div>
-
-    )
+            )}
+            {/* Show text only if size is 'lg' */}
+            {size === 'lg' && (
+                <span className="text-sm font-medium text-white">
+                    {buttonText} {/* Display "Upvote" or "Upvotes" */}
+                </span>
+            )}
+        </Button>
+    );
 }
-

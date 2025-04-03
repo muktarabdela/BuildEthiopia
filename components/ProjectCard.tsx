@@ -1,235 +1,254 @@
 import Link from 'next/link';
-
-import { MessageCircle, ArrowUp, Sparkles, Bookmark } from "lucide-react"
 import Image from 'next/image';
-import UpvoteButton from '@/app/projects/[id]/UpvoteButton';
-import { Skeleton } from "@/components/ui/skeleton"
-import { useAuth } from './AuthProvider';
+import { useRouter } from 'next/navigation';
+import { MessageCircle, Sparkles } from "lucide-react"; // Removed ArrowUp, Bookmark
+import { Skeleton } from "@/components/ui/skeleton";
+import { useAuth } from './AuthProvider'; // Assuming path is correct
 import { useState, useEffect } from 'react';
-import { upvoteProject, getUserUpvotedProjects } from '@/lib/services/projectInteractions';
-import { supabase } from '@/lib/supabase';
+import { getUserUpvotedProjects } from '@/lib/services/projectInteractions'; // Assuming path is correct
+import UpvoteButton from '@/app/projects/[id]/UpvoteButton';
 
-export function ProjectCard({ project, index }) {
-    // console.log("Project card data", project);
-    // Ensure project is defined
+// Define Project and Developer types
+interface Developer {
+    id: string;
+    name: string;
+    username?: string;
+    profile_picture?: string;
+}
+
+interface Project {
+    id: string;
+    title: string;
+    description: string;
+    category?: string;
+    logo_url?: string;
+    tech_stack?: string[];
+    comments_count: number;
+    upvotes_count: number;
+    developer?: Developer;
+}
+
+interface ProjectCardProps {
+    project: Project;
+    index?: number;
+}
+
+export function ProjectCard({ project, index }: ProjectCardProps) {
     if (!project) return null;
 
+    const router = useRouter();
     const { user, session } = useAuth();
-    const [isSaved, setIsSaved] = useState(false);
-    const [isUpvoted, setIsUpvoted] = useState(false);
-    // console.log("session data from project card", session);
+
+    // State to hold the initial upvoted status fetched for the current user
+    const [initialHasUpvoted, setInitialHasUpvoted] = useState<boolean | undefined>(undefined); // Undefined means loading
+    const [isLoadingUserInteraction, setIsLoadingUserInteraction] = useState(true);
+
     useEffect(() => {
-        if (user) {
-            if (session) {
-                Promise.all([
-                    // getUserSavedProjects(user.id, session.access_token),
-                    getUserUpvotedProjects(user.id, session.access_token),
-                ]).then(([upvoted]) => {
-                    // setIsSaved(saved.some(savedProject => savedProject.id === project.id));
-                    setIsUpvoted(upvoted?.includes(project.id));
+        let isMounted = true;
+        setInitialHasUpvoted(undefined); // Reset on project change
+        setIsLoadingUserInteraction(true);
+
+        if (user && session) {
+            getUserUpvotedProjects(user.id, session.access_token)
+                .then((upvotedIds) => {
+                    if (isMounted) {
+                        const upvotedStatus = upvotedIds?.includes(project.id) ?? false;
+                        setInitialHasUpvoted(upvotedStatus);
+                        setIsLoadingUserInteraction(false);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching user upvoted projects:", error);
+                    if (isMounted) {
+                        setInitialHasUpvoted(false); // Assume not upvoted on error
+                        setIsLoadingUserInteraction(false);
+                    }
                 });
+        } else {
+            // If no user/session, user cannot have upvoted
+            if (isMounted) {
+                setInitialHasUpvoted(false);
+                setIsLoadingUserInteraction(false);
             }
         }
-    }, [user, project.id]);
 
-    const handleUpvote = async () => {
-        if (!user) return;
-        if (!session) return;
+        // Cleanup function to prevent state updates on unmounted component
+        return () => {
+            isMounted = false;
+        };
+        // Depend on user, session, and project.id
+    }, [user, session, project.id]);
 
-        try {
-            if (isUpvoted) {
-                await fetch(`/api/projects/${project.id}/upvote`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${session?.access_token}`,
-                    },
-                });
-            } else {
-                await upvoteProject(user.id, project.id, session.access_token);
+    // Main Navigation Handler
+    const handleCardClick = (e: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
+        if ('key' in e) {
+            // Handle keyboard event
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+        } else {
+            // Handle mouse event
+            const target = e.target as HTMLElement;
+            if (target.closest('button, a, [role="button"], [role="link"]')) {
+                return;
             }
-            setIsUpvoted(!isUpvoted);
-        } catch (error) {
-            console.error('Error upvoting project:', error);
         }
+        router.push(`/projects/${project.id}`);
     };
+
     return (
-        <div className="group bg-gray-800 p-4 md:p-4 rounded-xl border border-gray-700 hover:border-primary/50 transition-all duration-300 relative overflow-hidden">
+        <div
+            className="group bg-gray-800 p-4 md:p-4 rounded-xl border border-gray-700 hover:border-primary/50 transition-all duration-300 relative overflow-hidden cursor-pointer"
+            onClick={handleCardClick}
+            role="link"
+            aria-label={`View details for ${project.title}`}
+            tabIndex={0}
+            onKeyDown={handleCardClick}
+        >
             {/* Background pattern */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
 
-            {/* Main content wrapped in Link */}
-            <Link
-                href={`/projects/${project.id}`}
-                className="block relative z-10"
-                onClick={(e) => {
-                    // If the click originated from a button or link, don't navigate
-                    if ((e.target as HTMLElement).closest('button, a')) {
-                        e.preventDefault();
-                    }
-                }}
-            >
-                {/* Project Logo */}
-                <div className="space-y-3">
+            <div className="relative z-10 flex flex-col justify-between h-full">
+                {/* Top part: Info */}
+                <div className="space-y-3 mb-4">
+                    {/* Project Logo & Title/Category - No changes needed here */}
                     <div className="flex items-center gap-4">
-                        <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${project.logo_url ? "bg-transparent" : "bg-primary/20"} group-hover:bg-primary/30 transition-colors duration-300`}>
+                        <div className={`flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center ${project.logo_url ? "bg-transparent" : "bg-primary/20"} group-hover:bg-primary/30 transition-colors duration-300`}>
                             {project.logo_url ? (
-                                <img
-                                    src={project.logo_url}
-                                    alt={project.title}
-                                    className="w-full h-full object-cover rounded-lg"
-                                />
+                                <img src={project.logo_url} alt={`${project.title} logo`} className="w-full h-full object-cover rounded-lg" />
                             ) : (
                                 <Sparkles className="w-6 h-6 text-primary group-hover:text-primary-400 transition-colors duration-300" />
                             )}
                         </div>
-                        {/* Project Details */}
-                        <div className="flex flex-col md:flex-row md:items-center justify-center gap-2">
-                            <h2 className="text-xl font-semibold text-gray-100 group-hover:text-primary transition-colors duration-300">
-                                {index + 1}. {project.title}
-                            </h2>
-                            {project.category && (
-                                <span className="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full">
-                                    {project.category}
-                                </span>
-                            )}
+                        <div className="flex-grow min-w-0">
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                                <h2 className="text-xl font-semibold text-gray-100 group-hover:text-primary transition-colors duration-300 truncate">
+                                    {index != null ? `${index + 1}. ` : ''}{project.title}
+                                </h2>
+                                {project.category && (
+                                    <span className="flex-shrink-0 inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full whitespace-nowrap">
+                                        {project.category}
+                                    </span>
+                                )}
+                            </div>
                         </div>
                     </div>
 
+                    {/* Description - No changes needed */}
                     <p className="text-gray-300 text-base line-clamp-2">{project.description}</p>
 
-                    {/* Tech stack */}
-                    {project.tech_stack?.length > 0 && (
+                    {/* Tech stack section with proper type checking */}
+                    {project.tech_stack && project.tech_stack.length > 0 && (
                         <div className="flex gap-2 flex-wrap mt-2">
-                            {project.tech_stack.map((tech) => (
-                                <span
-                                    key={tech}
-                                    className="px-3 py-1 bg-gray-700 rounded-full text-sm font-medium hover:bg-gray-700 text-white transition-colors duration-200"
-                                >
+                            {project.tech_stack.slice(0, 5).map((tech: string) => (
+                                <span key={tech} className="px-3 py-1 bg-gray-700 rounded-full text-sm font-medium text-white">
                                     {tech}
                                 </span>
                             ))}
+                            {project.tech_stack.length > 5 && (
+                                <span className="px-3 py-1 bg-gray-700 rounded-full text-sm font-medium text-gray-400">
+                                    +{project.tech_stack.length - 5} more
+                                </span>
+                            )}
                         </div>
                     )}
-                    {/* Developer Info */}
-                    <div
-                        className="flex items-center gap-3 mt-4 hover:underline cursor-pointer"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            window.location.href = `/${project.developer.username}`;
-                        }}
-                        role="link"
-                        tabIndex={0}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                                window.location.href = `/${project.developer.username}`;
-                            }
-                        }}
-                        aria-label={`View ${project.developer?.name || 'Anonymous Developer'}'s profile`}
+
+                    {/* Developer Info Link - No changes needed */}
+                    <Link
+                        href={`/${project.developer?.username ?? '#'}`} // Added fallback href
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex items-center gap-3 mt-4 group/devinfo focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-primary rounded"
+                        aria-label={`View profile of ${project.developer?.name || 'developer'}`}
+                        // Prevent navigating if developer is missing
+                        {...(!project.developer?.username ? { 'aria-disabled': true, tabIndex: -1, style: { pointerEvents: 'none' } } : {})}
                     >
-                        <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-700 text-white group-hover:ring-2 group-hover:ring-primary transition-all duration-300">
+                        <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-700 text-white group-hover/devinfo:ring-2 group-hover/devinfo:ring-primary transition-all duration-300 flex-shrink-0">
                             {project.developer?.profile_picture ? (
-                                <Image
-                                    src={project.developer.profile_picture}
-                                    alt={project.developer.name}
-                                    fill
-                                    className="object-cover"
-                                />
+                                <Image src={project.developer.profile_picture} alt={project.developer.name || 'Developer'} fill sizes="40px" className="object-cover" />
                             ) : (
                                 <div className="w-full h-full flex items-center justify-center bg-primary/20 text-primary font-medium">
                                     {project.developer?.name?.charAt(0).toUpperCase() || 'D'}
                                 </div>
                             )}
                         </div>
-                        <span className="text-base font-medium text-gray-300 group-hover:text-primary transition-colors duration-300">
+                        <span className="text-base font-medium text-gray-300 group-hover/devinfo:text-primary transition-colors duration-300 truncate">
                             {project.developer?.name || 'Anonymous Developer'}
                         </span>
-                    </div>
-                </div>
-            </Link>
-
-            {/* Right section with actions - outside the main Link */}
-            <div className="flex justify-end">
-                <div className="flex gap-3 text-gray-400">
-                    {/* Comments */}
-                    <Link
-                        href={`/projects/${project.id}`}
-                        className="flex items-center gap-2 bg-gray-700 px-3 py-1.5 rounded-full hover:bg-gray-700 text-white transition-colors duration-200"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        <MessageCircle className="w-4 h-4" />
-                        <span className="text-sm">{project.comments_count}</span>
                     </Link>
+                </div>
 
-                    {/* Upvote */}
-                    <div
-                        className="flex items-center gap-2 bg-gray-700 rounded-full hover:bg-gray-700 text-white transition-colors duration-200"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            handleUpvote();
-                        }}
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                                handleUpvote();
-                            }
-                        }}
-                        aria-label={`Upvote ${project.title}`}
-                    >
-                        <UpvoteButton
-                            projectId={project?.id}
-                            initialUpvotes={project.upvotes_count}
-                            className=""
-                        />
+                {/* Bottom part: Actions */}
+                <div className="flex justify-end items-center">
+                    <div className="flex gap-2 md:gap-3 text-gray-400"> {/* Adjusted gap */}
+                        {/* Comments Link */}
+                        <Link
+                            href={`/projects/${project.id}#comments`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="flex items-center gap-1.5 bg-gray-700/50 px-3 py-1.5 rounded-full hover:bg-gray-700 text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-primary" // Adjusted gap
+                            aria-label={`${project.comments_count} comments, view comments`}
+                            title={`${project.comments_count} comments`} // Add title for tooltip
+                        >
+                            <MessageCircle className="w-4 h-4 flex-shrink-0" />
+                            <span className="text-sm font-medium">{project.comments_count ?? 0}</span>
+                        </Link>
+
+                        {/* --- INTEGRATED UPVOTE BUTTON --- */}
+                        {/* Render button only after loading user interaction state */}
+                        {!isLoadingUserInteraction ? (
+                            <div onClick={(e) => e.stopPropagation()}> {/* Wrapper to stop propagation */}
+                                <UpvoteButton
+                                    projectId={project.id}
+                                    initialUpvotes={project.upvotes_count ?? 0}
+                                    initialHasUpvoted={initialHasUpvoted}
+                                    size="sm" // Make it slightly smaller to fit better maybe
+                                // Pass any specific className if needed
+                                // className="px-3 py-1.5" // Example if you need specific padding different from default
+                                />
+                            </div>
+                        ) : (
+                            // Skeleton/Placeholder for the button while loading initial state
+                            <Skeleton className="h-8 w-20 bg-gray-700 rounded-full" />
+                        )}
                     </div>
-
-
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
+// SkeletonProjectCard remains largely the same, just ensure its structure
+// mimics the final ProjectCard layout (especially the actions part).
 export function SkeletonProjectCard() {
     return (
         <div className="bg-gray-800 p-4 md:p-6 rounded-xl border border-gray-700">
-            <div className="flex flex-col md:flex-row justify-between gap-6">
-                {/* Left section */}
-                <div className="flex items-start gap-4 flex-1">
-                    {/* Project Icon */}
-                    <Skeleton className="w-10 h-10 rounded-lg bg-gray-700 text-white" />
-
-                    {/* Project Details */}
-                    <div className="flex-1 space-y-3">
-                        <Skeleton className="h-6 w-3/4 bg-gray-700 text-white" />
-                        <Skeleton className="h-4 w-1/4 bg-gray-700 text-white" />
-                        <Skeleton className="h-4 w-full bg-gray-700 text-white" />
-                        <Skeleton className="h-4 w-2/3 bg-gray-700 text-white" />
-
-                        {/* Tech stack */}
-                        <div className="flex gap-2">
-                            <Skeleton className="h-6 w-16 bg-gray-700 text-white rounded-full" />
-                            <Skeleton className="h-6 w-16 bg-gray-700 text-white rounded-full" />
-                        </div>
-
-                        {/* Developer Info */}
-                        <div className="flex items-center gap-2 mt-4">
-                            <Skeleton className="w-8 h-8 rounded-full bg-gray-700 text-white" />
-                            <Skeleton className="h-4 w-24 bg-gray-700 text-white" />
+            <div className="flex flex-col justify-between h-full"> {/* Mimic structure */}
+                {/* Top part Skeleton */}
+                <div className="space-y-3 mb-4">
+                    <div className="flex items-center gap-4">
+                        <Skeleton className="w-12 h-12 rounded-lg bg-gray-700 flex-shrink-0" />
+                        <div className="flex-grow space-y-2">
+                            <Skeleton className="h-6 w-3/4 bg-gray-700" />
+                            <Skeleton className="h-4 w-1/4 bg-gray-700" />
                         </div>
                     </div>
+                    <Skeleton className="h-4 w-full bg-gray-700" />
+                    <Skeleton className="h-4 w-5/6 bg-gray-700" />
+                    <div className="flex gap-2 flex-wrap mt-2">
+                        <Skeleton className="h-6 w-16 bg-gray-700 rounded-full" />
+                        <Skeleton className="h-6 w-20 bg-gray-700 rounded-full" />
+                        <Skeleton className="h-6 w-12 bg-gray-700 rounded-full" />
+                    </div>
+                    <div className="flex items-center gap-3 mt-4">
+                        <Skeleton className="w-10 h-10 rounded-full bg-gray-700" />
+                        <Skeleton className="h-4 w-24 bg-gray-700" />
+                    </div>
                 </div>
-
-                {/* Right section */}
-                <div className="flex flex-row md:flex-col items-start md:items-end gap-4">
-                    <div className="flex items-center gap-4">
-                        <Skeleton className="h-8 w-8 bg-gray-700 text-white rounded-full" />
-                        <Skeleton className="h-8 w-8 bg-gray-700 text-white rounded-full" />
+                {/* Bottom part Skeleton */}
+                <div className="flex justify-end items-center"> {/* Mimic alignment */}
+                    <div className="flex gap-2 md:gap-3"> {/* Mimic gap */}
+                        <Skeleton className="h-8 w-16 bg-gray-700 rounded-full" /> {/* Comments */}
+                        <Skeleton className="h-8 w-20 bg-gray-700 rounded-full" /> {/* Upvote */}
                     </div>
                 </div>
             </div>
         </div>
     )
 }
-

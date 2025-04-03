@@ -176,7 +176,7 @@ export function AboutMeForm({ about, profileSkills, profileBadges }: AboutMeForm
                     )}
                 />
                 {/* Include badges and skill (legacy) if they are edited here */}
-                <FormField
+                {/* <FormField
                     control={form.control}
                     name="badges_str"
                     render={({ field }) => (
@@ -195,7 +195,7 @@ export function AboutMeForm({ about, profileSkills, profileBadges }: AboutMeForm
                             <FormMessage />
                         </FormItem>
                     )}
-                />
+                /> */}
                 <FormField
                     control={form.control}
                     name="skill_str"

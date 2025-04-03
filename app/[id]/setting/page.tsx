@@ -99,7 +99,7 @@ export default function SettingsPage() {
                 <CardContent>
                     <Tabs defaultValue="public-profile" className="flex flex-col md:flex-row md:gap-8">
                         {/* Use flex-col for vertical layout on medium+ screens */}
-                        <TabsList className="w-full md:w-48 flex-shrink-0 mb-6 md:mb-0 flex flex-row md:flex-col items-start space-x-2 md:space-x-0 md:space-y-1">
+                        <TabsList className="w-full md:w-48 flex-shrink-0 mb-6 md:mb-0 flex flex-row md:flex-col items-start gap-2 md:gap-1 mt-6 overflow-x-auto md:overflow-visible">
                             <TabsTrigger
                                 value="public-profile"
                                 className="w-full justify-start px-3 py-2 hover:bg-muted rounded-md transition-colors text-muted-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:font-medium whitespace-nowrap"

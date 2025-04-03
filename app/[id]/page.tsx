@@ -150,6 +150,7 @@ export default function ProfilePage() {
     const params = useParams<{ id: string }>();
     const router = useRouter();
     const [profile, setProfile] = useState<Profile | null>(null);
+    const [about, setAbout] = useState<About | null>(null);
     const [showDialog, setShowDialog] = useState<boolean>(false);
     const [isOwner, setIsOwner] = useState<boolean>(false);
     const [upvotedProjects, setUpvotedProjects] = useState<string[]>([]);
@@ -172,6 +173,7 @@ export default function ProfilePage() {
                 console.log("profile data from ", response.data)
                 const profile = response.data.profile;
                 const about = response.data.about;
+                setAbout(about);
                 const projects = response.data.projects;
                 const transformedProfile = transformProfileData(profile, about, projects);
                 setProfile(transformedProfile);
@@ -242,7 +244,7 @@ export default function ProfilePage() {
                     {profile && <ProfileHeader user={profile} isOwner={isOwner} />}
                     <div className="grid gap-8 md:grid-cols-3">
                         <div className="md:col-span-2">
-                            {profile && <PortfolioSection user={profile} upvotedProjects={upvotedProjects} isOwner={isOwner} />}
+                            {profile && <PortfolioSection user={profile} about={about} upvotedProjects={upvotedProjects} isOwner={isOwner} />}
                         </div>
                         <div className="space-y-8">
                             {profile && <AchievementsSection user={profile} />}

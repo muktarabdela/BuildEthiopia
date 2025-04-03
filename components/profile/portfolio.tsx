@@ -25,7 +25,8 @@ const socialLinks = [
     { name: "Twitter", icon: MessageSquare, url: "https://twitter.com" }
 ];
 
-export default function PortfolioSection({ user, upvotedProjects = [], isOwner }) {
+export default function PortfolioSection({ user, upvotedProjects = [], isOwner, about }) {
+    console.log("User from portfolio section:", user)
     const [editingProject, setEditingProject] = useState(null)
     const [activeTab, setActiveTab] = useState("Project")
 
@@ -37,13 +38,38 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner }
         user.projects = updatedProjects
     }
 
+    if (!about) {
+        return (
+            <Card className="bg-gray-900 border-gray-700 rounded-xl shadow-2xl">
+                <CardHeader className="px-8 pt-8 pb-6">
+                    <CardTitle className="text-3xl font-bold text-white">
+                        Portfolio
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="p-8">
+                    <div className="flex flex-col items-center justify-center space-y-6">
+                        <div className="text-center">
+                            <h3 className="text-2xl font-semibold text-white mb-4">Complete Your Profile</h3>
+                            <p className="text-gray-400">To submit projects and showcase your work, please complete your profile.</p>
+                        </div>
+                        <Link href={`/${user.username}/complete`}>
+                            <Button className="bg-yellow-500 hover:bg-yellow-600 text-white">
+                                Complete Profile
+                            </Button>
+                        </Link>
+                    </div>
+                </CardContent>
+            </Card>
+        )
+    }
+
     return (
         <Card className="bg-gray-900 border-gray-700 rounded-xl shadow-2xl">
             <CardHeader className="px-8 pt-8 pb-6">
                 <CardTitle className="text-3xl font-bold text-white">
-                    Project
+                    Portfolio
                     <span className="ml-4 text-sm font-normal text-gray-400">
-                        {user.projects.length} projects
+                        {user?.projects?.length} projects
                     </span>
                 </CardTitle>
             </CardHeader>
@@ -120,33 +146,10 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner }
                     {/* About Tab */}
                     <TabsContent value="about" className="p-8">
                         <div className="space-y-8">
-                            {/* Profile Header
-                            <div className="bg-gray-800 p-8 rounded-xl flex flex-col items-center text-center">
-                                <Avatar className="h-32 w-32 mb-6 border-4 border-blue-500/20">
-                                    <AvatarImage src="/avatar.jpg" />
-                                    <AvatarFallback>JD</AvatarFallback>
-                                </Avatar>
-                                <h2 className="text-3xl font-bold text-white mb-2">{aboutDeveloper.fullName}</h2>
-                                <div className="flex gap-4 mt-4">
-                                    {socialLinks.map((link) => (
-                                        <a
-                                            key={link.name}
-                                            href={link.url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-gray-400 hover:text-white transition-colors"
-                                            aria-label={link.name}
-                                        >
-                                            <link.icon className="h-6 w-6" />
-                                        </a>
-                                    ))}
-                                </div>
-                            </div> */}
-
                             {/* Bio Section */}
                             <div className="bg-gray-800 p-8 rounded-xl">
                                 <h3 className="text-xl font-semibold text-white mb-6">About Me</h3>
-                                <p className="text-gray-300 leading-relaxed">{aboutDeveloper.bio}</p>
+                                <p className="text-gray-300 leading-relaxed">{about?.about_me || "No bio available"}</p>
                             </div>
 
                             {/* Experience & Expertise */}
@@ -156,7 +159,7 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner }
                                         <Briefcase className="h-6 w-6 text-blue-400" />
                                         <h4 className="text-lg font-semibold text-white">Experience</h4>
                                     </div>
-                                    <p className="text-gray-300">{aboutDeveloper.experience}</p>
+                                    <p className="text-gray-300">{about?.experience_summary || "No experience summary available"}</p>
                                 </div>
 
                                 <div className="bg-gray-700 p-6 rounded-lg">
@@ -165,11 +168,11 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner }
                                         <h4 className="text-lg font-semibold text-white">Expertise</h4>
                                     </div>
                                     <div className="flex flex-wrap gap-2">
-                                        {aboutDeveloper.expertise.map((skill, index) => (
+                                        {about?.expertise?.map((skill, index) => (
                                             <Badge key={index} className="bg-blue-500 hover:bg-blue-600 text-white">
                                                 {skill}
                                             </Badge>
-                                        ))}
+                                        )) || "No expertise listed"}
                                     </div>
                                 </div>
                             </div>
@@ -181,7 +184,7 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner }
                                         <GraduationCap className="h-6 w-6 text-purple-400" />
                                         <h4 className="text-lg font-semibold text-white">Education</h4>
                                     </div>
-                                    <p className="text-gray-300">{aboutDeveloper.education}</p>
+                                    <p className="text-gray-300">{about?.education_summary || "No education summary available"}</p>
                                 </div>
 
                                 <div className="bg-gray-700 p-6 rounded-lg">
@@ -189,7 +192,7 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner }
                                         <BookOpen className="h-6 w-6 text-yellow-400" />
                                         <h4 className="text-lg font-semibold text-white">Interests</h4>
                                     </div>
-                                    <p className="text-gray-300">{aboutDeveloper.interests}</p>
+                                    <p className="text-gray-300">{about?.interests?.join(", ") || "No interests listed"}</p>
                                 </div>
                             </div>
                         </div>

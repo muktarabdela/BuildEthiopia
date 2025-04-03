@@ -62,7 +62,7 @@ export default function ProfileHeader({ user, isOwner }) {
 
                     {/* Bio - Only show if exists */}
                     {user.bio && (
-                        <p className="text-gray-700 text-lg leading-relaxed max-w-2xl">
+                        <p className="text-gray-400 text-lg leading-relaxed max-w-2xl">
                             {user.bio}
                         </p>
                     )}

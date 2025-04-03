@@ -54,7 +54,7 @@ export async function GET(request, { params }) {
 // PUT /api/projects/[id] - Update a project
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Record<string, string> }
 ) {
   try {
     const session = await requireAuth(req);

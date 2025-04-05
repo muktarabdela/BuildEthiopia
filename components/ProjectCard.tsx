@@ -180,7 +180,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
                     <div className="flex gap-2 md:gap-3 text-gray-400"> {/* Adjusted gap */}
                         {/* Comments Link */}
                         <Link
-                            href={`/projects/${project.id}#comments`}
+                            href={`/projects/${project.id}`}
                             onClick={(e) => e.stopPropagation()}
                             className="flex items-center gap-1.5 bg-gray-700/50 px-3 py-1.5 rounded-full hover:bg-gray-700 text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-primary" // Adjusted gap
                             aria-label={`${project.comments_count} comments, view comments`}

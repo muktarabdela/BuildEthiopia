@@ -2,6 +2,7 @@ import { Github, Globe, MessageSquare, Code, Share2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import UpvoteButton from "@/app/projects/[id]/UpvoteButton"
 import Link from "next/link"
+import { toast } from "sonner";
 
 interface Developer {
     id: string;
@@ -40,11 +41,12 @@ export default function ProjectActionBar({ project, initialHasUpvoted }: Project
                 });
             } else {
                 await navigator.clipboard.writeText(window.location.href);
-                // You might want to show a toast notification here
-                console.log('Link copied to clipboard');
+                // Show a toast notification
+                toast("Link copied to clipboard!")
             }
         } catch (error) {
             console.error('Error sharing:', error);
+            toast('Failed to share the project. Please try again.'); // Replace this with a proper toast notification library
         }
     };
 

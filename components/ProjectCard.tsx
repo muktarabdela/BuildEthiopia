@@ -45,14 +45,31 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
 
     useEffect(() => {
         let isMounted = true;
-        setInitialHasUpvoted(undefined); // Reset on project change
+        // console.log(`ProjectCard Effect running for Project ID: ${project.id}`);
+        // console.log('User:', user);
+        // console.log('Session:', session);
+
+        setInitialHasUpvoted(undefined);
         setIsLoadingUserInteraction(true);
 
         if (user && session) {
+            // console.log(`Fetching upvoted projects for User ID: ${user.id}`);
             getUserUpvotedProjects(user.id, session.access_token)
-                .then((upvotedIds) => {
+                .then((upvotedProjectObjects) => { // Renamed for clarity
+                    // console.log(`Received upvoted Project Objects for user ${user.id}:`, upvotedProjectObjects);
                     if (isMounted) {
-                        const upvotedStatus = upvotedIds?.includes(project.id) ?? false;
+                        const currentProjectId = project.id;
+
+                        // --- *** THE FIX IS HERE *** ---
+                        // Check if the received data is an array before using .some()
+                        // Use .some() to check if any object in the array has a matching ID
+                        const upvotedStatus = Array.isArray(upvotedProjectObjects)
+                            ? upvotedProjectObjects.some(upvotedProj => String(upvotedProj.id) === String(currentProjectId))
+                            : false; // Default to false if not an array
+                        // --- *** END FIX *** ---
+
+                        // console.log(`Checking if ${currentProjectId} (Type: ${typeof currentProjectId}) has a matching ID in`, upvotedProjectObjects);
+                        console.log(`Result (upvotedStatus for ${currentProjectId}): ${upvotedStatus}`); // Log result with project ID
                         setInitialHasUpvoted(upvotedStatus);
                         setIsLoadingUserInteraction(false);
                     }
@@ -60,25 +77,22 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
                 .catch(error => {
                     console.error("Error fetching user upvoted projects:", error);
                     if (isMounted) {
-                        setInitialHasUpvoted(false); // Assume not upvoted on error
+                        setInitialHasUpvoted(false);
                         setIsLoadingUserInteraction(false);
                     }
                 });
         } else {
-            // If no user/session, user cannot have upvoted
+            // console.log('User or Session missing, setting initialHasUpvoted to false.');
             if (isMounted) {
                 setInitialHasUpvoted(false);
                 setIsLoadingUserInteraction(false);
             }
         }
 
-        // Cleanup function to prevent state updates on unmounted component
         return () => {
             isMounted = false;
         };
-        // Depend on user, session, and project.id
     }, [user, session, project.id]);
-
     // Main Navigation Handler
     const handleCardClick = (e: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
         if ('key' in e) {

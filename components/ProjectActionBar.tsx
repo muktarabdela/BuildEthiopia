@@ -1,8 +1,13 @@
+'use client'
 import { Github, Globe, MessageSquare, Code, Share2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import UpvoteButton from "@/app/projects/[id]/UpvoteButton"
 import Link from "next/link"
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import { getUserUpvotedProjects } from "@/lib/services/projectInteractions"
+import { useAuth } from "./AuthProvider"
+import { Skeleton } from "./ui/skeleton"
 
 interface Developer {
     id: string;
@@ -26,7 +31,60 @@ interface ProjectActionBarProps {
     initialHasUpvoted: boolean | undefined;
 }
 
-export default function ProjectActionBar({ project, initialHasUpvoted }: ProjectActionBarProps) {
+export default function ProjectActionBar({ project }: ProjectActionBarProps) {
+    const [isLoadingUserInteraction, setIsLoadingUserInteraction] = useState(true);
+    const [initialHasUpvoted, setInitialHasUpvoted] = useState<boolean | undefined>(undefined); // Undefined means loading
+    const { user, session } = useAuth(); // Assuming you have a custom hook for authentication
+    useEffect(() => {
+        let isMounted = true;
+        // console.log(`ProjectCard Effect running for Project ID: ${project.id}`);
+        // console.log('User:', user);
+        // console.log('Session:', session);
+
+        setInitialHasUpvoted(undefined);
+        setIsLoadingUserInteraction(true);
+
+        if (user && session) {
+            // console.log(`Fetching upvoted projects for User ID: ${user.id}`);
+            getUserUpvotedProjects(user.id, session.access_token)
+                .then((upvotedProjectObjects) => { // Renamed for clarity
+                    // console.log(`Received upvoted Project Objects for user ${user.id}:`, upvotedProjectObjects);
+                    if (isMounted) {
+                        const currentProjectId = project.id;
+
+                        // --- *** THE FIX IS HERE *** ---
+                        // Check if the received data is an array before using .some()
+                        // Use .some() to check if any object in the array has a matching ID
+                        const upvotedStatus = Array.isArray(upvotedProjectObjects)
+                            ? upvotedProjectObjects.some(upvotedProj => String(upvotedProj.id) === String(currentProjectId))
+                            : false; // Default to false if not an array
+                        // --- *** END FIX *** ---
+
+                        // console.log(`Checking if ${currentProjectId} (Type: ${typeof currentProjectId}) has a matching ID in`, upvotedProjectObjects);
+                        console.log(`Result (upvotedStatus for ${currentProjectId}): ${upvotedStatus}`); // Log result with project ID
+                        setInitialHasUpvoted(upvotedStatus);
+                        setIsLoadingUserInteraction(false);
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching user upvoted projects:", error);
+                    if (isMounted) {
+                        setInitialHasUpvoted(false);
+                        setIsLoadingUserInteraction(false);
+                    }
+                });
+        } else {
+            // console.log('User or Session missing, setting initialHasUpvoted to false.');
+            if (isMounted) {
+                setInitialHasUpvoted(false);
+                setIsLoadingUserInteraction(false);
+            }
+        }
+
+        return () => {
+            isMounted = false;
+        };
+    }, [user, session, project.id]);
     const projectId = project?.id;
     const initialUpvotes = project?.upvotes_count ?? 0;
     const commentsCount = project?.comments?.length ?? 0;
@@ -54,14 +112,20 @@ export default function ProjectActionBar({ project, initialHasUpvoted }: Project
         <div className="bg-gray-800 rounded-xl shadow-sm border border-gray-700 p-4 -mt-8 mb-8 flex flex-col sm:flex-row gap-4 justify-between items-center backdrop-blur-sm">
             {/* Left Section */}
             <div className="flex flex-wrap gap-3 w-full sm:w-auto justify-center sm:justify-start">
-                {projectId && (
-                    <UpvoteButton
-                        projectId={projectId}
-                        initialUpvotes={initialUpvotes}
-                        initialHasUpvoted={initialHasUpvoted}
-                        size="lg"
-                        className="hover:bg-primary/20"
-                    />
+                {!isLoadingUserInteraction ? (
+                    <div onClick={(e) => e.stopPropagation()}> {/* Wrapper to stop propagation */}
+                        <UpvoteButton
+                            projectId={project.id}
+                            initialUpvotes={project.upvotes_count ?? 0}
+                            initialHasUpvoted={initialHasUpvoted}
+                            size="lg" // Make it slightly smaller to fit better maybe
+                        // Pass any specific className if needed
+                        // className="px-3 py-1.5" // Example if you need specific padding different from default
+                        />
+                    </div>
+                ) : (
+                    // Skeleton/Placeholder for the button while loading initial state
+                    <Skeleton className="h-8 w-20 bg-gray-700 rounded-full" />
                 )}
                 <div className="flex items-center text-gray-300">
                     <MessageSquare className="h-5 w-5 mr-1" />

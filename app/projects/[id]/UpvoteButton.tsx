@@ -30,6 +30,7 @@ export default function UpvoteButton({
     // State derived from props, allowing internal updates
     const [upvotes, setUpvotes] = useState<number>(initialUpvotes);
     const [hasUpvoted, setHasUpvoted] = useState<boolean | undefined>(initialHasUpvoted);
+    console.log("has initialHasUpvoted", initialHasUpvoted);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isAnimating, setIsAnimating] = useState<boolean>(false);
 

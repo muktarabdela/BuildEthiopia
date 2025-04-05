@@ -29,6 +29,8 @@ type SocialLinks = {
     github: string;
     linkedin: string;
     twitter: string;
+    telegram: string;
+    website: string;
 };
 
 type Featured = {
@@ -121,6 +123,9 @@ const transformProfileData = (profile: ApiProfile, about: About, projects: Proje
             github: profile.github_url || '',
             linkedin: profile.linkedin_url || '',
             twitter: profile.telegram_url || '',
+            telegram: profile.telegram_url || '',
+            website: profile.website_url || '',
+            
         },
         featured: {
             isTopDeveloper: false,
@@ -179,7 +184,7 @@ export default function ProfilePage() {
                 setProfile(transformedProfile);
 
                 // Check if profile is incomplete
-                const isProfileIncomplete = !profile?.bio || !profile?.github_url || !profile?.linkedin_url;
+                const isProfileIncomplete = !about || !profile?.bio || !profile?.github_url || !profile?.linkedin_url;
                 setShowProfileCompletionAlert(isProfileIncomplete && user?.id === profile?.id);
 
                 if (user?.id === profile?.id) {
@@ -241,7 +246,7 @@ export default function ProfilePage() {
             )}
             <main className="container mx-auto py-8 px-4 md:px-6">
                 <div className="grid gap-8">
-                    {profile && <ProfileHeader user={profile} isOwner={isOwner} />}
+                    {profile && <ProfileHeader user={profile} isOwner={isOwner} about={about} />}
                     <div className="grid gap-8 md:grid-cols-3">
                         <div className="md:col-span-2">
                             {profile && <PortfolioSection user={profile} about={about} upvotedProjects={upvotedProjects} isOwner={isOwner} />}

@@ -7,9 +7,9 @@ import SettingsModal from "./settings"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 
-export default function ProfileHeader({ user, isOwner }) {
+export default function ProfileHeader({ user, isOwner, about }) {
 
-    // console.log("user data from profile_header", user.skill)
+    console.log("user data from profile_header", user)
 
     // Status display configuration
     const statusOptions = [
@@ -61,9 +61,9 @@ export default function ProfileHeader({ user, isOwner }) {
                     </div>
 
                     {/* Bio - Only show if exists */}
-                    {user.bio && (
+                    {about?.title && (
                         <p className="text-gray-400 text-lg leading-relaxed max-w-2xl">
-                            {user.bio}
+                            {about?.title}
                         </p>
                     )}
 
@@ -103,6 +103,22 @@ export default function ProfileHeader({ user, isOwner }) {
                             </Link>
                         )}
                     </div>
+
+                    {/* Portfolio Website Link */}
+                    {user.socialLinks.website && (
+                        <div className="flex gap-2 items-center pt-2">
+                            <Globe className="h-5 w-5 text-gray-400" />
+                            <Link
+                                href={user.socialLinks.website}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-400 hover:text-gray-600 transition-colors duration-200"
+                                aria-label="Personal portfolio website"
+                            >
+                                {user.socialLinks.website}
+                            </Link>
+                        </div>
+                    )}
                 </div>
 
                 {/* Status Badge */}

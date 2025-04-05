@@ -225,9 +225,10 @@ export async function POST(
       .from("user_about")
       .upsert({
         profile_id: userId,
+        title: body.title,
         about_me: body.about_me,
         experience_summary: body.experience_summary,
-        expertise: body.expertise,
+        Experience_level: body.Experience_level,
         education_summary: body.education_summary,
         interests: body.interests,
         updated_at: new Date().toISOString(),

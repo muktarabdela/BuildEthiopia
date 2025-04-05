@@ -25,6 +25,7 @@ const TOTAL_STEPS = 5;
 interface ProfileFormData {
     // From profiles table
     bio: string;
+    title: string;
     location: string;
     github_url: string;
     linkedin_url: string;
@@ -35,7 +36,7 @@ interface ProfileFormData {
     // From user_about table
     about_me: string;
     experience_summary: string;
-    expertise: string[];
+    Experience_level: string;
     education_summary: string;
     interests: string[];
 }
@@ -76,6 +77,7 @@ export default function CompleteProfilePage() {
     const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
     const [profileData, setProfileData] = useState<ProfileFormData>({
         bio: '',
+        title: '',
         location: '',
         github_url: '',
         linkedin_url: '',
@@ -84,7 +86,7 @@ export default function CompleteProfilePage() {
         skill: [],
         about_me: '',
         experience_summary: '',
-        expertise: [],
+        Experience_level: '',
         education_summary: '',
         interests: [],
     });
@@ -116,6 +118,7 @@ export default function CompleteProfilePage() {
                     setProfileData(prev => ({
                         ...prev,
                         bio: data.bio || '',
+                        title: data.title || '',
                         location: data.location || '',
                         github_url: data.github_url || '',
                         linkedin_url: data.linkedin_url || '',
@@ -124,7 +127,7 @@ export default function CompleteProfilePage() {
                         skill: data.skill || [],
                         about_me: data.about_me || '',
                         experience_summary: data.experience_summary || '',
-                        expertise: data.expertise || [],
+                        Experience_level: data.Experience_level || '',
                         education_summary: data.education_summary || '',
                         interests: data.interests || [],
                         profilePictureUrl: data.avatar_url || null
@@ -166,13 +169,14 @@ export default function CompleteProfilePage() {
         if (currentStep === 0) {
             // Step 0: Basic Information
             if (!profileData.bio.trim()) errors.bio = "Bio is required";
+            if (!profileData.title.trim()) errors.title = "title is required";
             if (!profileData.location.trim()) errors.location = "Location is required";
         }
 
         if (currentStep === 1) {
             // Step 1: Skills & Expertise
             if (!profileData.skill.length) errors.skill = "At least one skill is required";
-            if (!profileData.expertise.length) errors.expertise = "At least one expertise is required";
+            if (!profileData.Experience_level.trim()) errors.Experience_level = "Experience Level is required";
         }
 
         if (currentStep === 2) {
@@ -293,6 +297,7 @@ export default function CompleteProfilePage() {
             const data = {
                 bio: profileData.bio,
                 location: profileData.location,
+                title: profileData.title,
                 github_url: profileData.github_url || null,
                 linkedin_url: profileData.linkedin_url || null,
                 website_url: profileData.website_url || null,
@@ -300,7 +305,7 @@ export default function CompleteProfilePage() {
                 skill: profileData.skill,
                 about_me: profileData.about_me,
                 experience_summary: profileData.experience_summary,
-                expertise: profileData.expertise,
+                Experience_level: profileData.Experience_level,
                 education_summary: profileData.education_summary,
                 interests: profileData.interests,
             }
@@ -381,6 +386,25 @@ export default function CompleteProfilePage() {
                             {/* Step 1: Basic Information */}
                             {currentStep === 0 && (
                                 <>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="title" className={validationErrors.title ? "text-destructive" : ""}>
+                                            Title/Role <span className="text-destructive">*</span>
+                                        </Label>
+                                        <Input
+                                            id="title"
+                                            name="title"
+                                            value={profileData.title}
+                                            onChange={handleInputChange}
+                                            placeholder="Enter your title or role"
+                                            className={validationErrors.title ? "border-destructive" : "placeholder:text-gray-300"}
+                                        />
+                                        {validationErrors.title && (
+                                            <p className="text-sm text-destructive">{validationErrors.title}</p>
+                                        )}
+                                        <p className="text-xs text-muted-foreground">
+                                            Your current title or role (e.g., Frontend Web | Android App Developer)
+                                        </p>
+                                    </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="bio" className={validationErrors.bio ? "text-destructive" : ""}>
                                             Bio <span className="text-destructive">*</span>
@@ -465,47 +489,27 @@ export default function CompleteProfilePage() {
                                             </div>
                                         )}
                                     </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="expertise" className={validationErrors.skill ? "text-destructive" : ""}>
-                                            Areas of Expertise <span className="text-destructive">*</span>
-                                        </Label>
+                                    {/* Experience_level */}
 
+                                    <div className="space-y-2">
+                                        <Label htmlFor="Experience_level" className={validationErrors.Experience_level ? "text-destructive" : ""}>
+                                            Experience Level <span className="text-destructive">*</span>
+                                        </Label>
                                         <Input
-                                            id="expertise"
-                                            value={expertiseInput}
-                                            onChange={(e) => setExpertiseInput(e.target.value)}
-                                            onKeyDown={handleExpertiseInputKeyDown}
-                                            placeholder="Add an expertise and press Enter"
-                                            className={validationErrors.expertise ? "border-destructive" : ""}
+                                            id="Experience_level"
+                                            name="Experience_level"
+                                            value={profileData.Experience_level}
+                                            onChange={handleInputChange}
+                                            placeholder="Enter your experience level"
+                                            className={validationErrors.Experience_level ? "border-destructive" : "placeholder:text-gray-300"}
                                         />
-                                        {validationErrors.expertise && (
-                                            <p className="text-sm text-destructive">{validationErrors.expertise}</p>
+                                        {validationErrors.Experience_level && (
+                                            <p className="text-sm text-destructive">{validationErrors.Experience_level}</p>
                                         )}
                                         <p className="text-xs text-muted-foreground">
-                                            List your areas of expertise (e.g., Web Development, Machine Learning, UI/UX Design)
+                                            Your current Experience level (e.g. Junior | Mid-Level | Senior)
                                         </p>
-
-                                        {profileData.expertise.length > 0 && (
-                                            <div className="flex flex-wrap gap-2 mt-2">
-                                                {profileData.expertise?.map((tech, index) => (
-                                                    <div
-                                                        key={index}
-                                                        className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm flex items-center"
-                                                    >
-                                                        {tech}
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => removeExpertiseItem(index)}
-                                                            className="ml-2 text-primary hover:text-primary/80"
-                                                        >
-                                                            ×
-                                                        </button>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        )}
                                     </div>
-
 
                                 </>
                             )}
@@ -763,11 +767,7 @@ export default function CompleteProfilePage() {
                                             <div className="grid grid-cols-[150px_1fr] gap-4">
                                                 <span className="font-medium text-gray-500">Expertise</span>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {profileData.expertise.map((expertise, index) => (
-                                                        <span key={index} className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
-                                                            {expertise}
-                                                        </span>
-                                                    ))}
+                                                    {profileData.Experience_level}
                                                 </div>
                                             </div>
                                             <div className="grid grid-cols-[150px_1fr] gap-4">

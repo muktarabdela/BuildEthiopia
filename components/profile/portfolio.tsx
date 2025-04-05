@@ -26,7 +26,7 @@ const socialLinks = [
 ];
 
 export default function PortfolioSection({ user, upvotedProjects = [], isOwner, about }) {
-    console.log("User from portfolio section:", user)
+    console.log("about from portfolio section:", about)
     const [editingProject, setEditingProject] = useState(null)
     const [activeTab, setActiveTab] = useState("Project")
 
@@ -38,7 +38,7 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner, 
         user.projects = updatedProjects
     }
 
-    if (!about) {
+    if (!about && !about?.about_me && !about?.expertise?.length) {
         return (
             <Card className="bg-gray-900 border-gray-700 rounded-xl shadow-2xl">
                 <CardHeader className="px-8 pt-8 pb-6">
@@ -91,7 +91,7 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner, 
                     {/* Portfolio Tab */}
                     <TabsContent value="Project" className="p-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {user.projects.map(project => (
+                            {user.projects?.map(project => (
                                 <div
                                     key={project.id}
                                     className="group relative bg-gray-800 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300"
@@ -99,14 +99,14 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner, 
                                     <div className="relative aspect-video w-full">
                                         <Image
                                             src={project.thumbnail}
-                                            alt={project.title}
+                                            alt={project?.title}
                                             fill
                                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                                     </div>
                                     <div className="p-4">
-                                        <h3 className="text-lg font-semibold text-white mb-2">{project.title}</h3>
+                                        <h3 className="text-lg font-semibold text-white mb-2">{project?.title}</h3>
                                         <div className="flex flex-wrap gap-2 mb-4">
                                             {project.tags?.map((tag, index) => (
                                                 <Badge
@@ -144,57 +144,95 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner, 
                     </TabsContent>
 
                     {/* About Tab */}
-                    <TabsContent value="about" className="p-8">
-                        <div className="space-y-8">
-                            {/* Bio Section */}
-                            <div className="bg-gray-800 p-8 rounded-xl">
-                                <h3 className="text-xl font-semibold text-white mb-6">About Me</h3>
-                                <p className="text-gray-300 leading-relaxed">{about?.about_me || "No bio available"}</p>
-                            </div>
+                    {/* About Tab */}
+                    <TabsContent value="about" className="space-y-6"> {/* Reduced space slightly for Cards */}
+                        {/* Bio Section */}
+                        <Card className="bg-gray-800 border-gray-700 m-4">
+                            <CardHeader>
+                                {/* Using text-2xl for the main section title for hierarchy */}
+                                <CardTitle className="text-2xl text-white">About Me</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <p className="text-sm text-gray-400 leading-relaxed">
+                                    {about?.about_me || "No bio available."}
+                                </p>
+                            </CardContent>
+                        </Card>
 
-                            {/* Experience & Expertise */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="bg-gray-700 p-6 rounded-lg">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <Briefcase className="h-6 w-6 text-blue-400" />
-                                        <h4 className="text-lg font-semibold text-white">Experience</h4>
-                                    </div>
-                                    <p className="text-gray-300">{about?.experience_summary || "No experience summary available"}</p>
-                                </div>
+                        {/* Grid for Experience & Expertise */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 m-4">
+                            {/* Experience Card */}
+                            <Card className="bg-gray-800 border-gray-700">
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    {/* Adjusted header for tighter icon/title spacing */}
+                                    <CardTitle className="text-base font-medium text-white"> {/* Slightly smaller title */}
+                                        Experience
+                                    </CardTitle>
+                                    <Briefcase className="h-5 w-5 text-gray-400" /> {/* Consistent muted icon color */}
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="text-sm text-gray-400">
+                                        {about?.experience_summary || "No experience summary available."}
+                                    </p>
+                                </CardContent>
+                            </Card>
 
-                                <div className="bg-gray-700 p-6 rounded-lg">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <Code className="h-6 w-6 text-green-400" />
-                                        <h4 className="text-lg font-semibold text-white">Expertise</h4>
+                            {/* Expertise Level Card */}
+                            <Card className="bg-gray-800 border-gray-700">
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-base font-medium text-white">
+                                        Expertise Level
+                                    </CardTitle>
+                                    <Code className="h-5 w-5 text-gray-400" />
+                                </CardHeader>
+                                <CardContent>
+                                    {/* Display level directly, maybe bolder */}
+                                    <div className="text-lg font-semibold text-white">
+                                        {about?.Experience_level || "Not specified"}
                                     </div>
-                                    <div className="flex flex-wrap gap-2">
-                                        {about?.expertise?.map((skill, index) => (
-                                            <Badge key={index} className="bg-blue-500 hover:bg-blue-600 text-white">
-                                                {skill}
-                                            </Badge>
-                                        )) || "No expertise listed"}
-                                    </div>
-                                </div>
-                            </div>
+                                </CardContent>
+                            </Card>
+                        </div>
 
-                            {/* Education & Interests */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="bg-gray-700 p-6 rounded-lg">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <GraduationCap className="h-6 w-6 text-purple-400" />
-                                        <h4 className="text-lg font-semibold text-white">Education</h4>
-                                    </div>
-                                    <p className="text-gray-300">{about?.education_summary || "No education summary available"}</p>
-                                </div>
+                        {/* Grid for Education & Interests */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 m-4">
+                            {/* Education Card */}
+                            <Card className="bg-gray-800 border-gray-700">
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-base font-medium text-white">
+                                        Education
+                                    </CardTitle>
+                                    <GraduationCap className="h-5 w-5 text-gray-400" />
+                                </CardHeader>
+                                <CardContent>
+                                    <p className="text-sm text-gray-400">
+                                        {about?.education_summary || "No education summary available."}
+                                    </p>
+                                </CardContent>
+                            </Card>
 
-                                <div className="bg-gray-700 p-6 rounded-lg">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <BookOpen className="h-6 w-6 text-yellow-400" />
-                                        <h4 className="text-lg font-semibold text-white">Interests</h4>
-                                    </div>
-                                    <p className="text-gray-300">{about?.interests?.join(", ") || "No interests listed"}</p>
-                                </div>
-                            </div>
+                            {/* Interests Card */}
+                            <Card className="bg-gray-800 border-gray-700">
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <CardTitle className="text-base font-medium text-white">
+                                        Interests
+                                    </CardTitle>
+                                    <BookOpen className="h-5 w-5 text-gray-400" />
+                                </CardHeader>
+                                <CardContent>
+                                    {about?.interests && about.interests.length > 0 ? (
+                                        <div className="flex flex-wrap gap-2">
+                                            {about.interests.map((interest, index) => (
+                                                <Badge key={index} variant="secondary" className="bg-blue-500/20 text-blue-400 hover:bg-blue-500/30"> {/* Use Badge component */}
+                                                    {interest}
+                                                </Badge>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-sm text-gray-400">No interests listed.</p>
+                                    )}
+                                </CardContent>
+                            </Card>
                         </div>
                     </TabsContent>
                 </Tabs>

@@ -9,6 +9,7 @@ import { EditProjectModal } from '@/components/projects/EditProjectModal'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const aboutDeveloper = {
     fullName: "Jane Developer",
@@ -250,3 +251,123 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner, 
     )
 }
 
+
+export function SkeletonPortfolioSection() {
+    return (
+        // Mimic the outer card structure with muted styles
+        <Card className="bg-muted border border-gray-700 rounded-xl shadow-lg"> {/* Use muted bg and border */}
+            <CardHeader className="px-8 pt-8 pb-6">
+                {/* Title Placeholder */}
+                <div className="flex items-baseline">
+                    <Skeleton className="bg-gray-700 h-8 w-36" /> {/* "Portfolio" */}
+                    <Skeleton className="bg-gray-700 ml-4 h-4 w-24" /> {/* "X projects" */}
+                </div>
+            </CardHeader>
+            <CardContent className="p-0">
+                {/* Tabs Structure Placeholder */}
+                <Tabs defaultValue="Project" className="w-full"> {/* Default value doesn't matter much */}
+                    <TabsList className="flex justify-start space-x-4 px-8 bg-transparent border-b border-gray-700">
+                        {/* Tab Trigger Placeholders */}
+                        <Skeleton className="bg-gray-700 h-5 w-16 pb-3" /> {/* "Project" */}
+                        <Skeleton className="bg-gray-700 h-5 w-20 pb-3" /> {/* "Upvoted" */}
+                        <Skeleton className="bg-gray-700 h-5 w-16 pb-3" /> {/* "About" */}
+                    </TabsList>
+
+                    {/* Content for the first tab (Projects) */}
+                    <TabsContent value="Project" className="p-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {/* Repeat Project Preview Skeleton */}
+                            {[...Array(6)].map((_, i) => ( // Show ~6 placeholders
+                                <div key={i} className="group relative bg-background rounded-xl overflow-hidden border border-gray-700/50"> {/* Slightly different bg */}
+                                    {/* Image Placeholder */}
+                                    <Skeleton className="bg-gray-700 aspect-video w-full" />
+                                    <div className="p-4 space-y-2">
+                                        {/* Title Placeholder */}
+                                        <Skeleton className="bg-gray-700 h-5 w-3/4" />
+                                        {/* Tags Placeholder */}
+                                        <div className="flex flex-wrap gap-2">
+                                            <Skeleton className="bg-gray-700 h-5 w-16 rounded-full" />
+                                            <Skeleton className="bg-gray-700 h-5 w-12 rounded-full" />
+                                            <Skeleton className="bg-gray-700 h-5 w-20 rounded-full" />
+                                        </div>
+                                        {/* Stats Placeholder */}
+                                        <div className="flex items-center pt-1">
+                                            <ThumbsUp className="h-4 w-4 mr-2 text-muted-foreground/50" /> {/* Muted Icon */}
+                                            <Skeleton className="bg-gray-700 h-4 w-24" />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </TabsContent>
+
+                    {/* Placeholder for other TabsContent (add if needed, but often showing one tab's skeleton is enough) */}
+                    {/* Example for About Tab Skeleton Structure */}
+                    <TabsContent value="about" className="p-8 space-y-6">
+                        {/* About Me Card Skeleton */}
+                        <Card className="bg-background border-gray-700/50">
+                            <CardHeader>
+                                <Skeleton className="bg-gray-700 h-6 w-28" /> {/* "About Me" */}
+                            </CardHeader>
+                            <CardContent className="space-y-1.5">
+                                <Skeleton className="bg-gray-700 h-4 w-full" />
+                                <Skeleton className="bg-gray-700 h-4 w-full" />
+                                <Skeleton className="bg-gray-700 h-4 w-5/6" />
+                            </CardContent>
+                        </Card>
+
+                        {/* Grid for Exp/Expertise Skeleton */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <Card className="bg-background border-gray-700/50">
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <Skeleton className="bg-gray-700 h-5 w-24" /> {/* Title */}
+                                    <Briefcase className="h-5 w-5 text-muted-foreground/50" /> {/* Muted Icon */}
+                                </CardHeader>
+                                <CardContent className="space-y-1.5">
+                                    <Skeleton className="bg-gray-700 h-4 w-full" />
+                                    <Skeleton className="bg-gray-700 h-4 w-11/12" />
+                                </CardContent>
+                            </Card>
+                            <Card className="bg-background border-gray-700/50">
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <Skeleton className="bg-gray-700 h-5 w-32" /> {/* Title */}
+                                    <Code className="h-5 w-5 text-muted-foreground/50" /> {/* Muted Icon */}
+                                </CardHeader>
+                                <CardContent>
+                                    <Skeleton className="bg-gray-700 h-6 w-20" /> {/* Level */}
+                                </CardContent>
+                            </Card>
+                        </div>
+
+                        {/* Grid for Edu/Interests Skeleton */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <Card className="bg-background border-gray-700/50">
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <Skeleton className="bg-gray-700 h-5 w-24" /> {/* Title */}
+                                    <GraduationCap className="h-5 w-5 text-muted-foreground/50" /> {/* Muted Icon */}
+                                </CardHeader>
+                                <CardContent className="space-y-1.5">
+                                    <Skeleton className="bg-gray-700 h-4 w-full" />
+                                    <Skeleton className="bg-gray-700 h-4 w-5/6" />
+                                </CardContent>
+                            </Card>
+                            <Card className="bg-background border-gray-700/50">
+                                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                                    <Skeleton className="bg-gray-700 h-5 w-24" /> {/* Title */}
+                                    <BookOpen className="h-5 w-5 text-muted-foreground/50" /> {/* Muted Icon */}
+                                </CardHeader>
+                                <CardContent>
+                                    <div className="flex flex-wrap gap-2">
+                                        <Skeleton className="bg-gray-700 h-5 w-16 rounded-full" />
+                                        <Skeleton className="bg-gray-700 h-5 w-20 rounded-full" />
+                                        <Skeleton className="bg-gray-700 h-5 w-12 rounded-full" />
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    </TabsContent>
+                </Tabs>
+            </CardContent>
+        </Card>
+    )
+}

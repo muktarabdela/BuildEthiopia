@@ -10,9 +10,9 @@ import ProfileCompletionDialog from '@/components/ProfileCompletionDialog';
 import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/components/AuthProvider';
-import ProfileHeader from '@/components/profile/profile-header';
-import PortfolioSection from '@/components/profile/portfolio';
-import AchievementsSection from '@/components/profile/achievements';
+import ProfileHeader, { SkeletonProfileHeader } from '@/components/profile/profile-header';
+import PortfolioSection, { SkeletonPortfolioSection } from '@/components/profile/portfolio';
+import AchievementsSection, { SkeletonAchievementsSection } from '@/components/profile/achievements';
 import SettingsSection from '@/components/profile/settings';
 import { getUserUpvotedProjects } from '@/lib/services/projectInteractions';
 import { ProjectCard } from '@/components/ProjectCard';
@@ -125,7 +125,7 @@ const transformProfileData = (profile: ApiProfile, about: About, projects: Proje
             twitter: profile.telegram_url || '',
             telegram: profile.telegram_url || '',
             website: profile.website_url || '',
-            
+
         },
         featured: {
             isTopDeveloper: false,
@@ -159,12 +159,14 @@ export default function ProfilePage() {
     const [showDialog, setShowDialog] = useState<boolean>(false);
     const [isOwner, setIsOwner] = useState<boolean>(false);
     const [upvotedProjects, setUpvotedProjects] = useState<string[]>([]);
-    const { setIsLoading } = useLoading();
+    // const { setIsLoading } = useLoading();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [showProfileCompletionAlert, setShowProfileCompletionAlert] = useState<boolean>(false);
 
     useEffect(() => {
         async function getProfile() {
             try {
+                (true);
                 setIsLoading(true);
                 if (!params) return;
 
@@ -203,6 +205,7 @@ export default function ProfilePage() {
             } catch (error) {
                 console.error('Error:', error);
             } finally {
+                setIsLoading(false);
                 setIsLoading(false);
             }
         }
@@ -246,13 +249,25 @@ export default function ProfilePage() {
             )}
             <main className="container mx-auto py-8 px-4 md:px-6">
                 <div className="grid gap-8">
-                    {profile && <ProfileHeader user={profile} isOwner={isOwner} about={about} />}
+                    {isLoading ? (
+                        <SkeletonProfileHeader />
+                    ) : (
+                        profile && <ProfileHeader user={profile} isOwner={isOwner} about={about} />
+                    )}
                     <div className="grid gap-8 md:grid-cols-3">
                         <div className="md:col-span-2">
-                            {profile && <PortfolioSection user={profile} about={about} upvotedProjects={upvotedProjects} isOwner={isOwner} />}
+                            {isLoading ? (
+                                <SkeletonPortfolioSection />
+                            ) : (
+                                profile && <PortfolioSection user={profile} about={about} upvotedProjects={upvotedProjects} isOwner={isOwner} />
+                            )}
                         </div>
                         <div className="space-y-8">
-                            {profile && <AchievementsSection user={profile} />}
+                            {isLoading ? (
+                                <SkeletonAchievementsSection />
+                            ) : (
+                                profile && <AchievementsSection user={profile} />
+                            )}
                             {profile && isOwner && <SettingsSection user={profile} isOpen={false} onClose={() => { }} />}
                         </div>
                     </div>

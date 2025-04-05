@@ -1,10 +1,12 @@
 import Image from "next/image"
-import { Layers, Code, CheckCircle, Video, ChevronLeft, ChevronRight, X } from "lucide-react"
+import { Layers, Code, CheckCircle, Video, ChevronLeft, ChevronRight, X, MessageSquare } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import CommentsSection from "@/app/projects/[id]/CommentsSection"
 import { Dialog, DialogContent } from "./ui/dialog"
 import { Button } from "./ui/button"
 import { useState } from "react"
+import { Skeleton } from "@/components/ui/skeleton"
+
 
 // Helper function to extract YouTube video ID from URL
 const getYouTubeVideoId = (url: string | null): string => {
@@ -282,3 +284,144 @@ function ProjectMediaGallery({ project }) {
     )
 }
 
+
+
+
+export function SkeletonProjectContent() {
+    return (
+        // Maintain the overall layout and spacing
+        <div className="md:col-span-2 space-y-8">
+            {/* Project Overview Skeleton */}
+            <Card className="overflow-hidden bg-muted border border-gray-700"> {/* Use muted background */}
+                <CardHeader className="border-b border-gray-700">
+                    <CardTitle className="flex items-center text-muted-foreground text-lg">
+                        <Layers className="h-5 w-5 text-muted-foreground/50 mr-2" /> {/* Muted icon */}
+                        <Skeleton className="bg-gray-700 h-5 w-32" /> {/* Title placeholder */}
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6">
+                    {/* Description Placeholder */}
+                    <div className="space-y-2">
+                        <Skeleton className="bg-gray-700 h-4 w-full" />
+                        <Skeleton className="bg-gray-700 h-4 w-full" />
+                        <Skeleton className="bg-gray-700 h-4 w-11/12" />
+                        <Skeleton className="bg-gray-700 h-4 w-5/6" />
+                    </div>
+                    {/* Detailed Information Placeholder (assume it might exist) */}
+                    <div className="mt-6 pt-6 border-t border-gray-700 space-y-2">
+                        <Skeleton className="bg-gray-700 h-5 w-40 mb-3" /> {/* Heading placeholder */}
+                        <Skeleton className="bg-gray-700 h-4 w-full" />
+                        <Skeleton className="bg-gray-700 h-4 w-5/6" />
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Media Gallery Skeleton */}
+            <Card className="overflow-hidden bg-muted border border-gray-700">
+                <CardHeader className="border-b border-gray-700">
+                    <CardTitle className="flex items-center text-muted-foreground text-lg">
+                        <Video className="h-5 w-5 text-muted-foreground/50 mr-2" /> {/* Muted icon */}
+                        <Skeleton className="bg-gray-700 h-5 w-36" /> {/* Title placeholder */}
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6">
+                    {/* Mimic horizontal scroll with fixed placeholders */}
+                    <div className="flex gap-4 overflow-hidden pb-2"> {/* Don't need actual scroll on skeleton */}
+                        {/* Video Placeholder */}
+                        <Skeleton className="bg-gray-700 aspect-video min-w-[300px] h-auto rounded-lg" />
+                        {/* Image Placeholders (show a couple) */}
+                        <Skeleton className="bg-gray-700 aspect-video min-w-[300px] h-auto rounded-lg" />
+                        <Skeleton className="bg-gray-700 aspect-video min-w-[300px] h-auto rounded-lg hidden sm:block" /> {/* Hide one on small screens if needed */}
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Tech Stack Skeleton */}
+            <Card className="overflow-hidden bg-muted border border-gray-700">
+                <CardHeader className="border-b border-gray-700">
+                    <CardTitle className="flex items-center text-muted-foreground text-lg">
+                        <Code className="h-5 w-5 text-muted-foreground/50 mr-2" /> {/* Muted icon */}
+                        <Skeleton className="bg-gray-700 h-5 w-28" /> {/* Title placeholder */}
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6">
+                    {/* Tech Tag Placeholders */}
+                    <div className="flex flex-wrap gap-2">
+                        <Skeleton className="bg-gray-700 h-6 w-20 rounded-full" />
+                        <Skeleton className="bg-gray-700 h-6 w-24 rounded-full" />
+                        <Skeleton className="bg-gray-700 h-6 w-16 rounded-full" />
+                        <Skeleton className="bg-gray-700 h-6 w-28 rounded-full" />
+                        <Skeleton className="bg-gray-700 h-6 w-20 rounded-full" />
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Key Features Skeleton */}
+            <Card className="overflow-hidden bg-muted border border-gray-700">
+                <CardHeader className="border-b border-gray-700">
+                    <CardTitle className="flex items-center text-muted-foreground text-lg">
+                        <CheckCircle className="h-5 w-5 text-muted-foreground/50 mr-2" /> {/* Muted icon */}
+                        <Skeleton className="bg-gray-700 h-5 w-32" /> {/* Title placeholder */}
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6">
+                    {/* Feature List Item Placeholders */}
+                    <ul className="space-y-3">
+                        <li className="flex items-start">
+                            <CheckCircle className="h-5 w-5 text-muted-foreground/30 mr-2 mt-0.5 flex-shrink-0" /> {/* Very muted icon */}
+                            <Skeleton className="bg-gray-700 h-4 w-full" />
+                        </li>
+                        <li className="flex items-start">
+                            <CheckCircle className="h-5 w-5 text-muted-foreground/30 mr-2 mt-0.5 flex-shrink-0" />
+                            <Skeleton className="bg-gray-700 h-4 w-11/12" />
+                        </li>
+                        <li className="flex items-start">
+                            <CheckCircle className="h-5 w-5 text-muted-foreground/30 mr-2 mt-0.5 flex-shrink-0" />
+                            <Skeleton className="bg-gray-700 h-4 w-5/6" />
+                        </li>
+                        <li className="flex items-start">
+                            <CheckCircle className="h-5 w-5 text-muted-foreground/30 mr-2 mt-0.5 flex-shrink-0" />
+                            <Skeleton className="bg-gray-700 h-4 w-full" />
+                        </li>
+                    </ul>
+                </CardContent>
+            </Card>
+
+            {/* Comments Section Placeholder Skeleton */}
+            {/* You might want a more detailed SkeletonCommentsSection component eventually */}
+            <Card className="overflow-hidden bg-muted border border-gray-700">
+                <CardHeader className="border-b border-gray-700">
+                    <CardTitle className="flex items-center text-muted-foreground text-lg">
+                        <MessageSquare className="h-5 w-5 text-muted-foreground/50 mr-2" />
+                        <Skeleton className="bg-gray-700 h-5 w-28" /> {/* "Comments" */}
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-6 space-y-4">
+                    {/* Placeholder for comment input/form */}
+                    <div className="flex items-center gap-3">
+                        <Skeleton className="bg-gray-700 h-10 w-10 rounded-full" /> {/* Avatar */}
+                        <Skeleton className="bg-gray-700 h-10 flex-1 rounded" /> {/* Input field */}
+                    </div>
+                    {/* Placeholder for a couple of comments */}
+                    <div className="space-y-4 pt-4 border-t border-gray-700">
+                        <div className="flex items-start gap-3">
+                            <Skeleton className="bg-gray-700 h-9 w-9 rounded-full flex-shrink-0" />
+                            <div className="space-y-1.5 flex-1">
+                                <Skeleton className="bg-gray-700 h-4 w-32" /> {/* Name */}
+                                <Skeleton className="bg-gray-700 h-3 w-full" /> {/* Comment line 1 */}
+                                <Skeleton className="bg-gray-700 h-3 w-5/6" /> {/* Comment line 2 */}
+                            </div>
+                        </div>
+                        <div className="flex items-start gap-3">
+                            <Skeleton className="bg-gray-700 h-9 w-9 rounded-full flex-shrink-0" />
+                            <div className="space-y-1.5 flex-1">
+                                <Skeleton className="bg-gray-700 h-4 w-24" /> {/* Name */}
+                                <Skeleton className="bg-gray-700 h-3 w-full" /> {/* Comment line 1 */}
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    )
+}

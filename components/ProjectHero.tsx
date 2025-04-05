@@ -1,6 +1,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Calendar } from "lucide-react"
+import { Skeleton } from "./ui/skeleton"
 
 // Helper function to get a random gradient color for the project banner
 const getRandomColor = () => {
@@ -80,3 +81,60 @@ export default function ProjectHero({ project }) {
     )
 }
 
+
+
+export function SkeletonProjectHero() {
+    return (
+        // Use a neutral background, like muted or gray, standard for skeletons
+        // Removed the random color logic as it's for the loaded state.
+        <div className="bg-muted relative overflow-hidden">
+            {/* Optional: Add a very subtle static overlay if you want to mimic that effect */}
+            {/* <div className="absolute inset-0 bg-gradient-to-r from-black/5 to-transparent opacity-10"></div> */}
+
+            <div className="container mx-auto px-4 py-16 relative">
+                <div className="max-w-4xl mx-auto">
+                    <div className="mb-8">
+                        {/* Breadcrumbs Skeleton */}
+                        <div className="flex items-center space-x-2 mb-4">
+                            <Skeleton className="bg-gray-700 h-4 w-20 rounded " />
+                            <span className="text-muted-foreground">/</span> {/* Keep static elements */}
+                            <Skeleton className="bg-gray-700 h-4 w-32 rounded" />
+                        </div>
+
+                        {/* Logo and Title Skeleton */}
+                        <div className="flex items-center gap-4 mb-4">
+                            {/* Logo Skeleton */}
+                            <Skeleton className="bg-gray-700 h-16 w-16 rounded-lg flex-shrink-0" />
+                            {/* Title Skeleton */}
+                            <Skeleton className="bg-gray-700 h-10 md:h-12 w-3/4 rounded" />
+                        </div>
+
+                        {/* Description Skeleton */}
+                        <div className="space-y-2 mb-6 max-w-3xl">
+                            <Skeleton className="bg-gray-700 h-5 w-full rounded" />
+                            <Skeleton className="bg-gray-700 h-5 w-5/6 rounded" /> {/* Simulate slightly shorter second line */}
+                        </div>
+
+
+                        {/* Developer Info Skeleton */}
+                        <div className="flex items-center">
+                            <div className="flex items-center group">
+                                {/* Avatar Skeleton */}
+                                <Skeleton className="bg-gray-700 h-10 w-10 rounded-full mr-3" />
+                                {/* Name and Date Skeleton */}
+                                <div className="space-y-1.5">
+                                    <Skeleton className="bg-gray-700 h-4 w-28 rounded" /> {/* Developer Name */}
+                                    <div className="flex items-center text-muted-foreground text-sm">
+                                        {/* Keep the icon for structure, grayed out */}
+                                        <Calendar className="h-3.5 w-3.5 mr-1 text-muted-foreground/50" />
+                                        <Skeleton className="bg-gray-700 h-3 w-20 rounded" /> {/* Date */}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}

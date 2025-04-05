@@ -219,7 +219,7 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
                             </div>
                         ) : (
                             // Skeleton/Placeholder for the button while loading initial state
-                            <Skeleton className="h-8 w-20 bg-gray-700 rounded-full" />
+                            <Skeleton className="bg-gray-700 h-8 w-20 bg-gray-700 rounded-full" />
                         )}
                     </div>
                 </div>
@@ -237,29 +237,29 @@ export function SkeletonProjectCard() {
                 {/* Top part Skeleton */}
                 <div className="space-y-3 mb-4">
                     <div className="flex items-center gap-4">
-                        <Skeleton className="w-12 h-12 rounded-lg bg-gray-700 flex-shrink-0" />
+                        <Skeleton className="bg-gray-700 w-12 h-12 rounded-lg bg-gray-700 flex-shrink-0" />
                         <div className="flex-grow space-y-2">
-                            <Skeleton className="h-6 w-3/4 bg-gray-700" />
-                            <Skeleton className="h-4 w-1/4 bg-gray-700" />
+                            <Skeleton className="bg-gray-700 h-6 w-3/4 bg-gray-700" />
+                            <Skeleton className="bg-gray-700 h-4 w-1/4 bg-gray-700" />
                         </div>
                     </div>
-                    <Skeleton className="h-4 w-full bg-gray-700" />
-                    <Skeleton className="h-4 w-5/6 bg-gray-700" />
+                    <Skeleton className="bg-gray-700 h-4 w-full bg-gray-700" />
+                    <Skeleton className="bg-gray-700 h-4 w-5/6 bg-gray-700" />
                     <div className="flex gap-2 flex-wrap mt-2">
-                        <Skeleton className="h-6 w-16 bg-gray-700 rounded-full" />
-                        <Skeleton className="h-6 w-20 bg-gray-700 rounded-full" />
-                        <Skeleton className="h-6 w-12 bg-gray-700 rounded-full" />
+                        <Skeleton className="bg-gray-700 h-6 w-16 bg-gray-700 rounded-full" />
+                        <Skeleton className="bg-gray-700 h-6 w-20 bg-gray-700 rounded-full" />
+                        <Skeleton className="bg-gray-700 h-6 w-12 bg-gray-700 rounded-full" />
                     </div>
                     <div className="flex items-center gap-3 mt-4">
-                        <Skeleton className="w-10 h-10 rounded-full bg-gray-700" />
-                        <Skeleton className="h-4 w-24 bg-gray-700" />
+                        <Skeleton className="bg-gray-700 w-10 h-10 rounded-full bg-gray-700" />
+                        <Skeleton className="bg-gray-700 h-4 w-24 bg-gray-700" />
                     </div>
                 </div>
                 {/* Bottom part Skeleton */}
                 <div className="flex justify-end items-center"> {/* Mimic alignment */}
                     <div className="flex gap-2 md:gap-3"> {/* Mimic gap */}
-                        <Skeleton className="h-8 w-16 bg-gray-700 rounded-full" /> {/* Comments */}
-                        <Skeleton className="h-8 w-20 bg-gray-700 rounded-full" /> {/* Upvote */}
+                        <Skeleton className="bg-gray-700 h-8 w-16 bg-gray-700 rounded-full" /> {/* Comments */}
+                        <Skeleton className="bg-gray-700 h-8 w-20 bg-gray-700 rounded-full" /> {/* Upvote */}
                     </div>
                 </div>
             </div>

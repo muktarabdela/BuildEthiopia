@@ -197,11 +197,11 @@ export default function ProjectsPage() {
                         Array.from({ length: 6 }).map((_, i) => (
                             <Card key={i} className="hover:shadow-lg transition-shadow">
                                 <CardHeader>
-                                    <Skeleton className="h-6 w-2/3" />
+                                    <Skeleton className="bg-gray-700 h-6 w-2/3" />
                                 </CardHeader>
                                 <CardContent>
-                                    <Skeleton className="h-20 w-full mb-4" />
-                                    <Skeleton className="h-10 w-full" />
+                                    <Skeleton className="bg-gray-700 h-20 w-full mb-4" />
+                                    <Skeleton className="bg-gray-700 h-10 w-full" />
                                 </CardContent>
                             </Card>
                         ))

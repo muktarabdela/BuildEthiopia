@@ -23,7 +23,7 @@ export function SkeletonFeaturedDevelopers() {
             {/* <CardHeader className="bg-gradient-to-r from-primary/20 to-primary/10 border-b border-gray-700">
                 <div className="flex items-center">
                     <Award className="h-5 w-5 text-primary mr-2" />
-                    <Skeleton className="h-6 w-32 bg-gray-700 text-white" />
+                    <Skeleton className="bg-gray-700 h-6 w-32 bg-gray-700 text-white" />
                 </div>
             </CardHeader> */}
             <CardContent className="p-0">
@@ -32,10 +32,10 @@ export function SkeletonFeaturedDevelopers() {
                         key={index}
                         className={`flex items-center gap-4 p-4 ${index !== 2 ? 'border-b border-gray-700' : ''}`}
                     >
-                        <Skeleton className="w-12 h-12 rounded-full bg-gray-700 text-white" />
+                        <Skeleton className="bg-gray-700 w-12 h-12 rounded-full bg-gray-700 text-white" />
                         <div className="flex-1 space-y-2">
-                            <Skeleton className="h-4 w-3/4 bg-gray-700 text-white" />
-                            <Skeleton className="h-3 w-1/2 bg-gray-700 text-white" />
+                            <Skeleton className="bg-gray-700 h-4 w-3/4 bg-gray-700 text-white" />
+                            <Skeleton className="bg-gray-700 h-3 w-1/2 bg-gray-700 text-white" />
                         </div>
                     </div>
                 ))}

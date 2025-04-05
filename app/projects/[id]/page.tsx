@@ -6,10 +6,10 @@ import { supabase } from "@/lib/supabase"
 import { useEffect } from "react"
 import { useAuth } from "@/components/AuthProvider"
 import { useLoading } from "@/components/LoadingProvider"
-import ProjectHero from "@/components/ProjectHero"
-import ProjectActionBar from "@/components/ProjectActionBar"
-import ProjectContent from "@/components/ProjectContent"
-import ProjectSidebar from "@/components/ProjectSidebar"
+import ProjectHero, { SkeletonProjectHero } from "@/components/ProjectHero"
+import ProjectActionBar, { SkeletonProjectActionBar } from "@/components/ProjectActionBar"
+import ProjectContent, { SkeletonProjectContent } from "@/components/ProjectContent"
+import ProjectSidebar, { SkeletonProjectSidebar } from "@/components/ProjectSidebar"
 
 // Custom hook to fetch project data
 function useProject(projectId: string | undefined) {
@@ -87,20 +87,20 @@ export default function ProjectPage() {
     return (
         <main className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
             {/* Hero Section */}
-            {project && <ProjectHero project={project} />}
+            {project ? <ProjectHero project={project} /> : <SkeletonProjectHero />}
 
             {/* Main Content */}
             <div className="container mx-auto px-4 py-8">
                 <div className="max-w-4xl mx-auto">
                     {/* Action Bar */}
-                    {project && <ProjectActionBar project={project} />}
+                    {project ? <ProjectActionBar project={project} /> : <SkeletonProjectActionBar />}
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {/* Main Content Column */}
-                        {project && <ProjectContent project={project} />}
+                        {project ? <ProjectContent project={project} /> : <SkeletonProjectContent />}
 
                         {/* Sidebar */}
-                        {project && <ProjectSidebar developer={project.developer} />}
+                        {project ? <ProjectSidebar developer={project.developer} /> : <SkeletonProjectSidebar />}
                     </div>
                 </div>
             </div>

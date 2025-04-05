@@ -31,7 +31,7 @@ interface ProjectActionBarProps {
     initialHasUpvoted: boolean | undefined;
 }
 
-export default function ProjectActionBar({ project }: ProjectActionBarProps) {
+export default function ProjectActionBar({ project }: ProjectActionBarProps, isLoading = false) {
     const [isLoadingUserInteraction, setIsLoadingUserInteraction] = useState(true);
     const [initialHasUpvoted, setInitialHasUpvoted] = useState<boolean | undefined>(undefined); // Undefined means loading
     const { user, session } = useAuth(); // Assuming you have a custom hook for authentication
@@ -46,17 +46,17 @@ export default function ProjectActionBar({ project }: ProjectActionBarProps) {
 
         if (user && session) {
             // console.log(`Fetching upvoted projects for User ID: ${user.id}`);
-            getUserUpvotedProjects(user.id, session.access_token)
+            getUserUpvotedProjects(user?.id, session.access_token)
                 .then((upvotedProjectObjects) => { // Renamed for clarity
                     // console.log(`Received upvoted Project Objects for user ${user.id}:`, upvotedProjectObjects);
                     if (isMounted) {
-                        const currentProjectId = project.id;
+                        const currentProjectId = project?.id;
 
                         // --- *** THE FIX IS HERE *** ---
                         // Check if the received data is an array before using .some()
                         // Use .some() to check if any object in the array has a matching ID
                         const upvotedStatus = Array.isArray(upvotedProjectObjects)
-                            ? upvotedProjectObjects.some(upvotedProj => String(upvotedProj.id) === String(currentProjectId))
+                            ? upvotedProjectObjects.some(upvotedProj => String(upvotedProj?.id) === String(currentProjectId))
                             : false; // Default to false if not an array
                         // --- *** END FIX *** ---
 
@@ -84,7 +84,7 @@ export default function ProjectActionBar({ project }: ProjectActionBarProps) {
         return () => {
             isMounted = false;
         };
-    }, [user, session, project.id]);
+    }, [user, session, project?.id]);
     const projectId = project?.id;
     const initialUpvotes = project?.upvotes_count ?? 0;
     const commentsCount = project?.comments?.length ?? 0;
@@ -115,8 +115,8 @@ export default function ProjectActionBar({ project }: ProjectActionBarProps) {
                 {!isLoadingUserInteraction ? (
                     <div onClick={(e) => e.stopPropagation()}> {/* Wrapper to stop propagation */}
                         <UpvoteButton
-                            projectId={project.id}
-                            initialUpvotes={project.upvotes_count ?? 0}
+                            projectId={project?.id}
+                            initialUpvotes={project?.upvotes_count ?? 0}
                             initialHasUpvoted={initialHasUpvoted}
                             size="lg" // Make it slightly smaller to fit better maybe
                         // Pass any specific className if needed
@@ -125,7 +125,7 @@ export default function ProjectActionBar({ project }: ProjectActionBarProps) {
                     </div>
                 ) : (
                     // Skeleton/Placeholder for the button while loading initial state
-                    <Skeleton className="h-8 w-20 bg-gray-700 rounded-full" />
+                    <Skeleton className="bg-gray-700 h-8 w-20 bg-gray-700 rounded-full" />
                 )}
                 <div className="flex items-center text-gray-300">
                     <MessageSquare className="h-5 w-5 mr-1" />
@@ -179,3 +179,41 @@ export default function ProjectActionBar({ project }: ProjectActionBarProps) {
     )
 }
 
+
+export function SkeletonProjectActionBar() {
+    return (
+        // Maintain the same container structure, padding, margin, border, and background (using muted)
+        <div className="bg-muted rounded-xl shadow-sm border border-gray-700 p-4 -mt-8 mb-8 flex flex-col sm:flex-row gap-4 justify-between items-center">
+
+            {/* Left Section Skeleton */}
+            <div className="flex flex-wrap gap-3 w-full sm:w-auto justify-center sm:justify-start items-center">
+                {/* Upvote Button Placeholder */}
+                <Skeleton className="bg-gray-700 h-9 w-20 rounded-full" />
+
+                {/* Comments Count Placeholder */}
+                <div className="flex items-center gap-1 text-muted-foreground">
+                    <MessageSquare className="h-5 w-5 text-muted-foreground/50" /> {/* Muted Icon */}
+                    <Skeleton className="bg-gray-700 h-5 w-24 rounded" /> {/* "X Comments" */}
+                </div>
+
+                {/* Open Source Badge Placeholder (Assume it might be there for layout stability) */}
+                <div className="flex items-center gap-1 text-muted-foreground">
+                    <Code className="h-5 w-5 text-muted-foreground/50" /> {/* Muted Icon */}
+                    <Skeleton className="bg-gray-700 h-5 w-28 rounded" /> {/* "Open Source" */}
+                </div>
+            </div>
+
+            {/* Right Section Skeleton */}
+            <div className="flex flex-wrap gap-3 w-full sm:w-auto justify-center sm:justify-end items-center">
+                {/* GitHub Button Placeholder (Assume it might be there) */}
+                <Skeleton className="bg-gray-700 h-9 w-[110px] rounded-lg" /> {/* Approx size of icon + "GitHub" */}
+
+                {/* Live Demo Button Placeholder (Assume it might be there) */}
+                <Skeleton className="bg-gray-700 h-9 w-[125px] rounded-lg" /> {/* Approx size of icon + "Live Demo" */}
+
+                {/* Share Button Placeholder */}
+                <Skeleton className="bg-gray-700 h-9 w-9 rounded-lg" /> {/* Icon button size */}
+            </div>
+        </div>
+    )
+}

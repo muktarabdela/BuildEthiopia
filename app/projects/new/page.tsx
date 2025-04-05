@@ -74,22 +74,24 @@ export default function NewProjectPage() {
     const supabase = createClientComponentClient()
     const { setIsLoading } = useLoading()
 
-    // Simulate loading during filtering
-    useEffect(() => {
-        setIsLoading(true); // Start loading when filters change
-        const timeout = setTimeout(() => {
-            setIsLoading(false); // Stop loading after a short delay (simulate filtering)
-        }, 200); // Adjust the delay as needed
+    // // Simulate loading during filtering
+    // useEffect(() => {
+    //     setIsLoading(true); // Start loading when filters change
+    //     const timeout = setTimeout(() => {
+    //         setIsLoading(false); // Stop loading after a short delay (simulate filtering)
+    //     }, 200); // Adjust the delay as needed
 
-        return () => clearTimeout(timeout);
-    }, [user, searchTerm, formData.tech_stack, formData.is_open_source, setIsLoading]); // Add dependencies here
+    //     return () => clearTimeout(timeout);
+    // }, [user, searchTerm, formData.tech_stack, formData.is_open_source, setIsLoading]); // Add dependencies here
 
 
     useEffect(() => {
         async function checkAccess() {
+            setLoading(true)
 
             if (!user) {
                 console.log("No valid session found, redirecting to login")
+                setLoading(false) // Added setLoading here
                 router.push("/login")
                 return
             }
@@ -104,6 +106,7 @@ export default function NewProjectPage() {
             console.log("Profile error:", profileError)
 
             if (!profile) {
+                setLoading(false) // Added setLoading here
                 router.push("/")
                 return
             }
@@ -309,23 +312,15 @@ export default function NewProjectPage() {
             })
 
             // Show success dialog instead of redirecting immediately
-            toast({
-                title: "Success!",
-                description: "Your project has been submitted successfully.",
-                variant: "default",
-            })
+            toast("Your project has been submitted successfully."
+            )
 
             // Open success dialog
             setShowSuccessDialog(true)
         } catch (err) {
             console.error("Error:", err)
             setError("Failed to upload images. Please try again.")
-            toast({
-                // @ts-ignore
-                title: "Error",
-                description: "Failed to upload images. Please try again.",
-                variant: "destructive",
-            })
+            toast("Failed to upload images. Please try again.")
         } finally {
             setSubmitting(false)
             // setIsLoading(false)

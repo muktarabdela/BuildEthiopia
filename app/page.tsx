@@ -80,6 +80,7 @@ async function getFeaturedDevelopers(setIsFeatureDeveloperLoading: (loading: boo
 
 export default function Home() {
   const { user, loading } = useAuth();
+  console.log("loading from home page", loading);
   const { setIsLoading } = useLoading();
   const [trendingProjects, setTrendingProjects] = useState([]);
   const [featuredDevelopers, setFeaturedDevelopers] = useState([]);

@@ -112,7 +112,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     // 2. Set up listener for subsequent changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, newSession) => {
-        console.log("AuthProvider: Auth state change event:", event, !!newSession);
+        // console.log("AuthProvider: Auth state change event:", event, !!newSession);
 
         // Always update session and user state
         setSession(newSession);
@@ -185,13 +185,13 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         <WelcomeDialog
           user={user}
           onClose={() => {
-            console.log("AuthProvider: Welcome dialog closed manually.");
+            // console.log("AuthProvider: Welcome dialog closed manually.");
             setShowWelcomeDialog(false);
             // Decide if you want to allow closing without completing.
             // If not, remove the onClose prop/button from WelcomeDialog itself.
           }}
           onCompleteRedirect={() => {
-            console.log("AuthProvider: Redirecting to profile completion.");
+            // console.log("AuthProvider: Redirecting to profile completion.");
             setShowWelcomeDialog(false);
             if (profileUsername) { // Double check username exists
               router.push(`/${profileUsername}/complete`);

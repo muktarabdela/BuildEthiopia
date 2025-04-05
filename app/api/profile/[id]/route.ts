@@ -263,6 +263,19 @@ export async function POST(
       );
     }
 
+    const { error: profileUpdateError } = await supabase
+      .from("profiles")
+      .update({ is_profile_complete: true })
+      .eq("id", userId);
+
+    if (profileUpdateError) {
+      console.error("Supabase profile update error:", profileUpdateError);
+      return NextResponse.json(
+        { message: `Profile update failed: ${profileUpdateError.message}` },
+        { status: 500 }
+      );
+    }
+
     console.log("Profile updated successfully:", data);
 
     // 4. Return Success Response

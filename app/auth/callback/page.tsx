@@ -4,10 +4,12 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/components/AuthProvider"
 import { useLoading } from "@/components/LoadingProvider"
+import axios from "axios"
 
 export default function AuthCallback() {
     const router = useRouter()
     const { user } = useAuth()
+    console.log("AuthCallback user data :", user)
     const { setIsLoading } = useLoading()
     const [error, setError] = useState("")
     // console.log("AuthCallback user:", user)
@@ -16,33 +18,25 @@ export default function AuthCallback() {
             try {
                 setIsLoading(true) // Start loading
                 if (user) {
-                    const response = await fetch('/api/auth/callback', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(user),
-                    })
+                    const response = await axios.post('/api/auth/callback', user);
 
-                    const result = await response.json()
-
-                    if (!response.ok) {
-                        setError(result.error || "Profile creation failed")
-                        return
+                    if (response.status !== 200) {
+                        setError(response.data.error || "Profile creation failed");
+                        return;
                     }
 
                     // Redirect after successful profile insertion
-                    router.push("/")
+                    router.push("/");
                 }
             } catch (error) {
-                console.error("Error:", error)
-                setError("An unexpected error occurred")
+                console.error("Error:", error);
+                setError("An unexpected error occurred");
             } finally {
-                setIsLoading(false) // Stop loading
+                setIsLoading(false); // Stop loading
             }
         }
 
-        handleProfileInsertion()
+        handleProfileInsertion();
     }, [router, user, setIsLoading])
 
     if (error) {

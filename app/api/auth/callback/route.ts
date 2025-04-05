@@ -9,16 +9,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid user data" }, { status: 400 });
     }
 
-    // Check if profile exists
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .single();
-
-    if (!profile) {
-      // Insert new profile
-      const { error } = await supabase.from("profiles").insert([
+    // Upsert the profile - this will update if exists, insert if not
+    const { error } = await supabase.from("profiles").upsert(
+      [
         {
           id: user.id,
           name:
@@ -30,15 +23,18 @@ export async function POST(request: Request) {
           profile_picture: user.user_metadata.avatar_url,
           updated_at: new Date().toISOString(),
         },
-      ]);
+      ],
+      { onConflict: "id" } // Specify which column to check for conflicts
+    );
 
-      if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
-      }
+    if (error) {
+      console.error("Profile upsert error:", error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
+    console.error("Callback route error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

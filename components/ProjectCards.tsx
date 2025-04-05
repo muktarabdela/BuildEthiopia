@@ -17,6 +17,33 @@ const cardVariants = {
     show: { opacity: 1, y: 0 }
 };
 
+const projectdummy = {
+    "id": "5b2b3497-6d05-48b6-953b-c53c9a01c4d8",
+    "title": "habit ",
+    "description": "New York, USAghfdsa",
+    "category": "Web",
+    "post_content": "edia\nUpload images and logo for your project\nOptional: A logo helps your project stand out and builds brand recognition\n\nProvide detailed information about your project, including features, implementation details, challenges faced, and lessons learned...\nMinimum 100 characters. This is the main content of your project post.\n\nBack\nNext\nEthioDev Hub\nThe premier platform for Ethiopian developers to showcase their work and connect with opportunities.\n\nExplore\nProjects\nDevelopers\nPost a Project\nResources",
+    "images": [
+        "https://cvsolymnpaopcgtoxgke.supabase.co/storage/v1/object/public/project/5de09419-7352-4b5e-ba7a-f61b9f41431b/0.5915359171093524.jpg",
+        "https://cvsolymnpaopcgtoxgke.supabase.co/storage/v1/object/public/project/5de09419-7352-4b5e-ba7a-f61b9f41431b/0.3960836859740351.jpg",
+        "https://cvsolymnpaopcgtoxgke.supabase.co/storage/v1/object/public/project/5de09419-7352-4b5e-ba7a-f61b9f41431b/0.0981522701542914.jpg"
+    ],
+    "logo_url": "https://cvsolymnpaopcgtoxgke.supabase.co/storage/v1/object/public/project/5de09419-7352-4b5e-ba7a-f61b9f41431b/0.20638105447722022.jpg",
+    "youtube_video_url": "https://youtube.com/watch?v=qgwlWsljG3s",
+    "tech_stack": [
+        "react",
+        "next js"
+    ],
+    "github_url": "https://github.com/tfgyhj",
+    "live_url": "https://github.com/",
+    "developer_id": "5de09419-7352-4b5e-ba7a-f61b9f41431b",
+    "upvotes_count": 0,
+    "comments_count": 0,
+    "is_open_source": true,
+    "created_at": "2025-04-05T18:03:18.068911Z",
+    "updated_at": "2025-04-05T18:03:18.068911Z"
+}
+
 export default function ProjectCards({ project }: ProjectCardProps) {
     const fallbackImage = "/placeholder-image.png"; // Add a placeholder image in your public folder
 

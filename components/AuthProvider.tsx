@@ -35,7 +35,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   // Function to perform the profile check
-  const checkProfileCompletion = async (userId: string) => {
+  const checkProfileCompletion = async (userId: string, retryCount = 0) => {
     console.log("AuthProvider: Checking profile completion for user:", userId);
     try {
       const { data: profile, error } = await supabase
@@ -48,8 +48,15 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         // Handle case where profile might not exist yet (e.g., timing issue after signup)
         if (error.code === 'PGRST116') { // PostgreSQL code for "Not Found"
           console.warn(`AuthProvider: Profile not found for user ${userId}. Waiting for creation or manual completion.`);
-          // Decide if you want to show the dialog anyway or wait. Assuming wait for now.
-          setShowWelcomeDialog(false);
+          if (retryCount < 3) {
+            // Retry after 1 second
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            return checkProfileCompletion(userId, retryCount + 1);
+          } else {
+            // After retries, show the dialog or redirect to profile completion
+            setShowWelcomeDialog(true);
+            return false;
+          }
         } else {
           console.error('AuthProvider: Error fetching profile:', error.message);
           setShowWelcomeDialog(false); // Don't show dialog on error

@@ -8,11 +8,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import VerificationModal from '@/components/VerificationModal';
 import Image from "next/image"
 import { supabase } from '@/lib/supabase'
-import { Github } from 'lucide-react';
+import { Eye, EyeOff, Github } from 'lucide-react';
 
 type FormData = {
     email: string;
     password: string;
+    confirmPassword: string;
     name: string;
     username: string;
 };
@@ -27,6 +28,8 @@ export default function RegisterPage() {
     const [error, setError] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [isModalOpen, setModalOpen] = useState<boolean>(false);
+    const [showPassword, setShowPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -37,9 +40,16 @@ export default function RegisterPage() {
         const data: FormData = {
             email: formData.get('email') as string,
             password: formData.get('password') as string,
+            confirmPassword: formData.get('confirmPassword') as string,
             name: formData.get('name') as string,
             username: formData.get('username') as string,
         };
+
+        if (data.password !== data.confirmPassword) {
+            setError('Passwords do not match');
+            setLoading(false);
+            return;
+        }
 
         try {
             const response = await axios.post('/api/auth/register', data);
@@ -122,12 +132,12 @@ export default function RegisterPage() {
                     )}
 
 
-                    {/* <form onSubmit={handleSubmit} className="space-y-4">
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <label
                                 htmlFor="name"
-                                className="block text-sm font-medium text-muted-foreground mb-1"
-                            >
+                                className="block text-sm font-medium text-gray-300 mb-1">
+
                                 Full Name
                             </label>
                             <input
@@ -135,15 +145,14 @@ export default function RegisterPage() {
                                 id="name"
                                 name="name"
                                 required
-                                className="w-full px-3 py-2 border rounded-md"
+                                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent"
                                 placeholder="John Doe"
                             />
                         </div>
                         <div>
                             <label
                                 htmlFor="username"
-                                className="block text-sm font-medium text-muted-foreground mb-1"
-                            >
+                                className="block text-sm font-medium text-gray-300 mb-1">
                                 user name
                             </label>
                             <input
@@ -151,15 +160,14 @@ export default function RegisterPage() {
                                 id="username"
                                 name="username"
                                 required
-                                className="w-full px-3 py-2 border rounded-md"
+                                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent"
                                 placeholder="@johndoe"
                             />
                         </div>
                         <div>
                             <label
                                 htmlFor="email"
-                                className="block text-sm font-medium text-muted-foreground mb-1"
-                            >
+                                className="block text-sm font-medium text-gray-300 mb-1"                            >
                                 Email
                             </label>
                             <input
@@ -167,26 +175,54 @@ export default function RegisterPage() {
                                 id="email"
                                 name="email"
                                 required
-                                className="w-full px-3 py-2 border rounded-md"
+                                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent"
                                 placeholder="you@example.com"
                             />
                         </div>
-                        <div>
+                        <div className="relative">
                             <label
                                 htmlFor="password"
-                                className="block text-sm font-medium text-muted-foreground mb-1"
+                                className="block text-sm font-medium text-gray-300 mb-1"
                             >
                                 Password
                             </label>
                             <input
-                                type="password"
                                 id="password"
                                 name="password"
+                                type={showPassword ? "text" : "password"}
                                 required
-                                className="w-full px-3 py-2 border rounded-md"
+                                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent pr-10"
                                 placeholder="••••••••"
-                                minLength={8}
                             />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-300"
+                            >
+                                {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                            </button>
+                        </div>
+                        <div className="relative">
+                            <label
+                                htmlFor="confirmPassword"
+                                className="block text-sm font-medium text-gray-300 mb-1">
+                                Confirm Password
+                            </label>
+                            <input
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                type={showConfirmPassword ? "text" : "password"}
+                                required
+                                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-transparent pr-10"
+                                placeholder="••••••••"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-300"
+                            >
+                                {showConfirmPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                            </button>
                         </div>
                         <Button
                             type="submit"
@@ -195,16 +231,16 @@ export default function RegisterPage() {
                         >
                             {loading ? 'Creating Account...' : 'Create Account'}
                         </Button>
-                    </form> */}
+                    </form>
 
-                    {/* <div className="relative">
+                    <div className="relative">
                         <div className="absolute inset-0 flex items-center">
                             <span className="w-full border-t border-gray-700" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
                             <span className="bg-gray-900 px-2 text-gray-400">Or continue with</span>
                         </div>
-                    </div> */}
+                    </div>
 
                     <div className="space-y-4">
                         <Button

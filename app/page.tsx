@@ -79,11 +79,12 @@ async function getFeaturedDevelopers(setIsFeatureDeveloperLoading: (loading: boo
 }
 
 export default function Home() {
-  const { user, loading } = useAuth();
+  const { user, loading, requireProfileCompletion } = useAuth();
+  const router = useRouter();
   console.log("loading from home page", loading);
   const { setIsLoading } = useLoading();
-  const [trendingProjects, setTrendingProjects] = useState([]);
-  const [featuredDevelopers, setFeaturedDevelopers] = useState([]);
+  const [trendingProjects, setTrendingProjects] = useState<any[]>([]);
+  const [featuredDevelopers, setFeaturedDevelopers] = useState<any[]>([]);
   const [isFeatureProjectsLoading, setIsFeatureProjectsLoading] = useState(true);
   const [isFeatureDeveloperLoading, setIsFeatureDeveloperLoading] = useState(true);
 
@@ -120,6 +121,19 @@ export default function Home() {
     // Set loading to false when your data is ready
     setIsLoading(false);
   }, [setIsLoading]);
+
+  // Handler for Add Project button
+  const handleAddProject = async () => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+    const complete = await requireProfileCompletion();
+    if (complete) {
+      router.push("/projects/new");
+    }
+    // If not complete, dialog will show automatically
+  };
 
   // Early return if loading
   if (loading) {
@@ -260,11 +274,13 @@ export default function Home() {
                 <p className="mb-4 text-white/90">
                   Connect with other Ethiopian developers, share ideas, and grow together.
                 </p>
-                <Link href={`${user ? "/projects/new" : "/login"}`}>
-                  <Button variant="secondary" className="w-full bg-white text-primary hover:bg-gray-100">
-                    {user ? 'Add project' : 'Sign Up'}
-                  </Button>
-                </Link>
+                <Button
+                  variant="secondary"
+                  className="w-full bg-white text-primary hover:bg-gray-100"
+                  onClick={handleAddProject}
+                >
+                  {user ? 'Add project' : 'Sign Up'}
+                </Button>
               </div>
 
               {/* How It Works */}

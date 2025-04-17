@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
     Bell,
     Menu,
@@ -18,12 +18,13 @@ import {
 import { Button } from './ui/button';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from './AuthProvider';
+import { Skeleton } from './ui/skeleton';
 
 export function Navbar() {
-    const { user, session } = useAuth();
-    // console.log("user", user)
+    const { user, session, requireProfileCompletion, loading } = useAuth();
+    const router = useRouter();
     const pathname = usePathname();
-    const [profile, setProfile] = useState(null);
+    const [profile, setProfile] = useState<any>(null);
     const [unreadCount, setUnreadCount] = useState(0);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -64,7 +65,7 @@ export function Navbar() {
         setMobileMenuOpen(false);
     };
 
-    const isActive = (path) => {
+    const isActive = (path: string) => {
         return pathname === path;
     };
     // create function lo sign out  and clear the local storage
@@ -76,6 +77,53 @@ export function Navbar() {
         window.location.href = '/';
     }
     // console.log(profile)
+
+    // Handler for Add Project button (desktop and mobile)
+    const handleAddProject = async () => {
+        if (!user) {
+            router.push('/login');
+            return;
+        }
+        const complete = await requireProfileCompletion();
+        if (complete) {
+            router.push('/projects/new');
+        }
+        // If not complete, dialog will show automatically
+    };
+
+    if (loading) {
+        // Skeleton Navbar
+        return (
+            <header className="sticky top-0 z-50 bg-gradient-to-br from-gray-900 to-gray-800 border-b border-gray-700 shadow-sm">
+                <div className="container mx-auto px-4">
+                    <div className="flex items-center justify-between h-16">
+                        {/* Logo Skeleton */}
+                        <div className="flex items-center space-x-2">
+                            <Skeleton className="w-8 h-8 rounded-md bg-primary" />
+                            <Skeleton className="h-6 w-32 rounded bg-gray-700" />
+                        </div>
+                        {/* Desktop Nav Skeleton */}
+                        <div className="hidden md:flex items-center space-x-2 flex-1 justify-center">
+                            <Skeleton className="h-8 w-20 rounded bg-gray-700" />
+                            <Skeleton className="h-8 w-20 rounded bg-gray-700" />
+                            <Skeleton className="h-8 w-24 rounded bg-gray-700" />
+                            <Skeleton className="h-8 w-28 rounded bg-gray-700" />
+                        </div>
+                        {/* User Actions Skeleton */}
+                        <div className="flex items-center space-x-2">
+                            <Skeleton className="h-10 w-10 rounded-full bg-gray-700" />
+                            <Skeleton className="h-8 w-20 rounded bg-gray-700" />
+                        </div>
+                        {/* Mobile Menu Button Skeleton */}
+                        <div className="md:hidden flex items-center">
+                            <Skeleton className="h-10 w-10 rounded-md bg-gray-700" />
+                        </div>
+                    </div>
+                </div>
+            </header>
+        );
+    }
+
     return (
         <header className="sticky top-0 z-50 bg-gradient-to-br from-gray-900 to-gray-800 border-b border-gray-700 shadow-sm">
             <div className="container mx-auto px-4">
@@ -115,18 +163,17 @@ export function Navbar() {
                             </div>
                         </Link>
                         {profile?.role === 'developer' && (
-                            <Link
-                                href="/projects/new"
-                                className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 ${isActive('/projects/new')
+                            <Button
+                                onClick={handleAddProject}
+                                className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center space-x-1 ${isActive('/projects/new')
                                     ? 'text-primary bg-gray-800'
                                     : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                     }`}
+                                variant="ghost"
                             >
-                                <div className="flex items-center space-x-1">
-                                    <Code className="h-4 w-4" />
-                                    <span>Post Project</span>
-                                </div>
-                            </Link>
+                                <Code className="h-4 w-4" />
+                                <span>Post Project</span>
+                            </Button>
                         )}
                         <Link
                             href="/developers"
@@ -159,7 +206,7 @@ export function Navbar() {
                                 </Link>
 
                                 <Link
-                                    href={`${profile?.username}`}
+                                    href={`/${profile?.username}`}
                                     className="hidden md:flex items-center space-x-2 p-2 text-gray-300 hover:text-primary rounded-md hover:bg-gray-700 text-white"
                                 >
                                     <UserRound className="h-5 w-5" />
@@ -245,19 +292,17 @@ export function Navbar() {
                             </div>
                         </Link>
                         {profile?.role === 'developer' && (
-                            <Link
-                                href="/projects/new"
-                                className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/projects/new')
+                            <button
+                                onClick={() => { handleAddProject(); closeMobileMenu(); }}
+                                className={`block px-3 py-2 rounded-md text-base font-medium w-full text-left ${isActive('/projects/new')
                                     ? 'text-primary bg-gray-800'
-                                    : ' hover:text-primary hover:bg-gray-700 text-white'
-                                    }`}
-                                onClick={closeMobileMenu}
+                                    : 'hover:text-primary hover:bg-gray-700 text-white'
+                                    } flex items-center space-x-2`}
+                                type="button"
                             >
-                                <div className="flex items-center space-x-2">
-                                    <Code className="h-5 w-5" />
-                                    <span>Post Project</span>
-                                </div>
-                            </Link>
+                                <Code className="h-5 w-5" />
+                                <span>Post Project</span>
+                            </button>
                         )}
                         <Link
                             href="/developers"
@@ -276,7 +321,7 @@ export function Navbar() {
                         {user ? (
                             <>
                                 <Link
-                                    href={`${profile?.username}`}
+                                    href={`/${profile?.username}`}
                                     className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/profile')
                                         ? 'text-primary bg-gray-800'
                                         : 'hover:text-primary hover:bg-gray-700 text-white'

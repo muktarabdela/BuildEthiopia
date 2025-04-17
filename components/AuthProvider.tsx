@@ -13,6 +13,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean; // Indicates initial auth state resolution AND profile check
   signOut: () => Promise<void>; // Add signOut method
+  requireProfileCompletion: () => Promise<boolean>; // New: check and show dialog if incomplete
 }
 
 // Create context with a default value including signOut
@@ -21,6 +22,7 @@ const AuthContext = createContext<AuthContextType>({
   session: null,
   loading: true,
   signOut: async () => { console.warn("SignOut function called before AuthProvider initialized"); }, // Default dummy function
+  requireProfileCompletion: async () => false, // Default dummy
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -173,12 +175,21 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     // Loading state will be set to false by the SIGNED_OUT event in the listener
   };
 
+  // Expose a function to check and show dialog if incomplete
+  const requireProfileCompletion = async () => {
+    if (!user) return false;
+    const isComplete = await checkProfileCompletion(user.id);
+    // If incomplete, dialog will be shown by checkProfileCompletion
+    return !!isComplete;
+  };
+
   // Value provided to context consumers
   const value = {
     session,
     user,
     loading,
     signOut: handleSignOut, // Provide the actual signout function
+    requireProfileCompletion, // Expose the function
   };
 
   // Render loading state or children

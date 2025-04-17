@@ -98,7 +98,7 @@ export function Navbar() {
         // If not complete, dialog will show automatically
     };
 
-    if (loading) {
+    if (isLoading) {
         // Skeleton Navbar
         return (
             <header className="sticky top-0 z-50 bg-gradient-to-br from-gray-900 to-gray-800 border-b border-gray-700 shadow-sm">

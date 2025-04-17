@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Skeleton } from "@/components/ui/skeleton"
 import router from "next/router"
+import { useRouter } from "next/navigation"
 
 const aboutDeveloper = {
     fullName: "Jane Developer",
@@ -29,6 +30,7 @@ const socialLinks = [
 
 export default function PortfolioSection({ user, upvotedProjects = [], isOwner, about }) {
     // console.log("about from portfolio section:", about)
+    const router = useRouter()
     const [editingProject, setEditingProject] = useState(null)
     const [activeTab, setActiveTab] = useState("about")
 
@@ -189,8 +191,27 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner, 
                                 {user.projects.map(project => (
                                     <div
                                         key={project.id}
-                                        className="group relative bg-gray-800 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300"
+                                        className="group relative bg-gray-800 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer"
+                                        onClick={() => router.push(`/projects/${project.id}`)}
+                                        role="link"
+                                        tabIndex={0}
+                                        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') router.push(`/projects/${project.id}`) }}
+                                        aria-label={`View details for ${project.title}`}
                                     >
+                                        {/* Edit Icon (only for owner) */}
+                                        {isOwner && (
+                                            <button
+                                                className="absolute top-3 right-3 z-20 bg-gray-900/80 hover:bg-gray-800 p-2 rounded-full text-gray-300 hover:text-yellow-400 transition-colors"
+                                                onClick={e => {
+                                                    e.stopPropagation();
+                                                    setEditingProject(project);
+                                                }}
+                                                aria-label="Edit project"
+                                                tabIndex={0}
+                                            >
+                                                <Edit className="w-5 h-5" />
+                                            </button>
+                                        )}
                                         <div className="relative aspect-video w-full">
                                             <Image
                                                 src={project.thumbnail}

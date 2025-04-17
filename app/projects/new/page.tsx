@@ -25,7 +25,7 @@ const categoryList = [
     "4DBV", "AI", "API", "Automation", "Blockchain", "Bot", "Cloud",
     "Data Science", "Desktop", "E-commerce", "Entertainment", "Gaming",
     "Libraries", "ML", "Mobile", "Open Source", "Packages", "Portfolio",
-    "Resource", "Security", "Tools", "UI/UX", "VR/AR", "Web"
+    "Resource", "Security", "Tools", "UI/UX", "Web", "Other"
 ]
 
 
@@ -336,6 +336,16 @@ export default function NewProjectPage() {
         }
     }
 
+    const [customCategory, setCustomCategory] = useState("");
+
+    const handleCategorySelect = (category: string) => {
+        setFormData((prev) => ({ ...prev, category: category === "Other" ? customCategory : category }));
+        setSearchTerm(category);
+        if (category !== "Other") {
+            setCustomCategory("");
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center min-h-[60vh]">
@@ -439,15 +449,26 @@ export default function NewProjectPage() {
                                                     key={category}
                                                     className={`p-2 cursor-pointer hover:bg-primary/20 dark:hover:bg-gray-700 ${formData.category === category ? 'bg-primary text-white' : ''
                                                         }`}
-                                                    onClick={() => {
-                                                        setFormData((prev) => ({ ...prev, category }));
-                                                        setSearchTerm(category);
-                                                    }}
+                                                    onClick={() => handleCategorySelect(category)}
                                                 >
                                                     {category}
                                                 </div>
                                             ))}
                                         </div>
+                                        {/* Show custom input if 'Other' is selected */}
+                                        {searchTerm === "Other" && (
+                                            <div className="mt-2">
+                                                <Input
+                                                    placeholder="Enter custom category"
+                                                    value={customCategory}
+                                                    onChange={(e) => {
+                                                        setCustomCategory(e.target.value);
+                                                        setFormData((prev) => ({ ...prev, category: e.target.value }));
+                                                    }}
+                                                    className={validationErrors.category ? "border-destructive" : ""}
+                                                />
+                                            </div>
+                                        )}
                                         {validationErrors.category && (
                                             <p className="text-sm text-destructive">{validationErrors.category}</p>
                                         )}

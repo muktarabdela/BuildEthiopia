@@ -27,7 +27,7 @@ const socialLinks = [
 ];
 
 export default function PortfolioSection({ user, upvotedProjects = [], isOwner, about }) {
-    console.log("about from portfolio section:", about)
+    // console.log("about from portfolio section:", about)
     const [editingProject, setEditingProject] = useState(null)
     const [activeTab, setActiveTab] = useState("Project")
 
@@ -77,7 +77,7 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner, 
             <CardContent className="p-0">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                     <TabsList className="flex justify-start space-x-4 px-8 bg-transparent border-b border-gray-700">
-                        {["Project", "upvoted", "about"].map((tab) => (
+                        {["about", "Project", "upvoted"].map((tab) => (
                             <TabsTrigger
                                 key={tab}
                                 value={tab}
@@ -89,62 +89,6 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner, 
                         ))}
                     </TabsList>
 
-                    {/* Portfolio Tab */}
-                    <TabsContent value="Project" className="p-8">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {user.projects?.map(project => (
-                                <div
-                                    key={project.id}
-                                    className="group relative bg-gray-800 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300"
-                                >
-                                    <div className="relative aspect-video w-full">
-                                        <Image
-                                            src={project.thumbnail}
-                                            alt={project?.title}
-                                            fill
-                                            className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                                    </div>
-                                    <div className="p-4">
-                                        <h3 className="text-lg font-semibold text-white mb-2">{project?.title}</h3>
-                                        <div className="flex flex-wrap gap-2 mb-4">
-                                            {project.tags?.map((tag, index) => (
-                                                <Badge
-                                                    key={index}
-                                                    className="bg-blue-500/20 text-blue-400 hover:bg-blue-500/30"
-                                                >
-                                                    {tag}
-                                                </Badge>
-                                            ))}
-                                        </div>
-                                        <div className="flex items-center text-sm text-gray-400">
-                                            <ThumbsUp className="h-4 w-4 mr-2" />
-                                            <span>{project.upvotes} upvotes</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </TabsContent>
-
-                    {/* Upvoted Tab */}
-                    <TabsContent value="upvoted" className="p-8">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {upvotedProjects.length > 0 ? (
-                                upvotedProjects.map((project, index) => (
-                                    <ProjectCard key={project.id} project={project} index={index} />
-                                ))
-                            ) : (
-                                <div className="col-span-2 flex flex-col items-center justify-center p-8">
-                                    <Heart className="h-12 w-12 text-gray-400 mb-4" />
-                                    <p className="text-gray-400">No upvoted projects yet.</p>
-                                </div>
-                            )}
-                        </div>
-                    </TabsContent>
-
-                    {/* About Tab */}
                     {/* About Tab */}
                     <TabsContent value="about" className="space-y-6"> {/* Reduced space slightly for Cards */}
                         {/* Bio Section */}
@@ -236,6 +180,82 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner, 
                             </Card>
                         </div>
                     </TabsContent>
+
+                    {/* Portfolio Tab */}
+                    <TabsContent value="Project" className="p-8">
+                        {user.projects?.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {user.projects.map(project => (
+                                    <div
+                                        key={project.id}
+                                        className="group relative bg-gray-800 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300"
+                                    >
+                                        <div className="relative aspect-video w-full">
+                                            <Image
+                                                src={project.thumbnail}
+                                                alt={project?.title}
+                                                fill
+                                                className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                            />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                                        </div>
+                                        <div className="p-4">
+                                            <h3 className="text-lg font-semibold text-white mb-2">{project?.title}</h3>
+                                            <div className="flex flex-wrap gap-2 mb-4">
+                                                {project.tags?.map((tag, index) => (
+                                                    <Badge
+                                                        key={index}
+                                                        className="bg-blue-500/20 text-blue-400 hover:bg-blue-500/30"
+                                                    >
+                                                        {tag}
+                                                    </Badge>
+                                                ))}
+                                            </div>
+                                            <div className="flex items-center text-sm text-gray-400">
+                                                <ThumbsUp className="h-4 w-4 mr-2" />
+                                                <span>{project.upvotes} upvotes</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center p-8 space-y-6">
+                                <div className="text-center max-w-2xl">
+                                    <Code className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                                    <h3 className="text-2xl font-semibold text-white mb-2">No Projects Yet</h3>
+                                    <p className="text-gray-400 mb-6">
+                                        Showcase your skills and experience by adding your first project. 
+                                        It's a great way to demonstrate your capabilities to potential collaborators and employers.
+                                    </p>
+                                    <Button 
+                                        className="bg-primary hover:bg-primary/90"
+                                        onClick={() => router.push('/projects/new')}
+                                    >
+                                        Add Your First Project
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+                    </TabsContent>
+
+                    {/* Upvoted Tab */}
+                    <TabsContent value="upvoted" className="p-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {upvotedProjects.length > 0 ? (
+                                upvotedProjects.map((project, index) => (
+                                    <ProjectCard key={project.id} project={project} index={index} />
+                                ))
+                            ) : (
+                                <div className="col-span-2 flex flex-col items-center justify-center p-8">
+                                    <Heart className="h-12 w-12 text-gray-400 mb-4" />
+                                    <p className="text-gray-400">No upvoted projects yet.</p>
+                                </div>
+                            )}
+                        </div>
+                    </TabsContent>
+
+
                 </Tabs>
 
                 {editingProject && (

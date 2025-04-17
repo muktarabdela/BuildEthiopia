@@ -20,14 +20,14 @@ interface SettingsPageProps {
 }
 
 // Fetch function adapted for Server Component using fetch
-async function getUserProfileData(username: string): Promise<FullProfileData | null> {
+async function getUserProfileData(userId: string): Promise<FullProfileData | null> {
     // Construct the absolute URL for the API endpoint
     // In production, use environment variables for the base URL
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const apiUrl = `${baseUrl}/api/profile/${username}`;
+    const apiUrl = `${baseUrl}/api/profile/${userId}`;
 
     try {
-        console.log(`Fetching data from: ${apiUrl}`);
+        // console.log(`Fetching data from: ${apiUrl}`);
         // Use fetch within Server Components
         const response = await fetch(apiUrl, {
             // Optional: Add caching options if needed
@@ -39,7 +39,7 @@ async function getUserProfileData(username: string): Promise<FullProfileData | n
         console.log(`Response response: ${response}`);
 
         if (response.status === 404) {
-            console.log(`Profile not found for username: ${username}`);
+            console.log(`Profile not found for username: ${userId}`);
             return null; // Return null specifically for not found
         }
 
@@ -55,7 +55,7 @@ async function getUserProfileData(username: string): Promise<FullProfileData | n
         return data;
 
     } catch (error) {
-        console.error(`Error fetching profile data for ${username}:`, error);
+        console.error(`Error fetching profile data for ${userId}:`, error);
         // Re-throw the error to be caught by the component or Next.js error handling
         // Or return null to show a generic error message in the component
         return null; // Indicate failure to fetch/process
@@ -67,23 +67,39 @@ async function getUserProfileData(username: string): Promise<FullProfileData | n
 export default function SettingsPage() {
     const { user, loading } = useAuth();
     const [userData, setUserData] = useState<FullProfileData | null>(null);
-
+    const [isLoading, setIsLoading] = useState(true); // Local loading state
     useEffect(() => {
-        if (user?.user_metadata?.username) {
+        console.log("user in useEffect", user);
+        console.log("user_metadata", user?.user_metadata);
+        console.log("username", user?.user_metadata?.username);
+        if (user?.id) {
             const fetchData = async () => {
-                const data = await getUserProfileData(user.user_metadata.username);
+                setIsLoading(true);
+                console.log("Fetching profile for", user.id);
+                const data = await getUserProfileData(user.id);
+                console.log("Fetched data:", data);
                 setUserData(data);
+                setIsLoading(false);
             };
             fetchData();
+        } else {
+            setIsLoading(false);
         }
     }, [user]);
 
-    if (loading) {
-        return <div>Loading...</div>;
+    if (isLoading) {
+        return (
+            <div className="flex items-center justify-center min-h-[60vh]">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                    <p className="text-muted-foreground">Loading...</p>
+                </div>
+            </div>
+        )
     }
 
     if (!userData) {
-        return <div className="container mx-auto py-10 px-4">Error loading profile data</div>;
+        return <div className="container mx-auto py-10 px-4 text-white" >Error loading profile data</div>;
     }
 
     // Data is valid, proceed to render

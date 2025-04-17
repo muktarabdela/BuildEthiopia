@@ -82,7 +82,7 @@ export async function GET(
       : resolvedParams.id;
     if (!id) {
       return NextResponse.json(
-        { error: "Username is required" },
+        { error: "User ID is required" },
         { status: 400 }
       );
     }
@@ -91,7 +91,7 @@ export async function GET(
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select("*") // Select all profile fields
-      .eq("username", id)
+      .eq("id", id)
       .maybeSingle(); // Use maybeSingle to handle not found gracefully
 
     if (profileError) {

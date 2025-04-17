@@ -38,14 +38,14 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   // Function to perform the profile check
   const checkProfileCompletion = async (userId: string, retryCount = 0) => {
-    console.log("AuthProvider: Checking profile completion for user:", userId);
+    // console.log("AuthProvider: Checking profile completion for user:", userId);
     try {
       const { data: profile, error } = await supabase
         .from('profiles') // Your profiles table name
         .select('is_profile_complete, username') // Fetch status and username
         .eq('id', userId)
         .single(); // Expect one profile per user
-      console.log("AuthProvider: Profile data fetched:", profile, error);
+      // console.log("AuthProvider: Profile data fetched:", profile, error);
       if (error) {
         // Handle case where profile might not exist yet (e.g., timing issue after signup)
         if (error.code === 'PGRST116') { // PostgreSQL code for "Not Found"
@@ -68,12 +68,12 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       if (profile && !profile.is_profile_complete) {
-        console.log("AuthProvider: Profile incomplete. Triggering welcome dialog.");
+        // console.log("AuthProvider: Profile incomplete. Triggering welcome dialog.");
         setProfileUsername(profile.username); // Store username for redirect
         setShowWelcomeDialog(true);
         return false; // Indicate profile is incomplete
       } else if (profile && profile.is_profile_complete) {
-        console.log("AuthProvider: Profile complete.");
+        // console.log("AuthProvider: Profile complete.");
         setShowWelcomeDialog(false);
         setProfileUsername(profile.username); // Store username even if complete (might be useful elsewhere)
         return true; // Indicate profile is complete
@@ -98,7 +98,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
     // 1. Check initial session
     supabase.auth.getSession().then(async ({ data: { session: currentSession } }) => {
-      console.log("AuthProvider: Initial session fetch completed.", !!currentSession);
+      // console.log("AuthProvider: Initial session fetch completed.", !!currentSession);
       setSession(currentSession);
       setUser(currentSession?.user ?? null);
 
@@ -109,9 +109,9 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       // Initial load complete ONLY after session check AND potential profile check
-      console.log("AuthProvider: About to set loading false after initial check.");
+      // console.log("AuthProvider: About to set loading false after initial check.");
       setLoading(false);
-      console.log("AuthProvider: Set loading false after initial check.");
+      // console.log("AuthProvider: Set loading false after initial check.");
       // console.log("AuthProvider: Initial loading finished. Profile Complete:", isProfileComplete);
 
     }).catch(error => {
@@ -135,9 +135,9 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         if (event === "SIGNED_IN" && newSession?.user) {
           setLoading(true); // Show loading while checking profile after sign-in
           await checkProfileCompletion(newSession.user.id);
-          console.log("AuthProvider: About to set loading false after SIGNED_IN profile check.");
+          // console.log("AuthProvider: About to set loading false after SIGNED_IN profile check.");
           setLoading(false);
-          console.log("AuthProvider: Set loading false after SIGNED_IN profile check.");
+          // console.log("AuthProvider: Set loading false after SIGNED_IN profile check.");
         } else if (event === "SIGNED_OUT") {
           // No profile check needed on sign out
           setLoading(false); // Ensure loading is false on sign out
@@ -150,7 +150,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
     // Cleanup subscription on unmount
     return () => {
-      console.log("AuthProvider: Unsubscribing auth listener.");
+      // console.log("AuthProvider: Unsubscribing auth listener.");
       subscription.unsubscribe();
     };
   }, []); // Empty dependency array: Run only once on mount to set up listener

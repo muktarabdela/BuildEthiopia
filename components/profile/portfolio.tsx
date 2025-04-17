@@ -10,6 +10,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Skeleton } from "@/components/ui/skeleton"
+import router from "next/router"
 
 const aboutDeveloper = {
     fullName: "Jane Developer",
@@ -29,7 +30,7 @@ const socialLinks = [
 export default function PortfolioSection({ user, upvotedProjects = [], isOwner, about }) {
     // console.log("about from portfolio section:", about)
     const [editingProject, setEditingProject] = useState(null)
-    const [activeTab, setActiveTab] = useState("Project")
+    const [activeTab, setActiveTab] = useState("about")
 
     const handleUpdateProject = (updatedProject) => {
         // Update the project in the user's projects array
@@ -225,10 +226,10 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner, 
                                     <Code className="h-12 w-12 mx-auto text-gray-400 mb-4" />
                                     <h3 className="text-2xl font-semibold text-white mb-2">No Projects Yet</h3>
                                     <p className="text-gray-400 mb-6">
-                                        Showcase your skills and experience by adding your first project. 
+                                        Showcase your skills and experience by adding your first project.
                                         It's a great way to demonstrate your capabilities to potential collaborators and employers.
                                     </p>
-                                    <Button 
+                                    <Button
                                         className="bg-primary hover:bg-primary/90"
                                         onClick={() => router.push('/projects/new')}
                                     >

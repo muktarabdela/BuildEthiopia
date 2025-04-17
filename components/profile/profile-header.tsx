@@ -106,7 +106,7 @@ export default function ProfileHeader({ user, isOwner, about }) {
                         )}
                     </div>
 
-                    {/* Portfolio Website Link */}
+                    {/* Portfolio Website Call to Action */}
                     {user.socialLinks.website && (
                         <div className="flex gap-2 items-center pt-2">
                             <Globe className="h-5 w-5 text-gray-400" />
@@ -114,10 +114,10 @@ export default function ProfileHeader({ user, isOwner, about }) {
                                 href={user.socialLinks.website}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-400 hover:text-gray-600 transition-colors duration-200"
+                                className="text-blue-400 hover:text-gray-600 transition-colors duration-200 font-medium"
                                 aria-label="Personal portfolio website"
                             >
-                                {user.socialLinks.website}
+                                Visit Portfolio Website →
                             </Link>
                         </div>
                     )}

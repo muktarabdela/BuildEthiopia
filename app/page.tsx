@@ -276,7 +276,7 @@ export default function Home() {
                 </p>
                 <Button
                   variant="secondary"
-                  className="w-full bg-white text-primary hover:bg-gray-100"
+                  className="w-full bg-white text-primary hover:bg-gray-100 transition-all duration-200 ease-in-out transform hover:scale-105 cursor-pointer"
                   onClick={handleAddProject}
                 >
                   {user ? 'Add project' : 'Sign Up'}

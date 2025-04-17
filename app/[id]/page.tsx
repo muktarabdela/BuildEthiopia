@@ -21,6 +21,7 @@ import { useLoading } from '@/components/LoadingProvider';
 import axios from 'axios';
 import { Star } from 'lucide-react';
 import Link from 'next/link';
+import { profile } from 'console';
 
 // API or database
 
@@ -213,8 +214,15 @@ export default function ProfilePage() {
         getProfile();
     }, [params, user, session, setIsLoading]);
 
-    if (!profile) return <div>Profile not found.</div>;
+    if (!profile) return (
 
+        <div className="flex items-center justify-center min-h-[60vh]">
+            <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Loading...</p>
+            </div>
+        </div>
+    )
     const { projects } = profile;
     const username = params?.id;
 

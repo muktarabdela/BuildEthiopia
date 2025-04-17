@@ -21,36 +21,43 @@ import { useAuth } from './AuthProvider';
 import { Skeleton } from './ui/skeleton';
 
 export function Navbar() {
-    const { user, session, requireProfileCompletion, loading } = useAuth();
+    const { user, session, requireProfileCompletion } = useAuth();
     const router = useRouter();
     const pathname = usePathname();
     const [profile, setProfile] = useState<any>(null);
     const [unreadCount, setUnreadCount] = useState(0);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     useEffect(() => {
         async function getSession() {
+            setIsLoading(true);
+            try {
+                if (user) {
+                    const { data: profile } = await supabase
+                        .from('profiles')
+                        .select('*')
+                        .eq('id', user?.id)
+                        .single();
+                    setProfile(profile);
 
-            if (user) {
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', user?.id)
-                    .single();
-                setProfile(profile);
+                    // If user is a developer, check for unread contact requests
+                    if (profile?.role === 'developer') {
+                        const { count, error } = await supabase
+                            .from('contact_requests')
+                            .select('*', { count: 'exact', head: true })
+                            .eq('developer_id', user.id)
+                            .eq('is_read', false);
 
-                // If user is a developer, check for unread contact requests
-                if (profile?.role === 'developer') {
-                    const { count, error } = await supabase
-                        .from('contact_requests')
-                        .select('*', { count: 'exact', head: true })
-                        .eq('developer_id', user.id)
-                        .eq('is_read', false);
-
-                    if (!error) {
-                        setUnreadCount(count || 0);
+                        if (!error) {
+                            setUnreadCount(count || 0);
+                        }
                     }
                 }
+            } catch (error) {
+                console.error('Error fetching session data:', error);
+            } finally {
+                setIsLoading(false);
             }
         }
 
@@ -91,7 +98,7 @@ export function Navbar() {
         // If not complete, dialog will show automatically
     };
 
-    if (loading) {
+    if (isLoading) {
         // Skeleton Navbar
         return (
             <header className="sticky top-0 z-50 bg-gradient-to-br from-gray-900 to-gray-800 border-b border-gray-700 shadow-sm">

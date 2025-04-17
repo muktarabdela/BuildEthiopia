@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { AlertCircle, ArrowLeft, Check, ChevronLeft, ChevronRight, Github, Globe, Loader2, Star, Upload } from 'lucide-react';
+import { AlertCircle, ArrowLeft, Check, ChevronLeft, ChevronRight, Github, Globe, Loader2, Star, Upload, User } from 'lucide-react';
 import { useAuth } from '@/components/AuthProvider';
 import { useLoading } from '@/components/LoadingProvider';
 import { z } from 'zod';
@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { Label } from '@radix-ui/react-label';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const TOTAL_STEPS = 5;
 
@@ -490,19 +491,25 @@ export default function CompleteProfilePage() {
                                         )}
                                     </div>
                                     {/* Experience_level */}
-
                                     <div className="space-y-2">
                                         <Label htmlFor="Experience_level" className={validationErrors.Experience_level ? "text-destructive" : ""}>
                                             Experience Level <span className="text-destructive">*</span>
                                         </Label>
-                                        <Input
-                                            id="Experience_level"
-                                            name="Experience_level"
+                                        <Select
                                             value={profileData.Experience_level}
-                                            onChange={handleInputChange}
-                                            placeholder="Enter your experience level"
-                                            className={validationErrors.Experience_level ? "border-destructive" : "placeholder:text-gray-300"}
-                                        />
+                                            onValueChange={(value) => setProfileData(prev => ({ ...prev, Experience_level: value }))}
+                                        >
+                                            <SelectTrigger className={validationErrors.Experience_level ? "border-destructive" : ""}>
+                                                <SelectValue placeholder="Select your experience level" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectGroup>
+                                                    <SelectItem value="Junior">Junior</SelectItem>
+                                                    <SelectItem value="Mid-Level">Mid-Level</SelectItem>
+                                                    <SelectItem value="Senior">Senior</SelectItem>
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
                                         {validationErrors.Experience_level && (
                                             <p className="text-sm text-destructive">{validationErrors.Experience_level}</p>
                                         )}
@@ -724,90 +731,126 @@ export default function CompleteProfilePage() {
                             )}
                             {/* Step 4: Review */}
                             {currentStep === 4 && (
-                                <div className="space-y-6">
-                                    <div>
-                                        <h3 className="text-lg font-medium mb-4">Profile Information</h3>
-                                        <div className="bg-muted p-6 rounded-md space-y-4">
-                                            <div className="grid grid-cols-[150px_1fr] gap-4">
-                                                <span className="font-medium text-gray-500">Bio</span>
-                                                <span className="text-gray-100">{profileData.bio}</span>
+                                <div className="space-y-8">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {/* Profile Information */}
+                                        <div className="bg-gray-900 rounded-xl shadow-lg p-6 flex flex-col gap-4">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <h3 className="text-xl font-semibold text-primary flex items-center gap-2">
+                                                    <User className="w-5 h-5" /> Profile
+                                                </h3>
+                                                <Button size="sm" variant="ghost" onClick={() => setCurrentStep(0)}>
+                                                    Edit
+                                                </Button>
                                             </div>
-                                            <div className="grid grid-cols-[150px_1fr] gap-4">
-                                                <span className="font-medium text-gray-500">Location</span>
-                                                <span className="text-gray-100">{profileData.location}</span>
+                                            <div className="space-y-2">
+                                                <div>
+                                                    <span className="block text-xs text-gray-400">Title</span>
+                                                    <span className="font-medium text-gray-100">{profileData.title}</span>
+                                                </div>
+                                                <div>
+                                                    <span className="block text-xs text-gray-400">Bio</span>
+                                                    <span className="font-medium text-gray-100">{profileData.bio}</span>
+                                                </div>
+                                                <div>
+                                                    <span className="block text-xs text-gray-400">Location</span>
+                                                    <span className="font-medium text-gray-100">{profileData.location}</span>
+                                                </div>
+                                                <div>
+                                                    <span className="block text-xs text-gray-400">About Me</span>
+                                                    <span className="font-medium text-gray-100">{profileData.about_me}</span>
+                                                </div>
+                                                <div>
+                                                    <span className="block text-xs text-gray-400">Experience</span>
+                                                    <span className="font-medium text-gray-100">{profileData.experience_summary}</span>
+                                                </div>
+                                                <div>
+                                                    <span className="block text-xs text-gray-400">Education</span>
+                                                    <span className="font-medium text-gray-100">{profileData.education_summary}</span>
+                                                </div>
                                             </div>
-                                            <div className="grid grid-cols-[150px_1fr] gap-4">
-                                                <span className="font-medium text-gray-500">About Me</span>
-                                                <span className="text-gray-100">{profileData.about_me}</span>
+                                        </div>
+
+                                        {/* Skills & Interests */}
+                                        <div className="bg-gray-900 rounded-xl shadow-lg p-6 flex flex-col gap-4 h-[400px]">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <h3 className="text-xl font-semibold text-primary flex items-center gap-2">
+                                                    <Star className="w-5 h-5" /> Skills & Interests
+                                                </h3>
+                                                <Button size="sm" variant="ghost" onClick={() => setCurrentStep(1)}>
+                                                    Edit
+                                                </Button>
                                             </div>
-                                            <div className="grid grid-cols-[150px_1fr] gap-4">
-                                                <span className="font-medium text-gray-500">Experience Summary</span>
-                                                <span className="text-gray-100">{profileData.experience_summary}</span>
-                                            </div>
-                                            <div className="grid grid-cols-[150px_1fr] gap-4">
-                                                <span className="font-medium text-gray-500">Education Summary</span>
-                                                <span className="text-gray-100">{profileData.education_summary}</span>
+                                            <div className="space-y-2 overflow-y-auto">
+                                                <div>
+                                                    <span className="block text-xs text-gray-400">Skills</span>
+                                                    <div className="flex flex-wrap gap-2 mt-1">
+                                                        {profileData.skill.map((skill, idx) => (
+                                                            <span key={idx} className="bg-primary/20 text-primary px-3 py-1 rounded-full text-xs font-medium">
+                                                                {skill}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <span className="block text-xs text-gray-400">Experience Level</span>
+                                                    <span className="bg-secondary px-2 py-1 rounded text-xs font-medium text-gray-900 dark:text-gray-100">
+                                                        {profileData.Experience_level}
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <span className="block text-xs text-gray-400">Interests</span>
+                                                    <div className="flex flex-wrap gap-2 mt-1">
+                                                        {profileData.interests.map((interest, idx) => (
+                                                            <span key={idx} className="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full text-xs font-medium">
+                                                                {interest}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div>
-                                        <h3 className="text-lg font-medium mb-4">Skills & Expertise</h3>
-                                        <div className="bg-muted p-6 rounded-md space-y-4">
-                                            <div className="grid grid-cols-[150px_1fr] gap-4">
-                                                <span className="font-medium text-gray-500">Skills</span>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {profileData.skill.map((skill, index) => (
-                                                        <span key={index} className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
-                                                            {skill}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                            <div className="grid grid-cols-[150px_1fr] gap-4">
-                                                <span className="font-medium text-gray-500">Expertise</span>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {profileData.Experience_level}
-                                                </div>
-                                            </div>
-                                            <div className="grid grid-cols-[150px_1fr] gap-4">
-                                                <span className="font-medium text-gray-500">Interests</span>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {profileData.interests.map((interest, index) => (
-                                                        <span key={index} className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm">
-                                                            {interest}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </div>
+                                    {/* Links */}
+                                    <div className="bg-gray-900 rounded-xl shadow-lg p-6">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <h3 className="text-xl font-semibold text-primary flex items-center gap-2">
+                                                <Globe className="w-5 h-5" /> Links
+                                            </h3>
+                                            <Button size="sm" variant="ghost" onClick={() => setCurrentStep(2)}>
+                                                Edit
+                                            </Button>
                                         </div>
-                                    </div>
-
-                                    <div>
-                                        <h3 className="text-lg font-medium mb-4">Links</h3>
-                                        <div className="bg-muted p-6 rounded-md space-y-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             {profileData.github_url && (
-                                                <div className="grid grid-cols-[150px_1fr] gap-4">
-                                                    <span className="font-medium text-gray-500">GitHub</span>
-                                                    <span className="text-gray-100">{profileData.github_url}</span>
+                                                <div className="flex items-center gap-2">
+                                                    <Github className="w-4 h-4 text-gray-400" />
+                                                    <a href={profileData.github_url} target="_blank" rel="noopener noreferrer" className="text-primary underline break-all">
+                                                        {profileData.github_url}
+                                                    </a>
                                                 </div>
                                             )}
                                             {profileData.linkedin_url && (
-                                                <div className="grid grid-cols-[150px_1fr] gap-4">
-                                                    <span className="font-medium text-gray-500">LinkedIn</span>
-                                                    <span className="text-gray-100">{profileData.linkedin_url}</span>
+                                                <div className="flex items-center gap-2">
+                                                    <Globe className="w-4 h-4 text-blue-500" />
+                                                    <a href={profileData.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-primary underline break-all">
+                                                        {profileData.linkedin_url}
+                                                    </a>
                                                 </div>
                                             )}
                                             {profileData.website_url && (
-                                                <div className="grid grid-cols-[150px_1fr] gap-4">
-                                                    <span className="font-medium text-gray-500">Website</span>
-                                                    <span className="text-gray-100">{profileData.website_url}</span>
+                                                <div className="flex items-center gap-2">
+                                                    <Globe className="w-4 h-4 text-green-500" />
+                                                    <a href={profileData.website_url} target="_blank" rel="noopener noreferrer" className="text-primary underline break-all">
+                                                        {profileData.website_url}
+                                                    </a>
                                                 </div>
                                             )}
                                             {profileData.telegram_url && (
-                                                <div className="grid grid-cols-[150px_1fr] gap-4">
-                                                    <span className="font-medium text-gray-500">Telegram</span>
-                                                    <span className="text-gray-100">{profileData.telegram_url}</span>
+                                                <div className="flex items-center gap-2">
+                                                    <Globe className="w-4 h-4 text-cyan-500" />
+                                                    <span className="text-primary break-all">{profileData.telegram_url}</span>
                                                 </div>
                                             )}
                                             {!profileData.github_url && !profileData.linkedin_url && !profileData.website_url && !profileData.telegram_url && (
@@ -816,8 +859,9 @@ export default function CompleteProfilePage() {
                                         </div>
                                     </div>
 
+                                    {/* Error Message */}
                                     {error && (
-                                        <div className="bg-destructive/10 p-4 rounded-md flex items-start gap-3">
+                                        <div className="bg-destructive/10 p-4 rounded-md flex items-start gap-3 mt-4">
                                             <AlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
                                             <p className="text-sm text-destructive">{error}</p>
                                         </div>

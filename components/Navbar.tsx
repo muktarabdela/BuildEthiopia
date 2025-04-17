@@ -21,7 +21,7 @@ import { useAuth } from './AuthProvider';
 import { Skeleton } from './ui/skeleton';
 
 export function Navbar() {
-    const { user, session, requireProfileCompletion } = useAuth();
+    const { user, session, requireProfileCompletion, loading } = useAuth();
     const router = useRouter();
     const pathname = usePathname();
     const [profile, setProfile] = useState<any>(null);
@@ -98,7 +98,7 @@ export function Navbar() {
         // If not complete, dialog will show automatically
     };
 
-    if (isLoading) {
+    if (loading) {
         // Skeleton Navbar
         return (
             <header className="sticky top-0 z-50 bg-gradient-to-br from-gray-900 to-gray-800 border-b border-gray-700 shadow-sm">

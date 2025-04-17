@@ -26,7 +26,6 @@ export default function AuthCallback() {
                     }
 
                     // Refresh page after successful profile insertion
-                    router.refresh();
                     router.push("/");
                 }
             } catch (error) {

@@ -53,12 +53,14 @@ export default function RegisterPage() {
 
         try {
             const response = await axios.post('/api/auth/register', data);
+            console.log("Register response:", response);
             if (response.data) {
                 setModalOpen(true);
             } else {
                 throw new Error('Failed to register');
             }
         } catch (err: unknown) {
+            console.error("Registration error:", err);
             if (axios.isAxiosError(err) && err.response) {
                 setError(err.response.data?.error || 'Registration failed. Please try again.');
             } else if (err instanceof Error) {
@@ -132,7 +134,7 @@ export default function RegisterPage() {
                     )}
 
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
                             <label
                                 htmlFor="name"
@@ -231,16 +233,16 @@ export default function RegisterPage() {
                         >
                             {loading ? 'Creating Account...' : 'Create Account'}
                         </Button>
-                    </form>
+                    </form> */}
 
-                    <div className="relative">
+                    {/* <div className="relative">
                         <div className="absolute inset-0 flex items-center">
                             <span className="w-full border-t border-gray-700" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
                             <span className="bg-gray-900 px-2 text-gray-400">Or continue with</span>
                         </div>
-                    </div>
+                    </div> */}
 
                     <div className="space-y-4">
                         <Button

@@ -113,7 +113,9 @@ export async function POST(request: Request) {
         "Registration successful. Please check your email for verification.",
       user: data.user,
     });
+  
   } catch (error: unknown) {
+    console.error("Error in registration:", error);
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }

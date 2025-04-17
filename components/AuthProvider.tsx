@@ -107,7 +107,9 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       // Initial load complete ONLY after session check AND potential profile check
+      console.log("AuthProvider: About to set loading false after initial check.");
       setLoading(false);
+      console.log("AuthProvider: Set loading false after initial check.");
       // console.log("AuthProvider: Initial loading finished. Profile Complete:", isProfileComplete);
 
     }).catch(error => {
@@ -131,7 +133,9 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         if (event === "SIGNED_IN" && newSession?.user) {
           setLoading(true); // Show loading while checking profile after sign-in
           await checkProfileCompletion(newSession.user.id);
-          setLoading(false); // Hide loading after check is done
+          console.log("AuthProvider: About to set loading false after SIGNED_IN profile check.");
+          setLoading(false);
+          console.log("AuthProvider: Set loading false after SIGNED_IN profile check.");
         } else if (event === "SIGNED_OUT") {
           // No profile check needed on sign out
           setLoading(false); // Ensure loading is false on sign out

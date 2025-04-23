@@ -73,10 +73,7 @@ export async function GET(
   context: { params: Promise<{ id: string | string[] }> }
 ) {
   try {
-    // Await params before accessing its properties
     const resolvedParams = await context.params;
-
-    // Convert id to string if it's an array
     const id = Array.isArray(resolvedParams.id)
       ? resolvedParams.id[0]
       : resolvedParams.id;
@@ -86,13 +83,22 @@ export async function GET(
         { status: 400 }
       );
     }
-    // console.log(`Fetching profile for username: ${id}`);
-    // 1. Fetch profile by username
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("*") // Select all profile fields
-      .eq("id", id)
-      .maybeSingle(); // Use maybeSingle to handle not found gracefully
+
+    // Check if the ID is a valid UUID
+    const isUUID =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        id
+      );
+
+    let profileQuery;
+    if (isUUID) {
+      profileQuery = supabase.from("profiles").select("*").eq("id", id);
+    } else {
+      profileQuery = supabase.from("profiles").select("*").eq("username", id);
+    }
+
+    const { data: profile, error: profileError } =
+      await profileQuery.maybeSingle();
 
     if (profileError) {
       console.error("Supabase profile fetch error:", profileError);
@@ -144,7 +150,6 @@ export async function GET(
     return NextResponse.json(responseData, { status: 200 });
   } catch (error: unknown) {
     console.error("API route unexpected error:", error);
-    // Generic error handling
     if (error instanceof Error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }

@@ -2,7 +2,7 @@
 'use client'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardHeader, CardDescription, CardContent, CardTitle } from "@/components/ui/card";
-import { Link2, User, UserCircle } from "lucide-react";
+import { Link2, Settings, User, UserCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 
 import { FullProfileData } from "@/lib/definitions/setting"; // Use the combined type
@@ -106,10 +106,13 @@ export default function SettingsPage() {
     return (
         <div className="container mx-auto py-10 px-4 md:px-0 max-w-4xl">
             <Card>
-                <CardHeader>
-                    <CardTitle>Profile Settings for @{userData.profile.username}</CardTitle>
-                    <CardDescription>
-                        Manage your profile information and preferences.
+                <CardHeader className="">
+                    <CardTitle className="text-2xl font-bold tracking-tight flex items-center gap-2">
+                        <Settings className="w-6 h-6" />
+                        Profile Settings
+                    </CardTitle>
+                    <CardDescription className="text-muted-foreground mt-2">
+                        Manage and customize your profile information, preferences, and visibility settings.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>

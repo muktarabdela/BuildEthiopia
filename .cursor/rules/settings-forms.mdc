@@ -1,0 +1,48 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Settings Forms and Profile Structure
+
+## Overview
+The user profile settings are managed through three main forms, each with its own schema and validation logic. These forms are composed together in the settings page and interact with the backend via API endpoints.
+
+## Main Forms
+- **AboutMeForm** ([components/setting/AboutMeForm.tsx](mdc:components/setting/AboutMeForm.tsx))
+  - Handles detailed user information (about, experience, education, expertise, interests, skills, badges).
+  - Uses the `aboutMeSchema` and `AboutMeInput` from [lib/validations/setting.ts](mdc:lib/validations/setting.ts).
+  - Expects `about` (UserAboutData), `profileSkills`, and `profileBadges` as props.
+- **PublicProfileForm** ([components/setting/PublicProfileForm.tsx](mdc:components/setting/PublicProfileForm.tsx))
+  - Handles public-facing profile data (username, name, bio, location, website).
+  - Uses the `publicProfileSchema` and `PublicProfileInput` from [lib/validations/setting.ts](mdc:lib/validations/setting.ts).
+  - Expects `profile` (ProfileData) as a prop.
+- **LinksContactForm** ([components/setting/LinksContactForm.tsx](mdc:components/setting/LinksContactForm.tsx))
+  - Handles contact and social links (email, GitHub, LinkedIn, Telegram, contact visibility).
+  - Uses the `linksContactSchema` and `LinksContactInput` from [lib/validations/setting.ts](mdc:lib/validations/setting.ts).
+  - Expects `profile` (ProfileData) as a prop.
+
+## Data Types
+- **ProfileData** and **UserAboutData** are defined in [lib/definitions/setting.ts](mdc:lib/definitions/setting.ts).
+- **FullProfileData** combines both for easier frontend handling.
+
+## Settings Page Composition
+- The main settings page ([app/[id]/setting/page.tsx](mdc:app/[id]/setting/page.tsx))
+  - Fetches the user's profile and about data as `FullProfileData`.
+  - Renders the three forms in separate tabs: Public Profile, About Me, and Links & Contact.
+  - Passes the appropriate data to each form.
+
+## Validation and Parsing
+- All forms use Zod schemas for validation, imported from [lib/validations/setting.ts](mdc:lib/validations/setting.ts).
+- Helper functions like `parseCommaSeparatedString` are used to convert between string and array representations for API compatibility.
+
+## Auth Context
+- The forms use the `useAuth` hook from [components/AuthProvider.tsx](mdc:components/AuthProvider.tsx) to access the current user and session.
+- The context provides `user` and `session` (not `accessToken` directly).
+
+## API Endpoints
+- Each form submits data to a corresponding `/api/profile/...` endpoint for updating user information.
+
+---
+This rule helps you navigate and understand the structure of user profile settings, their validation, and their composition in the UI.
+

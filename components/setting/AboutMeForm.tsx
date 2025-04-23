@@ -20,6 +20,7 @@ import { aboutMeSchema, AboutMeInput, parseCommaSeparatedString } from "@/lib/va
 import { ProfileData, UserAboutData } from "@/lib/definitions/setting";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useAuth } from "@/components/AuthProvider"; // or your auth context/provider
 
 interface AboutMeFormProps {
     about: UserAboutData | null;
@@ -31,6 +32,7 @@ interface AboutMeFormProps {
 const safeJoin = (arr: string[] | null | undefined): string => (arr ?? []).join(', ');
 
 export function AboutMeForm({ about, profileSkills, profileBadges }: AboutMeFormProps) {
+    const { user, accessToken } = useAuth(); // Make sure your AuthProvider exposes the accessToken
     const [isSaving, setIsSaving] = useState(false);
 
     const form = useForm<AboutMeInput>({
@@ -43,6 +45,7 @@ export function AboutMeForm({ about, profileSkills, profileBadges }: AboutMeForm
             interests_str: safeJoin(about?.interests),
             badges_str: safeJoin(profileBadges), // From profiles table
             skill_str: safeJoin(profileSkills),   // From profiles table
+            position_type: about?.position_type ?? "", // Add position_type
         },
     });
 
@@ -60,14 +63,18 @@ export function AboutMeForm({ about, profileSkills, profileBadges }: AboutMeForm
             // Also send badge/skill arrays if your API updates them here
             badges: parseCommaSeparatedString(values.badges_str),
             skill: parseCommaSeparatedString(values.skill_str),
+            position_type: values.position_type, // Add position_type
         };
         console.log("API Payload:", apiPayload);
 
 
         try {
-            const response = await fetch('/api/profile/about', { // Adjust endpoint as needed
-                method: 'POST', // or PUT/PATCH
-                headers: { 'Content-Type': 'application/json' },
+            const response = await fetch('/api/profile/about', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${accessToken}`,
+                },
                 body: JSON.stringify(apiPayload),
             });
 
@@ -137,14 +144,14 @@ export function AboutMeForm({ about, profileSkills, profileBadges }: AboutMeForm
                 />
                 <FormField
                     control={form.control}
-                    name="expertise_str"
+                    name="skill_str"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Expertise / Skills</FormLabel>
                             <FormControl>
                                 <Textarea
-                                    placeholder="React, Node.js, TypeScript, PostgreSQL"
-                                    rows={3}
+                                    placeholder="Comma-separated skills"
+                                    rows={2}
                                     {...field}
                                 />
                             </FormControl>
@@ -198,24 +205,18 @@ export function AboutMeForm({ about, profileSkills, profileBadges }: AboutMeForm
                 /> */}
                 <FormField
                     control={form.control}
-                    name="skill_str"
+                    name="position_type"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Skills (Legacy)</FormLabel>
+                            <FormLabel>Position Type</FormLabel>
                             <FormControl>
-                                <Textarea
-                                    placeholder="Comma-separated skills"
-                                    rows={2}
-                                    {...field}
-                                />
+                                <Input placeholder="e.g., Full-time, Part-time, Freelance" {...field} />
                             </FormControl>
-                            <FormDescription>
-                                Legacy skills field, separated by commas (from profiles table). Prefer 'Expertise' above.
-                            </FormDescription>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
+
 
                 <Button type="submit" disabled={isSaving}>
                     {isSaving ? 'Saving...' : 'Save About Me Details'}

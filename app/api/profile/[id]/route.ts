@@ -50,6 +50,7 @@ interface UserAboutData {
   expertise?: string[] | null;
   education_summary?: string | null;
   interests?: string[] | null;
+  position_type?: string | null;
 }
 
 interface FullProfileData {
@@ -236,6 +237,7 @@ export async function POST(
         Experience_level: body.Experience_level,
         education_summary: body.education_summary,
         interests: body.interests,
+        position_type: body.position_type,
         updated_at: new Date().toISOString(),
       })
       .select()

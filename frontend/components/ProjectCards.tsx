@@ -14,7 +14,15 @@ interface ProjectCardProps {
 
 const cardVariants = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
+    show: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            type: "spring",
+            stiffness: 100,
+            damping: 15
+        }
+    }
 };
 
 const projectdummy = {
@@ -49,85 +57,109 @@ export default function ProjectCards({ project }: ProjectCardProps) {
 
     return (
         <motion.div variants={cardVariants} className="h-full">
-            <Card className="group flex flex-col h-full hover:shadow-lg transition-shadow duration-300 border bg-card overflow-hidden">
-                <CardHeader className="p-4">
+            <Card className="group relative flex flex-col h-full transition-all duration-300 hover:translate-y-[-2px] bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 border-gray-800 overflow-hidden backdrop-blur-sm">
+                {/* Gradient overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                <CardHeader className="p-4 relative z-10">
                     <div className="flex items-start justify-between gap-3">
                         <div className="flex items-center gap-3">
-                            <Image
-                                src={project.logo_url || fallbackImage}
-                                alt={`${project.title} logo`}
-                                width={40}
-                                height={40}
-                                className="rounded-md object-cover border"
-                                onError={(e) => (e.currentTarget.src = fallbackImage)} // Handle broken images
-                            />
-                            <CardTitle className="text-lg font-semibold leading-tight hover:text-primary transition-colors">
-                                <Link href={`/projects/${project.id}`} className="stretched-link">
+                            <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-gray-700 bg-gray-800">
+                                <Image
+                                    src={project.logo_url || fallbackImage}
+                                    alt={`${project.title} logo`}
+                                    fill
+                                    className="object-cover transition-transform group-hover:scale-110"
+                                    onError={(e) => (e.currentTarget.src = fallbackImage)}
+                                />
+                            </div>
+                            <CardTitle className="text-lg font-semibold leading-tight">
+                                <Link href={`/projects/${project.id}`} className="text-gray-100 hover:text-primary transition-colors">
                                     {project.title}
                                 </Link>
                             </CardTitle>
                         </div>
                         {project.is_open_source && (
-                            <Badge variant="secondary" className="text-xs whitespace-nowrap">
+                            <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
                                 <Code className="w-3 h-3 mr-1" /> Open Source
                             </Badge>
                         )}
                     </div>
 
-                    <p className="text-sm text-muted-foreground pt-2 line-clamp-2">
+                    <p className="text-sm text-gray-400 pt-3 line-clamp-2">
                         {project.description}
                     </p>
                 </CardHeader>
 
-                <CardContent className="p-4 pt-0 flex-grow">
+                <CardContent className="p-4 pt-0 flex-grow relative z-10">
                     {/* Display first image if available */}
                     {project.images && project.images.length > 0 && (
-                        <div className="mb-4 rounded-md overflow-hidden aspect-video relative bg-muted">
+                        <div className="mb-4 rounded-lg overflow-hidden aspect-video relative bg-gray-800 group-hover:shadow-lg transition-shadow">
                             <Image
                                 src={project.images[0] || fallbackImage}
                                 alt={`${project.title} preview`}
-                                fill // Use fill for aspect ratio container
-                                className="object-cover"
+                                fill
+                                className="object-cover transition-transform duration-300 group-hover:scale-105"
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                onError={(e) => (e.currentTarget.style.display = 'none')} // Hide if broken
+                                onError={(e) => (e.currentTarget.style.display = 'none')}
                             />
+                            <div className="absolute inset-0 bg-gradient-to-t from-gray-900/40 to-transparent" />
                         </div>
                     )}
 
                     {/* Tech Stack */}
                     {project.tech_stack && project.tech_stack.length > 0 && (
-                        <div className="flex flex-wrap gap-1.5 mb-3">
-                            {project.tech_stack.slice(0, 5).map((tech) => ( // Limit displayed techs
-                                <Badge key={tech} variant="outline" className="text-xs capitalize px-1.5 py-0.5">
+                        <div className="flex flex-wrap gap-2 mb-3">
+                            {project.tech_stack.slice(0, 5).map((tech) => (
+                                <Badge
+                                    key={tech}
+                                    variant="outline"
+                                    className="text-xs capitalize px-2 py-0.5 bg-gray-800/50 border-gray-700 text-gray-300 hover:bg-gray-700/50"
+                                >
                                     {tech}
                                 </Badge>
                             ))}
                             {project.tech_stack.length > 5 && (
-                                <Badge variant="outline" className="text-xs px-1.5 py-0.5">...</Badge>
+                                <Badge
+                                    variant="outline"
+                                    className="text-xs px-2 py-0.5 bg-gray-800/50 border-gray-700 text-gray-300"
+                                >
+                                    +{project.tech_stack.length - 5}
+                                </Badge>
                             )}
                         </div>
                     )}
                 </CardContent>
 
-                <CardFooter className="p-4 pt-2 flex justify-between items-center border-t mt-auto">
-                    <div className="flex items-center gap-3 text-sm text-muted-foreground">
-                        <span className="flex items-center gap-1" title="Upvotes">
+                <CardFooter className="p-4 pt-2 flex justify-between items-center border-t border-gray-800 mt-auto relative z-10 bg-gray-900/50">
+                    <div className="flex items-center gap-4 text-sm text-gray-400">
+                        <button className="flex items-center gap-1.5 hover:text-primary transition-colors">
                             <ThumbsUp className="w-4 h-4" /> {project.upvotes_count ?? 0}
-                        </span>
-                        <span className="flex items-center gap-1" title="Comments">
+                        </button>
+                        <button className="flex items-center gap-1.5 hover:text-primary transition-colors">
                             <MessageSquare className="w-4 h-4" /> {project.comments_count ?? 0}
-                        </span>
+                        </button>
                     </div>
                     <div className="flex items-center gap-2">
                         {project.github_url && (
-                            <Button variant="ghost" size="icon" asChild title="GitHub Repository">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="hover:bg-gray-800 hover:text-primary transition-colors"
+                                asChild
+                            >
                                 <Link href={project.github_url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
                                     <Github className="w-4 h-4" />
                                 </Link>
                             </Button>
                         )}
                         {project.live_url && (
-                            <Button variant="ghost" size="icon" asChild title="Live Demo">
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                className="hover:bg-gray-800 hover:text-primary transition-colors"
+                                asChild
+                            >
                                 <Link href={project.live_url} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
                                     <ExternalLink className="w-4 h-4" />
                                 </Link>

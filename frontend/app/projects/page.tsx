@@ -244,104 +244,131 @@ export default function ProjectsPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
                     <h1 className="text-4xl font-bold text-white mb-2 flex items-center gap-2">
-                        <Code className="w-8 h-8" /> Projects Showcase
+                        Projects Showcase
                     </h1>
                     <p className="text-muted-foreground">Discover, filter, and explore developer projects.</p>
                 </div>
-                <Link href="/projects/new">
+                {/* <Link href="/projects/new">
                     <Button size="lg" className="group bg-primary hover:bg-primary/90 text-primary-foreground">
                         <Code className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
                         Add Your Project
                     </Button>
-                </Link>
+                </Link> */}
             </div>
 
             {/* Main Content Layout (3 Columns) */}
             <div className="flex flex-col lg:flex-row gap-8">
 
                 {/* Left Sidebar: Filters */}
-                <aside className="w-full lg:w-1/4 xl:w-1/5 space-y-6">
-                    <h2 className="text-xl font-semibold border-b pb-2 text-gray-400">Filters</h2>
+                <aside className="w-full lg:w-1/4 xl:w-1/5">
+                    <div className="sticky top-20 space-y-6 rounded-lg bg-gradient-to-br from-gray-900 via-gray-900 to-gray-800 border border-gray-800 p-6">
+                        <div className="flex items-center gap-2 pb-2 border-b border-gray-800">
+                            <Search className="w-5 h-5 text-primary" />
+                            <h2 className="text-xl font-semibold text-gray-100">Filters</h2>
+                        </div>
 
-                    {/* Search */}
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                        <Input
-                            placeholder="Search title, description..."
-                            className="pl-10"
-                            value={filters.searchTerm}
-                            onChange={handleSearchChange}
-                        />
-                    </div>
-                    {/* Sort By */}
-                    <div>
-                        <Label htmlFor="sort-by" className="text-gray-400">Sort By</Label>
-                        <Select value={`${filters.sortBy}-${filters.sortOrder}`} onValueChange={handleSortChange}>
-                            <SelectTrigger id="sort-by" className="text-gray-400">
-                                <SelectValue placeholder="Sort by..." className="text-gray-400" />
-                            </SelectTrigger>
-                            <SelectContent className='text-gray-400'>
-                                <SelectItem value="created_at-desc" className='text-gray-400'>Newest</SelectItem>
-                                <SelectItem value="created_at-asc" className='text-gray-400'>Oldest</SelectItem>
-                                <SelectItem value="upvotes_count-desc" className='text-gray-400'>Most Upvoted</SelectItem>
-                                <SelectItem value="upvotes_count-asc" className='text-gray-400'>Least Upvoted</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
+                        {/* Search */}
+                        <div className="space-y-2">
+                            <div className="relative">
+                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                                <Input
+                                    placeholder="Search title, description..."
+                                    className="pl-10 bg-gray-900/50 border-gray-700 hover:border-gray-600 focus:border-primary transition-colors placeholder:text-gray-500"
+                                    value={filters.searchTerm}
+                                    onChange={handleSearchChange}
+                                />
+                            </div>
+                        </div>
 
+                        {/* Sort By */}
+                        <div className="space-y-2">
+                            <Label htmlFor="sort-by" className="text-sm font-medium text-gray-300">Sort By</Label>
+                            <Select value={`${filters.sortBy}-${filters.sortOrder}`} onValueChange={handleSortChange}>
+                                <SelectTrigger id="sort-by" className="w-full bg-gray-900/50 border-gray-700 hover:border-gray-600 focus:border-primary transition-colors">
+                                    <SelectValue placeholder="Sort by..." />
+                                </SelectTrigger>
+                                <SelectContent className="bg-gray-900 border-gray-700">
+                                    <SelectItem value="created_at-desc" className="text-gray-200 focus:bg-gray-800 focus:text-gray-100">Newest</SelectItem>
+                                    <SelectItem value="created_at-asc" className="text-gray-200 focus:bg-gray-800 focus:text-gray-100">Oldest</SelectItem>
+                                    <SelectItem value="upvotes_count-desc" className="text-gray-200 focus:bg-gray-800 focus:text-gray-100">Most Upvoted</SelectItem>
+                                    <SelectItem value="upvotes_count-asc" className="text-gray-200 focus:bg-gray-800 focus:text-gray-100">Least Upvoted</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                    {/* Category */}
-                    <div>
-                        <Label htmlFor="category" className="text-gray-400">Category</Label>
-                        <Select value={filters.category} onValueChange={handleCategoryChange}>
-                            <SelectTrigger id="category">
-                                <SelectValue placeholder="Select category..." />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {availableCategories.map(cat => (
-                                    <SelectItem key={cat} value={cat}>
-                                        {cat === 'all' ? 'All Categories' : cat}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
+                        {/* Category */}
+                        <div className="space-y-2">
+                            <Label htmlFor="category" className="text-sm font-medium text-gray-300">Category</Label>
+                            <Select value={filters.category} onValueChange={handleCategoryChange}>
+                                <SelectTrigger id="category" className="w-full bg-gray-900/50 border-gray-700 hover:border-gray-600 focus:border-primary transition-colors">
+                                    <SelectValue placeholder="Select category..." />
+                                </SelectTrigger>
+                                <SelectContent className="bg-gray-900 border-gray-700">
+                                    {availableCategories.map(cat => (
+                                        <SelectItem
+                                            key={cat}
+                                            value={cat}
+                                            className="text-gray-200 focus:bg-gray-800 focus:text-gray-100"
+                                        >
+                                            {cat === 'all' ? 'All Categories' : cat}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
 
-                    {/* Open Source */}
-                    <div className="flex items-center space-x-2 text-gray-400">
-                        <Checkbox
-                            id="open-source"
-                            checked={filters.isOpenSource ?? 'indeterminate'} // Use indeterminate state
-                            onCheckedChange={handleOpenSourceChange}
-                        />
-                        <Label
-                            htmlFor="open-source"
-                            className="cursor-pointer select-none"
-                            onClick={() => handleOpenSourceChange(filters.isOpenSource ?? false)} // Trigger cycle on label click too
-                        >
-                            Open Source {filters.isOpenSource === true ? '(Yes)' : filters.isOpenSource === false ? '(No)' : '(Any)'}
-                        </Label>
-                    </div>
-
-
-                    {/* Tech Stack */}
-                    <div>
-                        <Label className="text-gray-400">Tech Stack</Label>
-                        <div className="flex flex-wrap gap-2 mt-2 max-h-60 overflow-y-auto p-1 rounded-md border border-input">
-                            {availableTechStacks.length === 0 && <span className="text-xs text-gray-400">Loading tech...</span>}
-                            {availableTechStacks.map((tech) => (
-                                <Badge
-                                    key={tech}
-                                    variant={filters.techStack.includes(tech) ? "default" : "outline"}
-                                    className="cursor-pointer hover:opacity-80 text-xs capitalize text-gray-400"
-                                    onClick={() => handleTechStackToggle(tech)}
+                        {/* Open Source */}
+                        <div className="space-y-2">
+                            <Label className="text-sm font-medium text-gray-300">Project Type</Label>
+                            <div className="flex items-center p-3 rounded-md bg-gray-900/50 border border-gray-700 hover:border-gray-600 transition-colors">
+                                <Checkbox
+                                    id="open-source"
+                                    checked={filters.isOpenSource ?? 'indeterminate'}
+                                    onCheckedChange={handleOpenSourceChange}
+                                    className="border-gray-600 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                                />
+                                <Label
+                                    htmlFor="open-source"
+                                    className="flex-1 cursor-pointer select-none pl-3 text-gray-200"
+                                    onClick={() => handleOpenSourceChange(filters.isOpenSource ?? false)}
                                 >
-                                    {tech}
-                                </Badge>
-                            ))}
+                                    Open Source
+                                    <span className="ml-2 text-sm text-gray-400">
+                                        {filters.isOpenSource === true ? '(Yes)' : filters.isOpenSource === false ? '(No)' : '(Any)'}
+                                    </span>
+                                </Label>
+                            </div>
+                        </div>
+
+                        {/* Tech Stack */}
+                        <div className="space-y-2">
+                            <Label className="text-sm font-medium text-gray-300">Tech Stack</Label>
+                            <div className="flex flex-wrap gap-2 max-h-60 overflow-y-auto p-3 rounded-md bg-gray-900/50 border border-gray-700 hover:border-gray-600 transition-colors">
+                                {availableTechStacks.length === 0 ? (
+                                    <div className="flex items-center justify-center w-full py-3">
+                                        <span className="text-sm text-gray-400">Loading technologies...</span>
+                                    </div>
+                                ) : (
+                                    availableTechStacks.map((tech) => (
+                                        <Badge
+                                            key={tech}
+                                            variant={filters.techStack.includes(tech) ? "default" : "outline"}
+                                            className={`
+                                                cursor-pointer text-xs capitalize transition-all duration-200
+                                                ${filters.techStack.includes(tech)
+                                                    ? 'bg-primary/15 text-primary hover:bg-primary/20 border-primary/20'
+                                                    : 'hover:bg-gray-800 text-gray-400 border-gray-700'
+                                                }
+                                            `}
+                                            onClick={() => handleTechStackToggle(tech)}
+                                        >
+                                            {tech}
+                                        </Badge>
+                                    ))
+                                )}
+                            </div>
                         </div>
                     </div>
-
                 </aside>
 
                 {/* Center Content: Project Grid */}

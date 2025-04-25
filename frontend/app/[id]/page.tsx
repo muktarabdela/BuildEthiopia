@@ -178,7 +178,7 @@ export default function ProfilePage() {
                     return;
                 }
 
-                console.log("profile data from ", response.data)
+                // console.log("profile data from ", response.data)
                 const profile = response.data.profile;
                 const about = response.data.about;
                 setAbout(about);

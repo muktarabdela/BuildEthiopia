@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
+import logo from "../public/logo.png"
+
 import {
     Bell,
     Menu,
@@ -13,15 +15,18 @@ import {
     Search,
     Users,
     Home,
-    UserRound
+    UserRound,
+    Settings
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from './AuthProvider';
 import { Skeleton } from './ui/skeleton';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 export function Navbar() {
     const { user, session, requireProfileCompletion, loading } = useAuth();
+    console.log("user", user)
     const router = useRouter();
     const pathname = usePathname();
     const [profile, setProfile] = useState<any>(null);
@@ -41,7 +46,6 @@ export function Navbar() {
                         .single();
                     setProfile(profile);
 
-                    // If user is a developer, check for unread contact requests
                     if (profile?.role === 'developer') {
                         const { count, error } = await supabase
                             .from('contact_requests')
@@ -98,49 +102,72 @@ export function Navbar() {
         // If not complete, dialog will show automatically
     };
 
-    if (isLoading) {
-        // Skeleton Navbar
-        return (
-            <header className="sticky top-0 z-50 bg-gradient-to-br from-gray-900 to-gray-800 border-b border-gray-700 shadow-sm">
-                <div className="container mx-auto px-4">
-                    <div className="flex items-center justify-between h-16">
-                        {/* Logo Skeleton */}
-                        <div className="flex items-center space-x-2">
-                            <Skeleton className="w-8 h-8 rounded-md bg-primary" />
-                            <Skeleton className="h-6 w-32 rounded bg-gray-700" />
-                        </div>
-                        {/* Desktop Nav Skeleton */}
-                        <div className="hidden md:flex items-center space-x-2 flex-1 justify-center">
-                            <Skeleton className="h-8 w-20 rounded bg-gray-700" />
-                            <Skeleton className="h-8 w-20 rounded bg-gray-700" />
-                            <Skeleton className="h-8 w-24 rounded bg-gray-700" />
-                            <Skeleton className="h-8 w-28 rounded bg-gray-700" />
-                        </div>
-                        {/* User Actions Skeleton */}
-                        <div className="flex items-center space-x-2">
-                            <Skeleton className="h-10 w-10 rounded-full bg-gray-700" />
-                            <Skeleton className="h-8 w-20 rounded bg-gray-700" />
-                        </div>
-                        {/* Mobile Menu Button Skeleton */}
-                        <div className="md:hidden flex items-center">
-                            <Skeleton className="h-10 w-10 rounded-md bg-gray-700" />
-                        </div>
-                    </div>
-                </div>
-            </header>
-        );
-    }
+    // if (isLoading) {
+    //     // Skeleton Navbar
+    //     return (
+    //         <header className="sticky top-0 z-50 bg-gradient-to-br from-gray-900 to-gray-800 border-b border-gray-700 shadow-sm">
+    //             <div className="container mx-auto px-4">
+    //                 <div className="flex items-center justify-between h-16">
+    //                     {/* Logo Skeleton */}
+    //                     <div className="flex items-center space-x-2">
+    //                         <Skeleton className="w-8 h-8 rounded-md bg-primary" />
+    //                         <Skeleton className="h-6 w-32 rounded bg-gray-700" />
+    //                     </div>
+    //                     {/* Desktop Nav Skeleton */}
+    //                     <div className="hidden md:flex items-center space-x-2 flex-1 justify-center">
+    //                         <Skeleton className="h-8 w-20 rounded bg-gray-700" />
+    //                         <Skeleton className="h-8 w-20 rounded bg-gray-700" />
+    //                         <Skeleton className="h-8 w-24 rounded bg-gray-700" />
+    //                         <Skeleton className="h-8 w-28 rounded bg-gray-700" />
+    //                     </div>
+    //                     {/* User Actions Skeleton */}
+    //                     <div className="flex items-center space-x-2">
+    //                         <Skeleton className="h-10 w-10 rounded-full bg-gray-700" />
+    //                         <Skeleton className="h-8 w-20 rounded bg-gray-700" />
+    //                     </div>
+    //                     {/* Mobile Menu Button Skeleton */}
+    //                     <div className="md:hidden flex items-center">
+    //                         <Skeleton className="h-10 w-10 rounded-md bg-gray-700" />
+    //                     </div>
+    //                 </div>
+    //             </div>
+    //         </header>
+    //     );
+    // }
 
     return (
         <header className="sticky top-0 z-50 bg-gradient-to-br from-gray-900 to-gray-800 border-b border-gray-700 shadow-sm">
             <div className="container mx-auto px-4">
-                <div className="flex items-center justify-between h-16">
-                    {/* Logo - Add hover animation */}
-                    <Link href="/" className="flex items-center space-x-2 hover:scale-105 transition-transform duration-200" onClick={closeMobileMenu}>
-                        <div className="w-8 h-8 rounded-md bg-primary flex items-center justify-center">
-                            <Code className="h-5 w-5 text-white" />
-                        </div>
-                        <span className="text-xl font-bold text-gray-100">BuildEthiopia</span>
+                <div className="flex items-center justify-between h-16 max-w-7xl mx-auto">
+                    {/* Modern Creative Logo */}
+                    <Link
+                        href="/"
+                        className="flex items-center space-x-2 group"
+                        onClick={closeMobileMenu}
+                        aria-label="BuildUtopia Home"
+                    >
+                        {/* Creative logo mark */}
+                        <span className="relative flex items-center justify-center w-8 h-8 bg-gradient-to-br from-primary to-purple-600 rounded-lg shadow-lg">
+                            <svg
+                                className="w-6 h-6 text-white"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                <rect x="3" y="3" width="7" height="7" rx="2" />
+                                <rect x="14" y="3" width="7" height="7" rx="2" />
+                                <rect x="14" y="14" width="7" height="7" rx="2" />
+                                <rect x="3" y="14" width="7" height="7" rx="2" />
+                            </svg>
+                        </span>
+                        {/* Logo text */}
+                        <span className="text-2xl font-serif font-bold text-white tracking-tight leading-tight">
+                            Build
+                            <span className="italic text-xl font-light text-primary/90">Utopia</span>
+                        </span>
                     </Link>
 
                     {/* Desktop Navigation - Add smooth transitions */}
@@ -212,23 +239,48 @@ export function Navbar() {
                                     )}
                                 </Link>
 
-                                <Link
-                                    href={`/${profile?.username}`}
-                                    className="hidden md:flex items-center space-x-2 p-2 text-gray-300 hover:text-primary rounded-md hover:bg-gray-700 text-white"
-                                >
-                                    <UserRound className="h-5 w-5" />
-                                    <span className="text-sm font-medium">Profile</span>
-                                </Link>
-                                <div onClick={signOut} className="hidden md:block">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="border-gray-600 text-gray-300 hover:bg-gray-700 text-white"
-                                    >
-                                        <LogOut className="h-4 w-4 mr-1" />
-                                        Log Out
-                                    </Button>
-                                </div>
+                                {/* Dropdown Menu for Profile, Settings, and Logout */}
+                                <DropdownMenu.Root>
+                                    <DropdownMenu.Trigger asChild>
+                                        <button className="hidden md:flex items-center space-x-2 p-2 text-gray-300 hover:text-primary rounded-full hover:bg-gray-700 text-white focus:outline-none">
+                                            {user?.user_metadata?.avatar_url ? (
+                                                <Image
+                                                    src={user?.user_metadata?.avatar_url}
+                                                    alt="User Avatar"
+                                                    width={32}
+                                                    height={32}
+                                                    className="w-8 h-8 rounded-full object-cover"
+                                                />
+                                            ) : (
+                                                <UserRound className="h-5 w-5" />
+                                            )}
+                                        </button>
+                                    </DropdownMenu.Trigger>
+                                    <DropdownMenu.Content className="min-w-[200px] bg-gray-800 border border-gray-700 rounded-md shadow-lg mt-2">
+                                        <DropdownMenu.Item className="p-2 text-gray-300 hover:bg-gray-700 hover:text-primary cursor-pointer">
+                                            <Link href={`/${profile?.username}`} className="flex items-center space-x-2">
+                                                <UserRound className="h-4 w-4" />
+                                                <span>Profile</span>
+                                            </Link>
+                                        </DropdownMenu.Item>
+                                        <DropdownMenu.Item className="p-2 text-gray-300 hover:bg-gray-700 hover:text-primary cursor-pointer">
+                                            <Link href="/settings" className="flex items-center space-x-2">
+                                                <Settings className="h-4 w-4" />
+                                                <span>Settings</span>
+                                            </Link>
+                                        </DropdownMenu.Item>
+                                        <DropdownMenu.Separator className="h-px bg-gray-700 my-1" />
+                                        <DropdownMenu.Item
+                                            className="p-2 text-gray-300 hover:bg-gray-700 hover:text-primary cursor-pointer"
+                                            onClick={signOut}
+                                        >
+                                            <div className="flex items-center space-x-2">
+                                                <LogOut className="h-4 w-4" />
+                                                <span>Log Out</span>
+                                            </div>
+                                        </DropdownMenu.Item>
+                                    </DropdownMenu.Content>
+                                </DropdownMenu.Root>
                             </>
                         ) : (
                             <>
@@ -271,10 +323,10 @@ export function Navbar() {
             {/* Mobile Menu - Add backdrop blur */}
             {mobileMenuOpen && (
                 <div className="md:hidden bg-gray-900/95 backdrop-blur-sm border-t border-gray-700">
-                    <div className="container mx-auto px-4 py-3 space-y-1">
+                    <div className="container mx-auto px-4 py-3 space-y-2">
                         <Link
                             href="/"
-                            className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/')
+                            className={`block px-3 py-2 rounded-md text-base font-medium transition-all duration-200 ${isActive('/')
                                 ? 'text-primary bg-gray-800'
                                 : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                 }`}
@@ -287,7 +339,7 @@ export function Navbar() {
                         </Link>
                         <Link
                             href="/projects"
-                            className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/projects')
+                            className={`block px-3 py-2 rounded-md text-base font-medium transition-all duration-200 ${isActive('/projects')
                                 ? 'text-primary bg-gray-800'
                                 : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                 }`}
@@ -301,9 +353,9 @@ export function Navbar() {
                         {profile?.role === 'developer' && (
                             <button
                                 onClick={() => { handleAddProject(); closeMobileMenu(); }}
-                                className={`block px-3 py-2 rounded-md text-base font-medium w-full text-left ${isActive('/projects/new')
+                                className={`block px-3 py-2 rounded-md text-base font-medium w-full text-left transition-all duration-200 ${isActive('/projects/new')
                                     ? 'text-primary bg-gray-800'
-                                    : 'hover:text-primary hover:bg-gray-700 text-white'
+                                    : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                     } flex items-center space-x-2`}
                                 type="button"
                             >
@@ -313,9 +365,9 @@ export function Navbar() {
                         )}
                         <Link
                             href="/developers"
-                            className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/developers')
+                            className={`block px-3 py-2 rounded-md text-base font-medium transition-all duration-200 ${isActive('/developers')
                                 ? 'text-primary bg-gray-800'
-                                : 'hover:text-primary hover:bg-gray-700 text-white'
+                                : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                 }`}
                             onClick={closeMobileMenu}
                         >
@@ -327,35 +379,57 @@ export function Navbar() {
 
                         {user ? (
                             <>
-                                <Link
-                                    href={`/${profile?.username}`}
-                                    className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/profile')
-                                        ? 'text-primary bg-gray-800'
-                                        : 'hover:text-primary hover:bg-gray-700 text-white'
-                                        }`}
-                                    onClick={closeMobileMenu}
-                                >
-                                    <div className="flex items-center space-x-2">
-                                        <UserRound className="h-5 w-5" />
-                                        <span>Profile</span>
-                                    </div>
-                                </Link>
-                                <div className="px-3 py-2">
-                                    <Button onClick={signOut}
-                                        variant="outline"
-                                        className="w-full justify-center bg-primary hover:bg-primary- text-white
-                                     cursor-pointer">
-                                        <LogOut className="h-5 w-5 mr-2" />
-                                        log Out
-                                    </Button>
-                                </div>
+                                <DropdownMenu.Root>
+                                    <DropdownMenu.Trigger asChild>
+                                        <button className="block px-3 py-2 rounded-md text-base font-medium w-full text-left transition-all duration-200 text-gray-300 hover:text-primary hover:bg-gray-700 text-white focus:outline-none">
+                                            <div className="flex items-center space-x-2">
+                                                {user?.user_metadata?.avatar_url ? (
+                                                    <Image
+                                                        src={user?.user_metadata?.avatar_url}
+                                                        alt="User Avatar"
+                                                        width={32}
+                                                        height={32}
+                                                        className="w-8 h-8 rounded-full object-cover"
+                                                    />
+                                                ) : (
+                                                    <UserRound className="h-5 w-5" />
+                                                )}
+                                                <span>Profile</span>
+                                            </div>
+                                        </button>
+                                    </DropdownMenu.Trigger>
+                                    <DropdownMenu.Content className="min-w-[200px] bg-gray-800 border border-gray-700 rounded-md shadow-lg mt-2">
+                                        <DropdownMenu.Item className="p-2 text-gray-300 hover:bg-gray-700 hover:text-primary cursor-pointer">
+                                            <Link href={`/${profile?.username}`} className="flex items-center space-x-2">
+                                                <UserRound className="h-4 w-4" />
+                                                <span>Profile</span>
+                                            </Link>
+                                        </DropdownMenu.Item>
+                                        <DropdownMenu.Item className="p-2 text-gray-300 hover:bg-gray-700 hover:text-primary cursor-pointer">
+                                            <Link href="/settings" className="flex items-center space-x-2">
+                                                <Settings className="h-4 w-4" />
+                                                <span>Settings</span>
+                                            </Link>
+                                        </DropdownMenu.Item>
+                                        <DropdownMenu.Separator className="h-px bg-gray-700 my-1" />
+                                        <DropdownMenu.Item
+                                            className="p-2 text-gray-300 hover:bg-gray-700 hover:text-primary cursor-pointer"
+                                            onClick={signOut}
+                                        >
+                                            <div className="flex items-center space-x-2">
+                                                <LogOut className="h-4 w-4" />
+                                                <span>Log Out</span>
+                                            </div>
+                                        </DropdownMenu.Item>
+                                    </DropdownMenu.Content>
+                                </DropdownMenu.Root>
                             </>
                         ) : (
                             <div className="flex flex-col space-y-2 px-3 py-2">
                                 <Link href="/login" onClick={closeMobileMenu}>
                                     <Button
                                         variant="outline"
-                                        className="w-full justify-center bg-primary hover:bg-primary-dark text-white"
+                                        className="w-full justify-center bg-primary hover:bg-primary-dark text-white transition-colors duration-200"
                                     >
                                         Login
                                     </Button>

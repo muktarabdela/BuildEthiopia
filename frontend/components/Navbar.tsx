@@ -16,7 +16,8 @@ import {
     Users,
     Home,
     UserRound,
-    Settings
+    Settings,
+    FolderPlus
 } from 'lucide-react';
 import { Button } from './ui/button';
 import { supabase } from '@/lib/supabase';
@@ -199,13 +200,13 @@ export function Navbar() {
                         {profile?.role === 'developer' && (
                             <Button
                                 onClick={handleAddProject}
-                                className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center space-x-1 ${isActive('/projects/new')
+                                className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center space-x-1 cursor-pointer ${isActive('/projects/new')
                                     ? 'text-primary bg-gray-800'
                                     : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                     }`}
                                 variant="ghost"
                             >
-                                <Code className="h-4 w-4" />
+                                <FolderPlus className="h-4 w-4 -mr-[0.1em]" />
                                 <span>Post Project</span>
                             </Button>
                         )}

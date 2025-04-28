@@ -150,48 +150,50 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
-      {/* <Navbar /> */}
+      <div className="">
 
-      {/* Conditionally render sections for unauthenticated users */}
-      {!user && (
-        <>
-          {/* Hero Section */}
-          <section className="relative py-20 md:py-28 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 z-0"></div>
-            <div className="absolute right-0 top-0 w-1/3 h-full bg-gradient-to-l from-primary/20 to-transparent z-0 opacity-70"></div>
+        {/* <Navbar /> */}
 
-            {/* Decorative Elements */}
-            <div className="absolute left-10 top-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl z-0"></div>
-            <div className="absolute right-10 bottom-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl z-0"></div>
+        {/* Conditionally render sections for unauthenticated users */}
+        {!user && (
+          <>
+            {/* Hero Section */}
+            <section className="relative py-20 md:py-28 overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 z-0"></div>
+              <div className="absolute right-0 top-0 w-1/3 h-full bg-gradient-to-l from-primary/20 to-transparent z-0 opacity-70"></div>
 
-            <div className="container mx-auto px-4 relative z-10">
-              <div className="max-w-3xl mx-auto text-center">
-                <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
-                  Showcase Your Projects.{' '}
-                  <span className="bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">Get Hired!</span>
-                </h1>
-                <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
-                  Join Ethiopia's premier platform for developers to showcase their work,
-                  connect with peers, and get discovered by potential employers.
-                </p>
+              {/* Decorative Elements */}
+              <div className="absolute left-10 top-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl z-0"></div>
+              <div className="absolute right-10 bottom-20 w-80 h-80 bg-primary/10 rounded-full blur-3xl z-0"></div>
 
-                <div className="flex flex-col md:flex-row justify-center gap-4 mb-12">
-                  <Link href="/projects/new">
-                    <Button size="lg" className="bg-primary text-white hover:bg-primary-dark w-full md:w-auto">
-                      <Code className="mr-2 h-5 w-5" />
-                      Post Your Project
-                    </Button>
-                  </Link>
-                  <Link href="/projects">
-                    <Button variant="outline" size="lg" className="border-primary  hover:bg-gray-700 text-white w-full md:w-auto">
-                      <Search className="mr-2 h-5 w-5" />
-                      Explore Projects
-                    </Button>
-                  </Link>
-                </div>-
+              <div className="container mx-auto px-4 relative z-10">
+                <div className="max-w-3xl mx-auto text-center">
+                  <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">
+                    Showcase Your Projects.{' '}
+                    <span className="bg-gradient-to-r from-white to-gray-200 bg-clip-text text-transparent">Get Hired!</span>
+                  </h1>
+                  <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+                    Join Ethiopia's premier platform for developers to showcase their work,
+                    connect with peers, and get discovered by potential employers.
+                  </p>
 
-                {/* Search Bar */}
-                {/* <div className="relative max-w-2xl mx-auto">
+                  <div className="flex flex-col md:flex-row justify-center gap-4 mb-12">
+                    <Link href="/projects/new">
+                      <Button size="lg" className="bg-primary text-white hover:bg-primary-dark w-full md:w-auto">
+                        <Code className="mr-2 h-5 w-5" />
+                        Post Your Project
+                      </Button>
+                    </Link>
+                    <Link href="/projects">
+                      <Button variant="outline" size="lg" className="border-primary  hover:bg-gray-700 text-white w-full md:w-auto">
+                        <Search className="mr-2 h-5 w-5" />
+                        Explore Projects
+                      </Button>
+                    </Link>
+                  </div>-
+
+                  {/* Search Bar */}
+                  {/* <div className="relative max-w-2xl mx-auto">
                   <div className="flex items-center bg-gray-800 rounded-full shadow-md p-1 pl-6 border border-gray-700">
                     <Search className="h-5 w-5 text-gray-400 mr-2" />
                     <input
@@ -204,87 +206,87 @@ export default function Home() {
                     </Button>
                   </div>
                 </div> */}
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
 
-          {/* Stats Section */}
-          <section className="py-10 bg-gray-800 border-y border-gray-700">
-            <div className="container mx-auto px-4">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {/* Stats Section */}
+            <section className="py-10 bg-gray-800 border-y border-gray-700">
+              <div className="container mx-auto px-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                  <div>
+                    <p className="text-3xl md:text-4xl font-bold text-primary mb-2">200+</p>
+                    <p className="text-gray-300">Projects Showcased</p>
+                  </div>
+                  <div>
+                    <p className="text-3xl md:text-4xl font-bold text-primary mb-2">500+</p>
+                    <p className="text-gray-300">Active Developers</p>
+                  </div>
+                  <div>
+                    <p className="text-3xl md:text-4xl font-bold text-primary mb-2">1,000+</p>
+                    <p className="text-gray-300">Community Members</p>
+                  </div>
+                  <div>
+                    <p className="text-3xl md:text-4xl font-bold text-primary mb-2">50+</p>
+                    <p className="text-gray-300">Hiring Companies</p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </>
+        )}
+
+        {/* Main Content */}
+        <section className="py-16">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col lg:flex-row gap-8">
+              {/* Projects Column */}
+              <div className="w-full lg:w-[70%] space-y-16">
+                {/* Week Featured Projects */}
                 <div>
-                  <p className="text-3xl md:text-4xl font-bold text-primary mb-2">200+</p>
-                  <p className="text-gray-300">Projects Showcased</p>
+                  <div className="flex items-center mb-8">
+                    {/* <TrendingUp className="h-6 w-6 text-primary mr-2" /> */}
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-100">This Week Featured Projects</h2>
+                  </div>
+                  <FeaturedProjects
+                    projects={trendingProjects}
+                    title=""
+                    showHeader={false}
+                    isLoading={isFeatureProjectsLoading}
+                  />
                 </div>
+
+                {/* Recent Projects */}
                 <div>
-                  <p className="text-3xl md:text-4xl font-bold text-primary mb-2">500+</p>
-                  <p className="text-gray-300">Active Developers</p>
-                </div>
-                <div>
-                  <p className="text-3xl md:text-4xl font-bold text-primary mb-2">1,000+</p>
-                  <p className="text-gray-300">Community Members</p>
-                </div>
-                <div>
-                  <p className="text-3xl md:text-4xl font-bold text-primary mb-2">50+</p>
-                  <p className="text-gray-300">Hiring Companies</p>
+                  <div className="flex items-center mb-8">
+                    {/* <TrendingUp className="h-6 w-6 text-primary mr-2" /> */}
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-100">Past Featured Projects</h2>
+                  </div>
+                  <FeaturedProjectsHistory />
                 </div>
               </div>
-            </div>
-          </section>
-        </>
-      )}
+              {/* Sidebar */}
+              <div className="w-full lg:w-[30%] space-y-8 sticky top-20 h-fit transition-all duration-300 ease-in-out">
+                {/* Featured Developers */}
+                <FeaturedDevelopers isLoading={isFeatureDeveloperLoading} developers={featuredDevelopers} />
 
-      {/* Main Content */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Projects Column */}
-            <div className="w-full lg:w-[70%] space-y-16">
-              {/* Week Featured Projects */}
-              <div>
-                <div className="flex items-center mb-8">
-                  {/* <TrendingUp className="h-6 w-6 text-primary mr-2" /> */}
-                  <h2 className="text-2xl md:text-3xl font-bold text-gray-100">This Week Featured Projects</h2>
+                {/* Join Community Card */}
+                <div className="bg-gradient-to-br from-primary/80 to-primary rounded-xl p-6 text-white shadow-lg">
+                  <h3 className="text-xl font-bold mb-3">Join Our Community</h3>
+                  <p className="mb-4 text-white/90">
+                    Connect with other Ethiopian developers, share ideas, and grow together.
+                  </p>
+                  <Button
+                    variant="secondary"
+                    className="w-full bg-white text-primary hover:bg-gray-100 transition-all duration-200 ease-in-out transform hover:scale-105 cursor-pointer"
+                    onClick={handleAddProject}
+                  >
+                    {user ? 'Add project' : 'Sign Up'}
+                  </Button>
                 </div>
-                <FeaturedProjects
-                  projects={trendingProjects}
-                  title=""
-                  showHeader={false}
-                  isLoading={isFeatureProjectsLoading}
-                />
-              </div>
 
-              {/* Recent Projects */}
-              <div>
-                <div className="flex items-center mb-8">
-                  {/* <TrendingUp className="h-6 w-6 text-primary mr-2" /> */}
-                  <h2 className="text-2xl md:text-3xl font-bold text-gray-100">Past Featured Projects</h2>
-                </div>
-                <FeaturedProjectsHistory />
-              </div>
-            </div>
-            {/* Sidebar */}
-            <div className="w-full lg:w-[30%] space-y-8 sticky top-20 h-fit transition-all duration-300 ease-in-out">
-              {/* Featured Developers */}
-              <FeaturedDevelopers isLoading={isFeatureDeveloperLoading} developers={featuredDevelopers} />
-
-              {/* Join Community Card */}
-              <div className="bg-gradient-to-br from-primary/80 to-primary rounded-xl p-6 text-white shadow-lg">
-                <h3 className="text-xl font-bold mb-3">Join Our Community</h3>
-                <p className="mb-4 text-white/90">
-                  Connect with other Ethiopian developers, share ideas, and grow together.
-                </p>
-                <Button
-                  variant="secondary"
-                  className="w-full bg-white text-primary hover:bg-gray-100 transition-all duration-200 ease-in-out transform hover:scale-105 cursor-pointer"
-                  onClick={handleAddProject}
-                >
-                  {user ? 'Add project' : 'Sign Up'}
-                </Button>
-              </div>
-
-              {/* How It Works */}
-              {/* <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-sm">
+                {/* How It Works */}
+                {/* <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-sm">
                 <h3 className="text-xl font-bold mb-4 text-gray-100">How It Works</h3>
                 <div className="space-y-4">
                   <div className="flex items-start">
@@ -310,10 +312,12 @@ export default function Home() {
                   </div>
                 </div>
               </div> */}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
+
     </div>
   );
 }

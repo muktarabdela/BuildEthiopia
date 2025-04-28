@@ -30,7 +30,7 @@ export default function ProfileHeader({ user, isOwner, about }) {
                         aria-label="Edit profile"
                     >
                         <Edit className="h-4 w-4" />
-                        <span>Edit Profile</span>
+                        <span className="hidden md:inline">Edit Profile</span>
                     </Button>
                 </Link>
             )}

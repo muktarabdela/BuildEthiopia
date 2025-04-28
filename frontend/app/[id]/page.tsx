@@ -164,6 +164,7 @@ export default function ProfilePage() {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [showProfileCompletionAlert, setShowProfileCompletionAlert] = useState<boolean>(false);
     const [isGuestMode, setIsGuestMode] = useState<boolean>(false);
+    const [isGuestModeLoading, setIsGuestModeLoading] = useState<boolean>(false);
 
     useEffect(() => {
         async function getProfile() {
@@ -215,6 +216,14 @@ export default function ProfilePage() {
         getProfile();
     }, [params, user, session, setIsLoading]);
 
+    const handleGuestModeToggle = async () => {
+        setIsGuestModeLoading(true);
+        // Add a small delay for smooth transition
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setIsGuestMode(!isGuestMode);
+        setIsGuestModeLoading(false);
+    };
+
     if (!profile) return (
 
         <div className="flex items-center justify-center min-h-[60vh]">
@@ -239,6 +248,14 @@ export default function ProfilePage() {
     };
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+            {isGuestModeLoading && (
+                <div className="fixed inset-0 z-50 bg-gray-900/90 flex items-center justify-center">
+                    <div className="text-center">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                        <p className="text-muted-foreground">Switching view mode...</p>
+                    </div>
+                </div>
+            )}
             {showProfileCompletionAlert && (
                 <div className="bg-yellow-500/20 border-l-4 border-yellow-500 text-white p-4 mb-8">
                     <div className="flex items-center justify-between max-w-7xl mx-auto">
@@ -259,7 +276,7 @@ export default function ProfilePage() {
             {isOwner && (
                 <div className="fixed bottom-4 right-4 z-50">
                     <Button
-                        onClick={() => setIsGuestMode(!isGuestMode)}
+                        onClick={handleGuestModeToggle}
                         className="bg-indigo-600 hover:bg-indigo-700 text-white"
                     >
                         {isGuestMode ? 'Exit Guest Mode' : 'View in Guest Mode'}

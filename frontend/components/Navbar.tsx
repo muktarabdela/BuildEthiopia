@@ -96,11 +96,14 @@ export function Navbar() {
             router.push('/login');
             return;
         }
+
         const complete = await requireProfileCompletion();
-        if (complete) {
-            router.push('/projects/new');
+        if (!complete) {
+            return; // If profile is not complete, dialog will show automatically
         }
-        // If not complete, dialog will show automatically
+
+        // Only navigate if user exists and profile is complete
+        router.push('/projects/new');
     };
 
     // if (isLoading) {
@@ -198,17 +201,20 @@ export function Navbar() {
                             </div>
                         </Link>
                         {profile?.role === 'developer' && (
-                            <Button
-                                onClick={handleAddProject}
+                            <Link
+                                href="/projects/new"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleAddProject();
+                                }}
                                 className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center space-x-1 cursor-pointer ${isActive('/projects/new')
                                     ? 'text-primary bg-gray-800'
                                     : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
                                     }`}
-                                variant="ghost"
                             >
-                                <FolderPlus className="h-4 w-4 -mr-[0.1em]" />
+                                <FolderPlus className="h-4 w-4 " />
                                 <span>Post Project</span>
-                            </Button>
+                            </Link>
                         )}
                         <Link
                             href="/developers"
@@ -243,7 +249,10 @@ export function Navbar() {
                                 {/* Dropdown Menu for Profile, Settings, and Logout */}
                                 <DropdownMenu.Root>
                                     <DropdownMenu.Trigger asChild>
-                                        <button className="hidden md:flex items-center space-x-2 p-2 text-gray-300 hover:text-primary rounded-full hover:bg-gray-700 text-white focus:outline-none">
+                                        <button
+                                            className="hidden md:flex items-center space-x-2 p-2 text-gray-300 hover:text-primary rounded-full hover:bg-gray-700 text-white focus:outline-none"
+                                            aria-label="Open user menu"
+                                        >
                                             {user?.user_metadata?.avatar_url ? (
                                                 <Image
                                                     src={user?.user_metadata?.avatar_url}
@@ -257,28 +266,58 @@ export function Navbar() {
                                             )}
                                         </button>
                                     </DropdownMenu.Trigger>
-                                    <DropdownMenu.Content className="min-w-[200px] bg-gray-800 border border-gray-700 rounded-md shadow-lg mt-2">
-                                        <DropdownMenu.Item className="p-2 text-gray-300 hover:bg-gray-700 hover:text-primary cursor-pointer">
-                                            <Link href={`/${profile?.username}`} className="flex items-center space-x-2">
-                                                <UserRound className="h-4 w-4" />
-                                                <span>Profile</span>
-                                            </Link>
-                                        </DropdownMenu.Item>
-                                        <DropdownMenu.Item className="p-2 text-gray-300 hover:bg-gray-700 hover:text-primary cursor-pointer">
-                                            <Link href="/settings" className="flex items-center space-x-2">
-                                                <Settings className="h-4 w-4" />
-                                                <span>Settings</span>
-                                            </Link>
-                                        </DropdownMenu.Item>
-                                        <DropdownMenu.Separator className="h-px bg-gray-700 my-1" />
-                                        <DropdownMenu.Item
-                                            className="p-2 text-gray-300 hover:bg-gray-700 hover:text-primary cursor-pointer"
-                                            onClick={signOut}
-                                        >
-                                            <div className="flex items-center space-x-2">
-                                                <LogOut className="h-4 w-4" />
-                                                <span>Log Out</span>
+                                    <DropdownMenu.Content
+                                        className="min-w-[240px] bg-gray-800 border border-gray-700 rounded-xl shadow-2xl mt-2 p-2"
+                                        sideOffset={8}
+                                        align="end"
+                                    >
+                                        {/* User Info Header */}
+                                        <div className="flex items-center space-x-3 px-2 py-3 border-b border-gray-700 mb-2">
+                                            {user?.user_metadata?.avatar_url ? (
+                                                <Image
+                                                    src={user?.user_metadata?.avatar_url}
+                                                    alt="User Avatar"
+                                                    width={40}
+                                                    height={40}
+                                                    className="w-10 h-10 rounded-full object-cover"
+                                                />
+                                            ) : (
+                                                <UserRound className="h-8 w-8 text-primary" />
+                                            )}
+                                            <div>
+                                                <div className="text-white font-semibold text-base truncate">
+                                                    {profile?.full_name || profile?.username || "User"}
+                                                </div>
+                                                <div className="text-xs text-gray-400 truncate">
+                                                    {user?.email}
+                                                </div>
                                             </div>
+                                        </div>
+                                        {/* Menu Items */}
+                                        <DropdownMenu.Item
+                                            className="flex items-center gap-3 px-3 py-3 rounded-lg text-gray-200 hover:bg-gray-700 hover:text-primary focus:bg-gray-700 focus:text-primary transition-colors cursor-pointer"
+                                            onSelect={() => { router.push(`/${profile?.username}`); closeMobileMenu(); }}
+                                            aria-label="Go to profile"
+                                        >
+                                            <UserRound className="h-5 w-5" />
+                                            <span>Profile</span>
+                                        </DropdownMenu.Item>
+                                        <DropdownMenu.Item
+                                            className="flex items-center gap-3 px-3 py-3 rounded-lg text-gray-200 hover:bg-gray-700 hover:text-primary focus:bg-gray-700 focus:text-primary transition-colors cursor-pointer"
+                                            onSelect={() => { router.push('/settings'); closeMobileMenu(); }}
+                                            aria-label="Go to settings"
+                                        >
+                                            <Settings className="h-5 w-5" />
+                                            <span>Settings</span>
+                                        </DropdownMenu.Item>
+                                        <DropdownMenu.Separator className="my-2 h-px bg-gray-700" />
+                                        <DropdownMenu.Item
+                                            className="flex items-center gap-3 px-3 py-3 rounded-lg text-red-400 hover:bg-gray-700 hover:text-red-500 focus:bg-gray-700 focus:text-red-500 transition-colors cursor-pointer"
+                                            onClick={signOut}
+                                            aria-label="Log out"
+                                        >
+                                            <LogOut className="h-5 w-5" />
+                                            <span>Log Out</span>
                                         </DropdownMenu.Item>
                                     </DropdownMenu.Content>
                                 </DropdownMenu.Root>
@@ -352,17 +391,20 @@ export function Navbar() {
                             </div>
                         </Link>
                         {profile?.role === 'developer' && (
-                            <button
-                                onClick={() => { handleAddProject(); closeMobileMenu(); }}
-                                className={`block px-3 py-2 rounded-md text-base font-medium w-full text-left transition-all duration-200 ${isActive('/projects/new')
+                            <Link
+                                href="/projects/new"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    handleAddProject();
+                                }}
+                                className={`px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 flex items-center space-x-1 cursor-pointer ${isActive('/projects/new')
                                     ? 'text-primary bg-gray-800'
                                     : 'text-gray-300 hover:text-primary hover:bg-gray-700 text-white'
-                                    } flex items-center space-x-2`}
-                                type="button"
+                                    }`}
                             >
-                                <Code className="h-5 w-5" />
+                                <FolderPlus className="h-4 w-4 " />
                                 <span>Post Project</span>
-                            </button>
+                            </Link>
                         )}
                         <Link
                             href="/developers"
@@ -382,7 +424,10 @@ export function Navbar() {
                             <>
                                 <DropdownMenu.Root>
                                     <DropdownMenu.Trigger asChild>
-                                        <button className="block px-3 py-2 rounded-md text-base font-medium w-full text-left transition-all duration-200 text-gray-300 hover:text-primary hover:bg-gray-700 text-white focus:outline-none">
+                                        <button
+                                            className="block px-3 py-2 rounded-md text-base font-medium w-full text-left transition-all duration-200 text-gray-300 hover:text-primary hover:bg-gray-700 text-white focus:outline-none"
+                                            aria-label="Open user menu"
+                                        >
                                             <div className="flex items-center space-x-2">
                                                 {user?.user_metadata?.avatar_url ? (
                                                     <Image
@@ -399,28 +444,58 @@ export function Navbar() {
                                             </div>
                                         </button>
                                     </DropdownMenu.Trigger>
-                                    <DropdownMenu.Content className="min-w-[200px] bg-gray-800 border border-gray-700 rounded-md shadow-lg mt-2">
-                                        <DropdownMenu.Item className="p-2 text-gray-300 hover:bg-gray-700 hover:text-primary cursor-pointer">
-                                            <Link href={`/${profile?.username}`} className="flex items-center space-x-2">
-                                                <UserRound className="h-4 w-4" />
-                                                <span>Profile</span>
-                                            </Link>
-                                        </DropdownMenu.Item>
-                                        <DropdownMenu.Item className="p-2 text-gray-300 hover:bg-gray-700 hover:text-primary cursor-pointer">
-                                            <Link href="/settings" className="flex items-center space-x-2">
-                                                <Settings className="h-4 w-4" />
-                                                <span>Settings</span>
-                                            </Link>
-                                        </DropdownMenu.Item>
-                                        <DropdownMenu.Separator className="h-px bg-gray-700 my-1" />
-                                        <DropdownMenu.Item
-                                            className="p-2 text-gray-300 hover:bg-gray-700 hover:text-primary cursor-pointer"
-                                            onClick={signOut}
-                                        >
-                                            <div className="flex items-center space-x-2">
-                                                <LogOut className="h-4 w-4" />
-                                                <span>Log Out</span>
+                                    <DropdownMenu.Content
+                                        className="min-w-[240px] bg-gray-800 border border-gray-700 rounded-xl shadow-2xl mt-2 p-2"
+                                        sideOffset={8}
+                                        align="end"
+                                    >
+                                        {/* User Info Header */}
+                                        <div className="flex items-center space-x-3 px-2 py-3 border-b border-gray-700 mb-2">
+                                            {user?.user_metadata?.avatar_url ? (
+                                                <Image
+                                                    src={user?.user_metadata?.avatar_url}
+                                                    alt="User Avatar"
+                                                    width={40}
+                                                    height={40}
+                                                    className="w-10 h-10 rounded-full object-cover"
+                                                />
+                                            ) : (
+                                                <UserRound className="h-8 w-8 text-primary" />
+                                            )}
+                                            <div>
+                                                <div className="text-white font-semibold text-base truncate">
+                                                    {profile?.full_name || profile?.username || "User"}
+                                                </div>
+                                                <div className="text-xs text-gray-400 truncate">
+                                                    {user?.email}
+                                                </div>
                                             </div>
+                                        </div>
+                                        {/* Menu Items */}
+                                        <DropdownMenu.Item
+                                            className="flex items-center gap-3 px-3 py-3 rounded-lg text-gray-200 hover:bg-gray-700 hover:text-primary focus:bg-gray-700 focus:text-primary transition-colors cursor-pointer"
+                                            onSelect={() => { router.push(`/${profile?.username}`); closeMobileMenu(); }}
+                                            aria-label="Go to profile"
+                                        >
+                                            <UserRound className="h-5 w-5" />
+                                            <span>Profile</span>
+                                        </DropdownMenu.Item>
+                                        <DropdownMenu.Item
+                                            className="flex items-center gap-3 px-3 py-3 rounded-lg text-gray-200 hover:bg-gray-700 hover:text-primary focus:bg-gray-700 focus:text-primary transition-colors cursor-pointer"
+                                            onSelect={() => { router.push('/settings'); closeMobileMenu(); }}
+                                            aria-label="Go to settings"
+                                        >
+                                            <Settings className="h-5 w-5" />
+                                            <span>Settings</span>
+                                        </DropdownMenu.Item>
+                                        <DropdownMenu.Separator className="my-2 h-px bg-gray-700" />
+                                        <DropdownMenu.Item
+                                            className="flex items-center gap-3 px-3 py-3 rounded-lg text-red-400 hover:bg-gray-700 hover:text-red-500 focus:bg-gray-700 focus:text-red-500 transition-colors cursor-pointer"
+                                            onClick={signOut}
+                                            aria-label="Log out"
+                                        >
+                                            <LogOut className="h-5 w-5" />
+                                            <span>Log Out</span>
                                         </DropdownMenu.Item>
                                     </DropdownMenu.Content>
                                 </DropdownMenu.Root>

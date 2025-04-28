@@ -163,6 +163,7 @@ export default function ProfilePage() {
     // const { setIsLoading } = useLoading();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [showProfileCompletionAlert, setShowProfileCompletionAlert] = useState<boolean>(false);
+    const [isGuestMode, setIsGuestMode] = useState<boolean>(false);
 
     useEffect(() => {
         async function getProfile() {
@@ -255,19 +256,29 @@ export default function ProfilePage() {
                     </div>
                 </div>
             )}
-            <main className="container mx-auto py-8 px-4 md:px-6">
+            {isOwner && (
+                <div className="fixed bottom-4 right-4 z-50">
+                    <Button
+                        onClick={() => setIsGuestMode(!isGuestMode)}
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                    >
+                        {isGuestMode ? 'Exit Guest Mode' : 'View in Guest Mode'}
+                    </Button>
+                </div>
+            )}
+            <main className="container py-8 px-4 md:px-6 max-w-7xl mx-auto">
                 <div className="grid gap-8">
                     {isLoading ? (
                         <SkeletonProfileHeader />
                     ) : (
-                        profile && <ProfileHeader user={profile} isOwner={isOwner} about={about} />
+                        profile && <ProfileHeader user={profile} isOwner={isGuestMode ? false : isOwner} about={about} />
                     )}
                     <div className="grid gap-8 md:grid-cols-3">
                         <div className="md:col-span-2">
                             {isLoading ? (
                                 <SkeletonPortfolioSection />
                             ) : (
-                                profile && <PortfolioSection user={profile} about={about} upvotedProjects={upvotedProjects} isOwner={isOwner} />
+                                profile && <PortfolioSection user={profile} about={about} upvotedProjects={upvotedProjects} isOwner={isGuestMode ? false : isOwner} />
                             )}
                         </div>
                         <div className="space-y-8">
@@ -276,7 +287,7 @@ export default function ProfilePage() {
                             ) : (
                                 profile && <AchievementsSection user={profile} />
                             )}
-                            {profile && isOwner && <SettingsSection user={profile} isOpen={false} onClose={() => { }} />}
+                            {profile && isOwner && !isGuestMode && <SettingsSection user={profile} isOpen={false} onClose={() => { }} />}
                         </div>
                     </div>
                 </div>

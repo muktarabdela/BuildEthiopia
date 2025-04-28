@@ -304,7 +304,7 @@ export function Navbar() {
                                         </DropdownMenu.Item>
                                         <DropdownMenu.Item
                                             className="flex items-center gap-3 px-3 py-3 rounded-lg text-gray-200 hover:bg-gray-700 hover:text-primary focus:bg-gray-700 focus:text-primary transition-colors cursor-pointer"
-                                            onSelect={() => { router.push('/settings'); closeMobileMenu(); }}
+                                            onSelect={() => { router.push(`/${profile?.username}/setting`); closeMobileMenu(); }}
                                             aria-label="Go to settings"
                                         >
                                             <Settings className="h-5 w-5" />
@@ -482,7 +482,7 @@ export function Navbar() {
                                         </DropdownMenu.Item>
                                         <DropdownMenu.Item
                                             className="flex items-center gap-3 px-3 py-3 rounded-lg text-gray-200 hover:bg-gray-700 hover:text-primary focus:bg-gray-700 focus:text-primary transition-colors cursor-pointer"
-                                            onSelect={() => { router.push('/settings'); closeMobileMenu(); }}
+                                            onSelect={() => { router.push(`/${profile?.username}/setting`); closeMobileMenu(); }}
                                             aria-label="Go to settings"
                                         >
                                             <Settings className="h-5 w-5" />

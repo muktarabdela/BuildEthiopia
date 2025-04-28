@@ -163,6 +163,8 @@ export default function ProfilePage() {
     // const { setIsLoading } = useLoading();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [showProfileCompletionAlert, setShowProfileCompletionAlert] = useState<boolean>(false);
+    const [isGuestMode, setIsGuestMode] = useState<boolean>(false);
+    const [isGuestModeLoading, setIsGuestModeLoading] = useState<boolean>(false);
 
     useEffect(() => {
         async function getProfile() {
@@ -178,7 +180,7 @@ export default function ProfilePage() {
                     return;
                 }
 
-                console.log("profile data from ", response.data)
+                // console.log("profile data from ", response.data)
                 const profile = response.data.profile;
                 const about = response.data.about;
                 setAbout(about);
@@ -214,6 +216,14 @@ export default function ProfilePage() {
         getProfile();
     }, [params, user, session, setIsLoading]);
 
+    const handleGuestModeToggle = async () => {
+        setIsGuestModeLoading(true);
+        // Add a small delay for smooth transition
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setIsGuestMode(!isGuestMode);
+        setIsGuestModeLoading(false);
+    };
+
     if (!profile) return (
 
         <div className="flex items-center justify-center min-h-[60vh]">
@@ -238,6 +248,14 @@ export default function ProfilePage() {
     };
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+            {isGuestModeLoading && (
+                <div className="fixed inset-0 z-50 bg-gray-900/90 flex items-center justify-center">
+                    <div className="text-center">
+                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+                        <p className="text-muted-foreground">Switching view mode...</p>
+                    </div>
+                </div>
+            )}
             {showProfileCompletionAlert && (
                 <div className="bg-yellow-500/20 border-l-4 border-yellow-500 text-white p-4 mb-8">
                     <div className="flex items-center justify-between max-w-7xl mx-auto">
@@ -255,19 +273,29 @@ export default function ProfilePage() {
                     </div>
                 </div>
             )}
-            <main className="container mx-auto py-8 px-4 md:px-6">
+            {isOwner && (
+                <div className="fixed bottom-4 right-4 z-50">
+                    <Button
+                        onClick={handleGuestModeToggle}
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                    >
+                        {isGuestMode ? 'Exit Guest Mode' : 'View in Guest Mode'}
+                    </Button>
+                </div>
+            )}
+            <main className="container py-8 px-4 md:px-6 max-w-7xl mx-auto">
                 <div className="grid gap-8">
                     {isLoading ? (
                         <SkeletonProfileHeader />
                     ) : (
-                        profile && <ProfileHeader user={profile} isOwner={isOwner} about={about} />
+                        profile && <ProfileHeader user={profile} isOwner={isGuestMode ? false : isOwner} about={about} />
                     )}
                     <div className="grid gap-8 md:grid-cols-3">
                         <div className="md:col-span-2">
                             {isLoading ? (
                                 <SkeletonPortfolioSection />
                             ) : (
-                                profile && <PortfolioSection user={profile} about={about} upvotedProjects={upvotedProjects} isOwner={isOwner} />
+                                profile && <PortfolioSection user={profile} about={about} upvotedProjects={upvotedProjects} isOwner={isGuestMode ? false : isOwner} />
                             )}
                         </div>
                         <div className="space-y-8">
@@ -276,7 +304,7 @@ export default function ProfilePage() {
                             ) : (
                                 profile && <AchievementsSection user={profile} />
                             )}
-                            {profile && isOwner && <SettingsSection user={profile} isOpen={false} onClose={() => { }} />}
+                            {profile && isOwner && !isGuestMode && <SettingsSection user={profile} isOpen={false} onClose={() => { }} />}
                         </div>
                     </div>
                 </div>

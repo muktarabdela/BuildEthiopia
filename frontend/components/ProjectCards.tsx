@@ -62,9 +62,9 @@ export default function ProjectCards({ project }: ProjectCardProps) {
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                 <CardHeader className="p-4 relative z-10">
-                    <div className="flex items-start justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                            <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-gray-700 bg-gray-800">
+                    <div className="flex flex-col gap-4">
+                        <div className="flex items-center gap-4">
+                            <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-gray-700 bg-gray-800">
                                 <Image
                                     src={project.logo_url || fallbackImage}
                                     alt={`${project.title} logo`}
@@ -80,7 +80,7 @@ export default function ProjectCards({ project }: ProjectCardProps) {
                             </CardTitle>
                         </div>
                         {project.is_open_source && (
-                            <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20 transition-colors">
+                            <Badge variant="secondary" className="w-fit bg-primary/10 text-primary hover:bg-primary/20 transition-colors mt-1">
                                 <Code className="w-3 h-3 mr-1" /> Open Source
                             </Badge>
                         )}

@@ -384,7 +384,7 @@ export default function ProjectsPage() {
                         animate="show"
                     >
                         {isLoading ? (
-                            Array.from({ length: 6 }).map((_, i) => <ProjectCardSkeleton key={i} />)
+                            Array.from({ length: 4 }).map((_, i) => <ProjectCardSkeleton key={i} />)
                         ) : projects.length > 0 ? (
                             projects.map((project) => (
                                 <ProjectCards key={project.id} project={project} />
@@ -412,22 +412,22 @@ export default function ProjectsPage() {
 // --- Skeleton Component for Project Card ---
 function ProjectCardSkeleton() {
     return (
-        <div className="bg-card border rounded-lg overflow-hidden p-4 space-y-3">
+        <div className="bg-gray-900 border border-gray-800 rounded-lg overflow-hidden p-4 space-y-3">
             <div className="flex items-center gap-3">
-                <Skeleton className="bg-gray-700 h-10 w-10 rounded-full" />
-                <Skeleton className="bg-gray-700 h-5 w-3/5" />
+                <Skeleton className="bg-gray-800 h-10 w-10 rounded-full" />
+                <Skeleton className="bg-gray-800 h-5 w-3/5" />
             </div>
-            <Skeleton className="bg-gray-700 h-4 w-full" />
-            <Skeleton className="bg-gray-700 h-4 w-4/5" />
-            <Skeleton className="bg-gray-700 h-16 w-full rounded" /> {/* Image Placeholder */}
+            <Skeleton className="bg-gray-800 h-4 w-full" />
+            <Skeleton className="bg-gray-800 h-4 w-4/5" />
+            <Skeleton className="bg-gray-800 h-16 w-full rounded" /> {/* Image Placeholder */}
             <div className="flex gap-2">
-                <Skeleton className="bg-gray-700 h-5 w-12 rounded-full" />
-                <Skeleton className="bg-gray-700 h-5 w-16 rounded-full" />
-                <Skeleton className="bg-gray-700 h-5 w-14 rounded-full" />
+                <Skeleton className="bg-gray-800 h-5 w-12 rounded-full" />
+                <Skeleton className="bg-gray-800 h-5 w-16 rounded-full" />
+                <Skeleton className="bg-gray-800 h-5 w-14 rounded-full" />
             </div>
             <div className="flex justify-between items-center pt-2">
-                <Skeleton className="bg-gray-700 h-5 w-20" />
-                <Skeleton className="bg-gray-700 h-8 w-24 rounded" />
+                <Skeleton className="bg-gray-800 h-5 w-20" />
+                <Skeleton className="bg-gray-800 h-8 w-24 rounded" />
             </div>
         </div>
     )

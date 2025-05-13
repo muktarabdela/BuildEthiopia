@@ -17,7 +17,7 @@ export default function ProjectSidebar({ developer }) {
         <div className="space-y-8">
             {/* Developer Info */}
             <Card className="overflow-hidden bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 hover:border-gray-700/50 transition-all duration-300 sticky top-4">
-                <CardHeader className="bg-gray0/30 rounded-md border-b border-gray-700/30">
+                <CardHeader className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-b border-indigo-500/20 px-6 py-4 -mt-6">
                     <CardTitle className="flex items-center text-gray-100 text-lg">
                         <User className="h-5 w-5 text-primary mr-2 " />
                         About the Developer
@@ -95,7 +95,7 @@ export default function ProjectSidebar({ developer }) {
             </Card>
 
             {/* Related Projects Card */}
-            <Card className="overflow-hidden bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 hover:border-gray-700/50 transition-all duration-300">
+            {/* <Card className="overflow-hidden bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 hover:border-gray-700/50 transition-all duration-300">
                 <CardHeader className="bg-gray-800/30 border-b border-gray-700/30">
                     <CardTitle className="flex items-center text-gray-100">
                         <User className="h-5 w-5 text-primary mr-2" />
@@ -104,7 +104,6 @@ export default function ProjectSidebar({ developer }) {
                 </CardHeader>
                 <CardContent className="pt-6">
                     <div className="space-y-4">
-                        {/* This would be populated with actual data in a real implementation */}
                         <div className="flex items-start gap-3 group">
                             <div className="w-12 h-12 rounded-md bg-gray-700 text-white flex-shrink-0 overflow-hidden">
                                 <div className="w-full h-full flex items-center justify-center bg-primary/10 text-primary">P</div>
@@ -134,7 +133,7 @@ export default function ProjectSidebar({ developer }) {
                         </div>
                     </div>
                 </CardContent>
-            </Card>
+            </Card> */}
         </div>
     )
 }

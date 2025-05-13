@@ -27,7 +27,7 @@ export default function ProjectHero({ project }) {
                         <div className="flex items-center space-x-2 mb-4">
                             <Link href="/projects" className="text-white/80 hover:text-white text-sm font-medium">
                                 Projects
-                            </Link>
+                            </Link>~
                             <span className="text-white/60">/</span>
                             <span className="text-white/80 text-sm font-medium truncate">{project.title}</span>
                         </div>

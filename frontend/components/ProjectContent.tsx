@@ -26,8 +26,8 @@ export default function ProjectContent({ project }) {
         <div className="md:col-span-2 space-y-8">
             {/* Project Description */}
             <Card className="overflow-hidden bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 hover:border-gray-700/50 transition-all duration-300">
-                <CardHeader className="bg-/30 border-b rounded-md border-gray-300/30 ">
-                    <CardTitle className="flex items-center text-gray-100 text-lg">
+                <CardHeader className="bg-/30 rounded-md border bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-b border-indigo-500/20 px-6 py-4 -mt-6">
+                    <CardTitle className="flex items-center text-gray-100 text-lg ">
                         <Layers className="h-5 w-5 text-primary mr-2" />
                         Project Overview
                     </CardTitle>
@@ -51,7 +51,7 @@ export default function ProjectContent({ project }) {
 
             {/* Tech Stack */}
             <Card className="overflow-hidden bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 hover:border-gray-700/50 transition-all duration-300">
-                <CardHeader className="bg-0/30 border-b rounded-md border-gray-700/30">
+                <CardHeader className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-b border-indigo-500/20 px-6 py-4 -mt-6">
                     <CardTitle className="flex items-center text-gray-100 text-lg">
                         <Code className="h-5 w-5 text-primary mr-2 " />
                         Tech Stack
@@ -88,7 +88,7 @@ export default function ProjectContent({ project }) {
 
             {/* Key Features */}
             <Card className="overflow-hidden bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 hover:border-gray-700/50 transition-all duration-300">
-                <CardHeader className="bg-gray00/30 rounded-md border-b border-gray-700/30">
+                <CardHeader className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-b border-indigo-500/20 px-6 py-4 -mt-6">
                     <CardTitle className="flex items-center text-gray-100 text-lg">
                         <CheckCircle className="h-5 w-5 text-primary mr-2" />
                         Key Features
@@ -175,7 +175,7 @@ function ProjectMediaGallery({ project }) {
     return (
         <>
             <Card className="overflow-hidden bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 hover:border-gray-700/50 transition-all duration-300">
-                <CardHeader className="bg-gray-800/30 border-b rounded-md border-gray-700/30">
+                <CardHeader className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-b border-indigo-500/20 px-6 py-4 -mt-6">
                     <CardTitle className="flex items-center text-gray-100 text-lg">
                         <Video className="h-5 w-5 text-primary mr-2" />
                         Project Gallery

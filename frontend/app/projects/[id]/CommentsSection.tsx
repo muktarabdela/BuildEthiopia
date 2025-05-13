@@ -38,7 +38,7 @@ export default function CommentsSection({ projectId, initialComments = [], comme
 
     return (
         <Card className="overflow-hidden bg-gray-800/50 backdrop-blur-sm border border-gray-700/30 hover:border-gray-700/50 transition-all duration-300">
-            <CardHeader className="bg- border-b rounded-md border-gray-700/30">
+            <CardHeader className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 border-b border-indigo-500/20 px-6 py-4 -mt-6">
                 <div className="flex items-center justify-between">
                     <CardTitle className="flex items-center text-gray-100 text-lg">
                         <MessageSquare className="h-5 w-5 text-primary mr-2" />
@@ -128,7 +128,7 @@ function CommentItem({ comment }: CommentItemProps) {
 
                     {/* Comment Actions */}
                     <div className="flex items-center gap-4 pt-2">
-                        <Button
+                        {/* <Button
                             variant="ghost"
                             size="sm"
                             className={`h-8 px-2 gap-1.5 text-sm ${liked ? "text-primary" : "text-gray-400 hover:text-gray-200"}`}
@@ -136,7 +136,7 @@ function CommentItem({ comment }: CommentItemProps) {
                         >
                             <Heart className={`h-4 w-4 ${liked ? "fill-primary" : ""}`} />
                             <span>{likeCount}</span>
-                        </Button>
+                        </Button> */}
 
                         {/* <Button variant="ghost" size="sm" className="h-8 px-2 gap-1.5 text-sm text-gray-400 hover:text-gray-200">
                             <Reply className="h-4 w-4" />

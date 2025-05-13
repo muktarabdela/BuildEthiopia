@@ -24,10 +24,27 @@ export default function AchievementsSection({ user }) {
                 <CardTitle className="text-white">Achievements</CardTitle>
             </CardHeader>
             <CardContent>
+                {/* Statistics Section */}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                    <div className="flex flex-col items-center p-4 bg-gray-700 text-white rounded-lg">
+                        <span className="text-lg font-semibold">{user.projects?.length || 0}</span>
+                        <span className="text-sm text-gray-300">Projects</span>
+                    </div>
+                    <div className="flex flex-col items-center p-4 bg-gray-700 text-white rounded-lg">
+                        <span className="text-lg font-semibold">{user.stats?.totalUpvotes || 0}</span>
+                        <span className="text-sm text-gray-300">Upvotes</span>
+                    </div>
+                    <div className="flex flex-col items-center p-4 bg-gray-700 text-white rounded-lg">
+                        <span className="text-lg font-semibold">{user.stats?.totalComments || 0}</span>
+                        <span className="text-sm text-gray-300">Comments</span>
+                    </div>
+                </div>
+
+                {/* Badges Section */}
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {user.badges.map(badge => (
                         <div key={badge.id} className="flex flex-col items-center p-4 bg-gray-700 text-white rounded-lg">
-                            <Trophy className="h-8 w-8 text-yellow-400" />
+                            {getIconComponent(badge.icon)}
                             <span className="mt-2 text-sm text-center text-white">{badge.name}</span>
                         </div>
                     ))}
@@ -37,34 +54,30 @@ export default function AchievementsSection({ user }) {
     )
 }
 
-
-
-
 export function SkeletonAchievementsSection() {
     return (
-        // Use standard muted background and border for the skeleton card
         <Card className="bg-muted border border-gray-700">
             <CardHeader>
                 <CardTitle>
-                    {/* Skeleton for the "Achievements" title */}
                     <Skeleton className="bg-gray-700 h-6 w-36 rounded-md" />
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                {/* Maintain the grid structure */}
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {/* Repeat skeleton items to fill the grid visually */}
-                    {[...Array(6)].map((_, i) => ( // Generate 6 placeholders
-                        <div
-                            key={i}
-                            // Use background for inner items, add subtle border
-                            className="flex flex-col items-center p-4 bg-background border border-gray-700 rounded-lg space-y-2" // Added space-y-2 for spacing
-                        >
-                            {/* Skeleton for the Icon (Trophy/Award/Heart) */}
-                            <Skeleton className="bg-gray-700 h-8 w-8 rounded-full" />
+                {/* Statistics Section Skeleton */}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+                    {[...Array(3)].map((_, i) => (
+                        <div key={i} className="flex flex-col items-center p-4 bg-background border border-gray-700 rounded-lg space-y-2">
+                            <Skeleton className="bg-gray-700 h-6 w-12 rounded-md" />
+                            <Skeleton className="bg-gray-700 h-4 w-20 rounded-md" />
+                        </div>
+                    ))}
+                </div>
 
-                            {/* Skeleton for the Badge Name */}
-                            {/* Use w-full or a fixed width, text-center is handled by items-center */}
+                {/* Badges Section Skeleton */}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {[...Array(6)].map((_, i) => (
+                        <div key={i} className="flex flex-col items-center p-4 bg-background border border-gray-700 rounded-lg space-y-2">
+                            <Skeleton className="bg-gray-700 h-8 w-8 rounded-full" />
                             <Skeleton className="bg-gray-700 h-4 w-20 rounded-md" />
                         </div>
                     ))}

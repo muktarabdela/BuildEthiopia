@@ -39,7 +39,7 @@ export default function RootLayout({ children, }: { children: React.ReactNode; }
       <body
         className={`${inter.variable} ${robotoMono.variable} antialiased bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen flex flex-col`}
       >
-        <div className="container max-w-7xl mx-auto">
+        <div className="container o">
 
           <LoadingProvider>
             {/* <LoadingOverlay /> */}

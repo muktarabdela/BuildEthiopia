@@ -10,7 +10,6 @@ import { PublicProfileForm } from "@/components/setting/PublicProfileForm"; // E
 import { AboutMeForm } from "@/components/setting/AboutMeForm";       // Ensure correct path
 import { LinksContactForm } from "@/components/setting/LinksContactForm"; // Ensure correct path
 import { useAuth } from "@/components/AuthProvider";
-import { notFound } from "next/navigation";
 
 // Define the props for the Server Component to receive params
 interface SettingsPageProps {
@@ -104,68 +103,119 @@ export default function SettingsPage() {
 
     // Data is valid, proceed to render
     return (
-        <div className="container mx-auto py-10 px-4 md:px-0 max-w-4xl">
-            <Card>
-                <CardHeader className="">
-                    <CardTitle className="text-2xl font-bold tracking-tight flex items-center gap-2">
-                        <Settings className="w-6 h-6" />
-                        Profile Settings
-                    </CardTitle>
-                    <CardDescription className="text-muted-foreground mt-2">
-                        Manage and customize your profile information, preferences, and visibility settings.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <Tabs defaultValue="public-profile" className="flex flex-col md:flex-row md:gap-8">
-                        {/* Use flex-col for vertical layout on medium+ screens */}
-                        <TabsList className="w-full md:w-48 flex-shrink-0 mb-6 md:mb-0 flex flex-row md:flex-col items-start gap-2 md:gap-1 mt-6 overflow-x-auto md:overflow-visible">
-                            <TabsTrigger
-                                value="public-profile"
-                                className="w-full justify-start px-3 py-2 hover:bg-muted rounded-md transition-colors text-muted-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:font-medium whitespace-nowrap"
-                            >
-                                <User className="w-4 h-4 mr-2 inline-block" />
-                                Public Profile
-                            </TabsTrigger>
-                            <TabsTrigger
-                                value="about-me"
-                                className="w-full justify-start px-3 py-2 hover:bg-muted rounded-md transition-colors text-muted-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:font-medium whitespace-nowrap"
-                            >
-                                <UserCircle className="w-4 h-4 mr-2 inline-block" />
-                                About Me
-                            </TabsTrigger>
-                            <TabsTrigger
-                                value="links-contact"
-                                className="w-full justify-start px-3 py-2 hover:bg-muted rounded-md transition-colors text-muted-foreground data-[state=active]:bg-muted data-[state=active]:text-foreground data-[state=active]:font-medium whitespace-nowrap"
-                            >
-                                <Link2 className="w-4 h-4 mr-2 inline-block" />
-                                Links & Contact
-                            </TabsTrigger>
-                        </TabsList>
+        <main className="bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen">
+            <div className="container mx-auto py-10 px-4 md:px-0 max-w-4xl">
+                <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <h1 className="text-4xl font-bold mb-2 text-white">Profile Settings</h1>
+                        <p className="text-gray-50">Customize your profile and manage your preferences.</p>
+                    </div>
+                    {/* Optionally, you can add a settings icon or avatar here for extra modern feel */}
+                </div>
 
-                        <div className="flex-grow min-w-0"> {/* Added min-w-0 for flex child overflow */}
-                            <TabsContent value="public-profile" className="mt-0"> {/* Remove extra margin-top */}
-                                <h3 className="text-lg font-medium mb-6">Public Profile Details</h3>
-                                <PublicProfileForm profile={userData.profile} />
-                            </TabsContent>
+                <Card className="bg-gray-800 border-gray-700 shadow-xl">
+                    <CardContent className="p-0">
+                        <Tabs defaultValue="public-profile" className="w-full">
+                            <div className="flex flex-col md:flex-row md:gap-12">
+                                <TabsList
+                                    className="
+                                        w-full md:w-56 flex-shrink-0 mb-4 md:mb-0
+                                        flex flex-row md:flex-col items-stretch gap-2 md:gap-3
+                                        p-2 rounded-xl md:rounded-l-2xl md:rounded-r-none shadow-lg
+                                        overflow-x-auto md:overflow-visible
+                                        sticky top-0 bg-gray-800 z-10
+                                    "
+                                >
+                                    <TabsTrigger
+                                        value="public-profile"
+                                        className="
+                                            flex-1 md:flex-none md:w-full flex items-center gap-2 md:gap-3 px-3 py-3 md:px-5 md:py-4
+                                            text-base md:text-lg font-semibold rounded-lg md:rounded-xl transition-all
+                                            bg-gray-800 hover:bg-gray-700 lg:mt-20
+                                            text-gray-200 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg
+                                            focus:outline-none focus:ring-2 focus:ring-primary
+                                            whitespace-nowrap
+                                        "
+                                    >
+                                        <User className="w-5 h-5 md:w-6 md:h-6" />
+                                        <span>Public Profile</span>
+                                    </TabsTrigger>
+                                    <TabsTrigger
+                                        value="about-me"
+                                        className="
+                                            flex-1 md:flex-none md:w-full flex items-center gap-2 md:gap-3 px-3 py-3 md:px-5 md:py-4
+                                            text-base md:text-lg font-semibold rounded-lg md:rounded-xl transition-all
+                                            bg-gray-800 hover:bg-gray-700
+                                            text-gray-200 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg
+                                            focus:outline-none focus:ring-2 focus:ring-primary
+                                            whitespace-nowrap
+                                        "
+                                    >
+                                        <UserCircle className="w-5 h-5 md:w-6 md:h-6" />
+                                        <span>About Me</span>
+                                    </TabsTrigger>
+                                    <TabsTrigger
+                                        value="links-contact"
+                                        className="
+                                            flex-1 md:flex-none md:w-full flex items-center gap-2 md:gap-3 px-3 py-3 md:px-5 md:py-4
+                                            text-base md:text-lg font-semibold rounded-lg md:rounded-xl transition-all
+                                            bg-gray-800 hover:bg-gray-700
+                                            text-gray-200 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg
+                                            focus:outline-none focus:ring-2 focus:ring-primary
+                                            whitespace-nowrap
+                                        "
+                                    >
+                                        <Link2 className="w-5 h-5 md:w-6 md:h-6" />
+                                        <span>Links & Contact</span>
+                                    </TabsTrigger>
+                                </TabsList>
 
-                            <TabsContent value="about-me" className="mt-0">
-                                <h3 className="text-lg font-medium mb-6">About Me Details</h3>
-                                {/* Pass profileSkills/Badges from profile data */}
-                                <AboutMeForm
-                                    about={userData.about}
-                                    profileSkills={userData.profile.skill}
-                                    profileBadges={userData.profile.badges}
-                                />
-                            </TabsContent>
+                                <div className="flex-grow min-w-0 p-4 md:p-8 bg-gray-900 rounded-xl md:rounded-2xl shadow-lg mt-4 md:mt-0">
+                                    <TabsContent value="public-profile" className="mt-0">
+                                        <div className="space-y-6">
+                                            <div>
+                                                <h3 className="text-lg font-medium text-white mb-2">Public Profile Details</h3>
+                                                <p className="text-gray-400 text-sm mb-6">
+                                                    This information will be displayed publicly on your profile page.
+                                                </p>
+                                            </div>
+                                            <PublicProfileForm profile={userData.profile} />
+                                        </div>
+                                    </TabsContent>
 
-                            <TabsContent value="links-contact" className="mt-0">
-                                <h3 className="text-lg font-medium mb-6">Links & Contact Information</h3>
-                                <LinksContactForm profile={userData.profile} />
-                            </TabsContent>
-                        </div>
-                    </Tabs>
-                </CardContent>
-            </Card>
-        </div>
+                                    <TabsContent value="about-me" className="mt-0">
+                                        <div className="space-y-6">
+                                            <div>
+                                                <h3 className="text-lg font-medium text-white mb-2">About Me Details</h3>
+                                                <p className="text-gray-400 text-sm mb-6">
+                                                    Share your story, expertise, and interests with the community.
+                                                </p>
+                                            </div>
+                                            <AboutMeForm
+                                                about={userData.about}
+                                                profileSkills={userData.profile.skill}
+                                                profileBadges={userData.profile.badges}
+                                            />
+                                        </div>
+                                    </TabsContent>
+
+                                    <TabsContent value="links-contact" className="mt-0">
+                                        <div className="space-y-6">
+                                            <div>
+                                                <h3 className="text-lg font-medium text-white mb-2">Links & Contact Information</h3>
+                                                <p className="text-gray-400 text-sm mb-6">
+                                                    Manage your social links and contact preferences.
+                                                </p>
+                                            </div>
+                                            <LinksContactForm profile={userData.profile} />
+                                        </div>
+                                    </TabsContent>
+                                </div>
+                            </div>
+                        </Tabs>
+                    </CardContent>
+                </Card>
+            </div>
+        </main>
     );
 }

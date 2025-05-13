@@ -93,29 +93,10 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
             isMounted = false;
         };
     }, [user, session, project.id]);
-    // Main Navigation Handler
-    const handleCardClick = (e: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
-        if ('key' in e) {
-            // Handle keyboard event
-            if (e.key !== 'Enter' && e.key !== ' ') return;
-        } else {
-            // Handle mouse event
-            const target = e.target as HTMLElement;
-            if (target.closest('button, a, [role="button"], [role="link"]')) {
-                return;
-            }
-        }
-        router.push(`/projects/${project.id}`);
-    };
 
     return (
         <div
-            className="group bg-gray-800 p-4 md:p-4 rounded-xl border border-gray-700 hover:border-primary/50 transition-all duration-300 relative overflow-hidden cursor-pointer"
-            onClick={handleCardClick}
-            role="link"
-            aria-label={`View details for ${project.title}`}
-            tabIndex={0}
-            onKeyDown={handleCardClick}
+            className="group bg-gray-800 p-4 md:p-4 rounded-xl border border-gray-700 hover:border-primary/50 transition-all duration-300 relative overflow-hidden"
         >
             {/* Background pattern */}
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
@@ -123,33 +104,38 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
             <div className="relative z-10 flex flex-col justify-between h-full">
                 {/* Top part: Info */}
                 <div className="space-y-3 mb-4">
-                    {/* Project Logo & Title/Category - No changes needed here */}
+                    {/* Project Logo & Title/Category - Make this section clickable */}
                     <div className="flex items-center gap-4">
-                        <div className={`flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center ${project.logo_url ? "bg-transparent" : "bg-primary/20"} group-hover:bg-primary/30 transition-colors duration-300`}>
-                            {project.logo_url ? (
-                                <img src={project.logo_url} alt={`${project.title} logo`} className="w-full h-full object-cover rounded-lg" />
-                            ) : (
-                                <Sparkles className="w-6 h-6 text-primary group-hover:text-primary-400 transition-colors duration-300" />
-                            )}
-                        </div>
-                        <div className="flex-grow min-w-0">
-                            <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                                <h2 className="text-xl font-semibold text-gray-100 group-hover:text-primary transition-colors duration-300 truncate">
-                                    {index != null ? `${index + 1}. ` : ''}{project.title}
-                                </h2>
-                                {project.category && (
-                                    <span className="flex-shrink-0 inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full whitespace-nowrap">
-                                        {project.category}
-                                    </span>
+                        <Link
+                            href={`/projects/${project.id}`}
+                            className="flex items-center gap-4 group/title cursor-pointer"
+                        >
+                            <div className={`flex-shrink-0 w-12 h-12 rounded-lg flex items-center justify-center ${project.logo_url ? "bg-transparent" : "bg-primary/20"} group-hover/title:bg-primary/30 transition-colors duration-300`}>
+                                {project.logo_url ? (
+                                    <img src={project.logo_url} alt={`${project.title} logo`} className="w-full h-full object-cover rounded-lg" />
+                                ) : (
+                                    <Sparkles className="w-6 h-6 text-primary group-hover/title:text-primary-400 transition-colors duration-300" />
                                 )}
                             </div>
-                        </div>
+                            <div className="flex-grow min-w-0">
+                                <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                                    <h2 className="text-xl font-semibold text-gray-100 group-hover/title:text-primary transition-colors duration-300 truncate">
+                                        {index != null ? `${index + 1}. ` : ''}{project.title}
+                                    </h2>
+                                    {project.category && (
+                                        <span className="flex-shrink-0 inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full whitespace-nowrap">
+                                            {project.category}
+                                        </span>
+                                    )}
+                                </div>
+                            </div>
+                        </Link>
                     </div>
 
                     {/* Description - No changes needed */}
                     <p className="text-gray-300 text-base line-clamp-2">{project.description}</p>
 
-                    {/* Tech stack section with proper type checking */}
+                    {/* Tech stack section - No changes needed */}
                     {project.tech_stack && project.tech_stack.length > 0 && (
                         <div className="flex gap-2 flex-wrap mt-2">
                             {project.tech_stack.slice(0, 5).map((tech: string) => (
@@ -165,13 +151,11 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
                         </div>
                     )}
 
-                    {/* Developer Info Link - No changes needed */}
+                    {/* Developer Info Link - Already properly implemented */}
                     <Link
-                        href={`/${project.developer?.username ?? '#'}`} // Added fallback href
-                        onClick={(e) => e.stopPropagation()}
-                        className="inline-flex items-center gap-3 mt-4 group/devinfo focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-primary rounded"
+                        href={`/${project.developer?.username ?? '#'}`}
+                        className="inline-flex items-center gap-3 mt-4 group/devinfo focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-primary rounded cursor-pointer"
                         aria-label={`View profile of ${project.developer?.name || 'developer'}`}
-                        // Prevent navigating if developer is missing
                         {...(!project.developer?.username ? { 'aria-disabled': true, tabIndex: -1, style: { pointerEvents: 'none' } } : {})}
                     >
                         <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-700 text-white group-hover/devinfo:ring-2 group-hover/devinfo:ring-primary transition-all duration-300 flex-shrink-0">
@@ -191,34 +175,29 @@ export function ProjectCard({ project, index }: ProjectCardProps) {
 
                 {/* Bottom part: Actions */}
                 <div className="flex justify-end items-center">
-                    <div className="flex gap-2 md:gap-3 text-gray-400"> {/* Adjusted gap */}
+                    <div className="flex gap-2 md:gap-3 text-gray-400">
                         {/* Comments Link */}
                         <Link
                             href={`/projects/${project.id}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="flex items-center gap-1.5 bg-gray-700/50 px-3 py-1.5 rounded-full hover:bg-gray-700 text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-primary" // Adjusted gap
+                            className="flex items-center gap-1.5 bg-gray-700/50 px-3 py-1.5 rounded-full hover:bg-gray-700 text-white transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-primary cursor-pointer"
                             aria-label={`${project.comments_count} comments, view comments`}
-                            title={`${project.comments_count} comments`} // Add title for tooltip
+                            title={`${project.comments_count} comments`}
                         >
                             <MessageCircle className="w-4 h-4 flex-shrink-0" />
                             <span className="text-sm font-medium">{project.comments_count ?? 0}</span>
                         </Link>
 
-                        {/* --- INTEGRATED UPVOTE BUTTON --- */}
-                        {/* Render button only after loading user interaction state */}
+                        {/* Upvote Button - Already properly implemented */}
                         {!isLoadingUserInteraction ? (
-                            <div onClick={(e) => e.stopPropagation()}> {/* Wrapper to stop propagation */}
+                            <div>
                                 <UpvoteButton
                                     projectId={project.id}
                                     initialUpvotes={project.upvotes_count ?? 0}
                                     initialHasUpvoted={initialHasUpvoted}
-                                    size="sm" // Make it slightly smaller to fit better maybe
-                                // Pass any specific className if needed
-                                // className="px-3 py-1.5" // Example if you need specific padding different from default
+                                    size="sm"
                                 />
                             </div>
                         ) : (
-                            // Skeleton/Placeholder for the button while loading initial state
                             <Skeleton className="bg-gray-700 h-8 w-20 bg-gray-700 rounded-full" />
                         )}
                     </div>

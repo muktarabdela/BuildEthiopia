@@ -116,10 +116,10 @@ export default function SettingsPage() {
                 <Card className="bg-gray-800 border-gray-700 shadow-xl">
                     <CardContent className="p-0">
                         <Tabs defaultValue="public-profile" className="w-full">
-                            <div className="flex flex-col md:flex-row md:gap-12">
+                            <div className="flex flex-col md:flex-row md:gap-8">
                                 <TabsList
                                     className="
-                                        w-full md:w-56 flex-shrink-0 mb-4 md:mb-0
+                                        w-full md:w-48 flex-shrink-0 mb-4 md:mb-0
                                         flex flex-row md:flex-col items-stretch gap-2 md:gap-3
                                         p-2 rounded-xl md:rounded-l-2xl md:rounded-r-none shadow-lg
                                         overflow-x-auto md:overflow-visible
@@ -129,48 +129,48 @@ export default function SettingsPage() {
                                     <TabsTrigger
                                         value="public-profile"
                                         className="
-                                            flex-1 md:flex-none md:w-full flex items-center gap-2 md:gap-3 px-3 py-3 md:px-5 md:py-4
-                                            text-base md:text-lg font-semibold rounded-lg md:rounded-xl transition-all
+                                            flex-1 md:flex-none md:w-full flex items-center gap-2 md:gap-3 px-3 py-3 md:px-4 md:py-3
+                                            text-sm md:text-base font-semibold rounded-lg md:rounded-xl transition-all
                                             bg-gray-800 hover:bg-gray-700 lg:mt-20
                                             text-gray-200 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg
                                             focus:outline-none focus:ring-2 focus:ring-primary
                                             whitespace-nowrap
                                         "
                                     >
-                                        <User className="w-5 h-5 md:w-6 md:h-6" />
+                                        <User className="w-4 h-4 md:w-5 md:h-5" />
                                         <span>Public Profile</span>
                                     </TabsTrigger>
                                     <TabsTrigger
                                         value="about-me"
                                         className="
-                                            flex-1 md:flex-none md:w-full flex items-center gap-2 md:gap-3 px-3 py-3 md:px-5 md:py-4
-                                            text-base md:text-lg font-semibold rounded-lg md:rounded-xl transition-all
+                                            flex-1 md:flex-none md:w-full flex items-center gap-2 md:gap-3 px-3 py-3 md:px-4 md:py-3
+                                            text-sm md:text-base font-semibold rounded-lg md:rounded-xl transition-all
                                             bg-gray-800 hover:bg-gray-700
                                             text-gray-200 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg
                                             focus:outline-none focus:ring-2 focus:ring-primary
                                             whitespace-nowrap
                                         "
                                     >
-                                        <UserCircle className="w-5 h-5 md:w-6 md:h-6" />
+                                        <UserCircle className="w-4 h-4 md:w-5 md:h-5" />
                                         <span>About Me</span>
                                     </TabsTrigger>
                                     <TabsTrigger
                                         value="links-contact"
                                         className="
-                                            flex-1 md:flex-none md:w-full flex items-center gap-2 md:gap-3 px-3 py-3 md:px-5 md:py-4
-                                            text-base md:text-lg font-semibold rounded-lg md:rounded-xl transition-all
+                                            flex-1 md:flex-none md:w-full flex items-center gap-2 md:gap-3 px-3 py-3 md:px-4 md:py-3
+                                            text-sm md:text-base font-semibold rounded-lg md:rounded-xl transition-all
                                             bg-gray-800 hover:bg-gray-700
                                             text-gray-200 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg
                                             focus:outline-none focus:ring-2 focus:ring-primary
                                             whitespace-nowrap
                                         "
                                     >
-                                        <Link2 className="w-5 h-5 md:w-6 md:h-6" />
+                                        <Link2 className="w-4 h-4 md:w-5 md:h-5" />
                                         <span>Links & Contact</span>
                                     </TabsTrigger>
                                 </TabsList>
 
-                                <div className="flex-grow min-w-0 p-4 md:p-8 bg-gray-900 rounded-xl md:rounded-2xl shadow-lg mt-4 md:mt-0">
+                                <div className="flex-grow min-w-0 p-4 md:p-6 bg-gray-900 rounded-xl md:rounded-2xl shadow-lg mt-4 md:mt-0">
                                     <TabsContent value="public-profile" className="mt-0">
                                         <div className="space-y-6">
                                             <div>

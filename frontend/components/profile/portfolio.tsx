@@ -84,7 +84,7 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner, 
                             <TabsTrigger
                                 key={tab}
                                 value={tab}
-                                className="relative px-0 pb-3 text-sm font-medium text-gray-400 hover:text-white transition-colors data-[state=active]:text-white"
+                                className="relative px-0 pb-3 text-sm font-medium text-gray-400 hover:text-white transition-colors data-[state=active]:text-white cursor-pointer"
                             >
                                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
                                 <span className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-500 scale-x-0 data-[state=active]:scale-x-100 transition-transform duration-300" />
@@ -245,17 +245,22 @@ export default function PortfolioSection({ user, upvotedProjects = [], isOwner, 
                             <div className="flex flex-col items-center justify-center p-8 space-y-6">
                                 <div className="text-center max-w-2xl">
                                     <Code className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                                    <h3 className="text-2xl font-semibold text-white mb-2">No Projects Yet</h3>
+                                    <h3 className="text-2xl font-semibold text-white mb-2">
+                                        {isOwner ? "No Projects Yet" : "No Projects Available"}
+                                    </h3>
                                     <p className="text-gray-400 mb-6">
-                                        Showcase your skills and experience by adding your first project.
-                                        It's a great way to demonstrate your capabilities to potential collaborators and employers.
+                                        {isOwner
+                                            ? "Showcase your skills and experience by adding your first project. It's a great way to demonstrate your capabilities to potential collaborators and employers."
+                                            : "This developer hasn't added any projects yet. Check back later!"}
                                     </p>
-                                    <Button
-                                        className="bg-primary hover:bg-primary/90"
-                                        onClick={() => router.push('/projects/new')}
-                                    >
-                                        Add Your First Project
-                                    </Button>
+                                    {isOwner && (
+                                        <Button
+                                            className="bg-primary hover:bg-primary/90"
+                                            onClick={() => router.push('/projects/new')}
+                                        >
+                                            Add Your First Project
+                                        </Button>
+                                    )}
                                 </div>
                             </div>
                         )}

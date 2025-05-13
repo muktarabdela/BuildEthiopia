@@ -1,0 +1,19 @@
+Talent
+    complete your profile
+        baisc information
+            Title/Role *
+            Bio *
+            Location *
+        Skills & Expertise
+            Skills *
+            Experience Level *
+        Social & Contact Links
+            GitHub URL
+            LinkedIn URL
+            Personal Website URL
+            Telegram URL
+        Professional Summary
+            About Me *
+            Experience Summary *
+            Education Summary *
+            Professional Interests *

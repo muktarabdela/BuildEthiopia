@@ -160,27 +160,25 @@ export default function ProfilePage() {
     const [showDialog, setShowDialog] = useState<boolean>(false);
     const [isOwner, setIsOwner] = useState<boolean>(false);
     const [upvotedProjects, setUpvotedProjects] = useState<string[]>([]);
-    // const { setIsLoading } = useLoading();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [showProfileCompletionAlert, setShowProfileCompletionAlert] = useState<boolean>(false);
     const [isGuestMode, setIsGuestMode] = useState<boolean>(false);
     const [isGuestModeLoading, setIsGuestModeLoading] = useState<boolean>(false);
+    const [profileNotFound, setProfileNotFound] = useState<boolean>(false);
 
     useEffect(() => {
         async function getProfile() {
             try {
-                (true);
                 setIsLoading(true);
                 if (!params) return;
 
                 const username = params?.id;
                 const response = await axios.get(`/api/profile/${username}`);
                 if (response.status !== 200) {
-                    router.push('/login');
+                    setProfileNotFound(true);
                     return;
                 }
 
-                // console.log("profile data from ", response.data)
                 const profile = response.data.profile;
                 const about = response.data.about;
                 setAbout(about);
@@ -188,7 +186,6 @@ export default function ProfilePage() {
                 const transformedProfile = transformProfileData(profile, about, projects);
                 setProfile(transformedProfile);
 
-                // Check if profile is incomplete
                 const isProfileIncomplete = !about || !profile?.bio || !profile?.github_url || !profile?.linkedin_url;
                 setShowProfileCompletionAlert(isProfileIncomplete && user?.id === profile?.id);
 
@@ -207,8 +204,8 @@ export default function ProfilePage() {
                 }
             } catch (error) {
                 console.error('Error:', error);
+                setProfileNotFound(true);
             } finally {
-                setIsLoading(false);
                 setIsLoading(false);
             }
         }
@@ -224,15 +221,34 @@ export default function ProfilePage() {
         setIsGuestModeLoading(false);
     };
 
-    if (!profile) return (
+    if (profileNotFound) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 flex items-center justify-center">
+                <div className="text-center">
+                    <h1 className="text-4xl font-bold text-white mb-4">Profile Not Found</h1>
+                    <p className="text-gray-300 mb-8">The profile you are looking for does not exist or may have been removed.</p>
+                    <div className="flex justify-center space-x-4">
+                        <Button onClick={() => router.push('/')} className="bg-indigo-600 hover:bg-indigo-700 text-white">
+                            Back to Home
+                        </Button>
+                        <Button onClick={() => router.push('/developers')} className="bg-green-600 hover:bg-green-700 text-white">
+                            Explore Developers
+                        </Button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
+    if (!profile) return (
         <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
                 <p className="text-muted-foreground">Loading...</p>
             </div>
         </div>
-    )
+    );
+
     const { projects } = profile;
     const username = params?.id;
 

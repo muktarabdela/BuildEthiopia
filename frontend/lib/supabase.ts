@@ -27,8 +27,8 @@ export async function requireAuth(req: Request) {
   return { user };
 }
 
-export async function requireRole(allowedRoles: string[]) {
-  const session = await requireAuth();
+export async function requireRole(req: Request, allowedRoles: string[]) {
+  const session = await requireAuth(req);
 
   // Fetch user profile from Supabase
   const { data: profile, error } = await supabase
